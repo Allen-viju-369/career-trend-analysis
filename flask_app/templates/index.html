@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career Trend Analysis System</title>
+  <meta name="description" content="Upload job data, discover salary clusters, compare ML models, and predict your salary tier." />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">📊</span>
+        <div>
+          <span class="logo-title">Career Trend Analysis</span>
+          <span class="logo-sub">ML-Powered Salary Intelligence</span>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <a href="#upload-section"  class="nav-link">Upload Data</a>
+        <a href="#hottest-jobs-section" class="nav-link">🔥 Hot Jobs</a>
+        <a href="#clusters-section" class="nav-link">Clusters</a>
+        <a href="#metrics-section"  class="nav-link">Model Metrics</a>
+        <a href="#predict-section"  class="nav-link">Predict</a>
+        <a href="/sample-csv" class="btn btn-outline" id="download-sample-btn">⬇ Sample CSV</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">Powered by K-Means · KNN · Logistic Regression</div>
+      <h1 class="hero-title">Decode the Job Market.<br>Predict Your Salary Tier.</h1>
+      <p class="hero-sub">
+        Upload a job listings CSV, discover hidden skill clusters, compare ML model performance,
+        then select your own skills to get an instant salary tier prediction.
+      </p>
+      <div class="hero-steps">
+        <div class="hero-step"><span class="step-num">01</span><span>Upload CSV</span></div>
+        <div class="hero-arrow">→</div>
+        <div class="hero-step"><span class="step-num">02</span><span>Train Models</span></div>
+        <div class="hero-arrow">→</div>
+        <div class="hero-step"><span class="step-num">03</span><span>View Clusters</span></div>
+        <div class="hero-arrow">→</div>
+        <div class="hero-step"><span class="step-num">04</span><span>Get Prediction</span></div>
+      </div>
+    </div>
+  </section>
+
+  <main class="container main-content">
+
+    <!-- ═══════════════════════ UPLOAD SECTION ═══════════════════════ -->
+    <section id="upload-section" class="card upload-card">
+      <div class="card-header">
+        <span class="card-icon">📂</span>
+        <div>
+          <h2 class="card-title">Step 1 — Upload Your Dataset</h2>
+          <p class="card-sub">Universal Compatibility: Upload <strong>any</strong> tech job dataset (Kaggle, LinkedIn, etc.). Columns like Title, Skills/Description, Salary, and Experience are automatically detected and mapped.</p>
+        </div>
+      </div>
+
+      <form id="upload-form" enctype="multipart/form-data">
+        <div class="file-drop" id="file-drop-zone">
+          <input type="file" name="csv_file" id="csv-file-input" accept=".csv" class="file-input" />
+          <div class="file-drop-inner">
+            <span class="drop-icon">☁️</span>
+            <p class="drop-label">Drag &amp; drop your CSV here, or <span class="browse-link">browse</span></p>
+            <p class="drop-hint" id="file-name-display">No file chosen</p>
+          </div>
+        </div>
+
+        <div class="upload-actions">
+          <button type="submit" class="btn btn-primary" id="upload-btn">
+            <span class="btn-icon">⚡</span> Train Models
+          </button>
+          <button type="button" class="btn btn-secondary" id="quick-load-btn" title="Instant load sample_jobs.csv from server">
+            <span class="btn-icon">🚀</span> Quick Load Sample Data
+          </button>
+          <a href="/sample-csv" class="btn btn-ghost">⬇ Download Sample CSV</a>
+        </div>
+      </form>
+
+      <!-- Upload progress / status -->
+      <div id="upload-status" class="status-box hidden"></div>
+    </section>
+
+    <!-- ═══════════════════════ HOTTEST JOBS SECTION ═══════════════════════ -->
+    <section id="hottest-jobs-section" class="hidden">
+      <div class="section-title-wrap">
+        <div>
+          <h2 class="section-title"><span>🔥</span> Top 5 Hottest Jobs in Market</h2>
+          <p class="section-sub">
+            Ranked by live industry hiring demand, salary competitiveness, and required technical depth.
+          </p>
+        </div>
+        <span class="badge badge-hot">Market Trends</span>
+      </div>
+      <div class="hottest-grid" id="hottest-grid">
+        <!-- Populated dynamically by JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ DATASET OVERVIEW ═══════════════════════ -->
+    <section id="overview-section" class="hidden">
+      <h2 class="section-title"><span>📋</span> Dataset Overview</h2>
+      <div class="stat-grid" id="stat-grid">
+        <!-- Populated by JS -->
+      </div>
+      <div class="tier-bars" id="tier-bars">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ CLUSTERS SECTION ═══════════════════════ -->
+    <section id="clusters-section" class="hidden">
+      <h2 class="section-title"><span>🔵</span> K-Means Clustering Results <span class="badge">k = 3</span></h2>
+      <p class="section-sub">
+        K-Means groups job profiles into 3 clusters based on their skill vectors,
+        revealing natural segments in the job market.
+      </p>
+      <div class="cluster-grid" id="cluster-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ METRICS SECTION ═══════════════════════ -->
+    <section id="metrics-section" class="hidden">
+      <h2 class="section-title"><span>🤖</span> Model Comparison</h2>
+      <p class="section-sub">
+        Both models are trained on one-hot encoded skill features to predict
+        <strong>Salary Tier</strong> (Entry / Mid / Senior).
+      </p>
+
+      <div class="metrics-table-wrap">
+        <table class="metrics-table" id="metrics-table">
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>Winner</th>
+            </tr>
+          </thead>
+          <tbody id="metrics-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Per-class breakdown -->
+      <div class="report-grid" id="report-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ PREDICT SECTION ═══════════════════════ -->
+    <section id="predict-section" class="card predict-card hidden">
+      <div class="card-header">
+        <span class="card-icon">🔮</span>
+        <div>
+          <h2 class="card-title">Step 2 — Predict Your Salary Tier</h2>
+          <p class="card-sub">Select the technical skills you possess and click Predict.</p>
+        </div>
+      </div>
+
+      <div class="skills-filter-bar">
+        <input type="text" id="skill-search" placeholder="🔍 Filter skills…" class="skill-search-input" />
+        <button class="btn btn-ghost btn-sm" id="select-all-btn">Select All</button>
+        <button class="btn btn-ghost btn-sm" id="clear-all-btn">Clear All</button>
+      </div>
+
+      <div class="skills-grid" id="skills-grid">
+        {% for skill in skills %}
+        <label class="skill-chip" for="skill-{{ loop.index }}">
+          <input type="checkbox" id="skill-{{ loop.index }}"
+                 class="skill-checkbox" value="{{ skill }}" />
+          <span class="chip-label">{{ skill }}</span>
+        </label>
+        {% endfor %}
+      </div>
+
+      <div class="predict-actions">
+        <button class="btn btn-primary btn-lg" id="predict-btn">
+          <span class="btn-icon">🔮</span> Predict My Salary Tier
+        </button>
+      </div>
+
+      <!-- Result box -->
+      <div id="predict-result" class="predict-result hidden">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Career Trend Analysis System</span>
+      <span class="footer-sep">·</span>
+      <span>Built with Flask, Scikit-learn &amp; Vanilla JS</span>
+      <span class="footer-sep">·</span>
+      <span>Models: K-Means · KNN · Logistic Regression</span>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
+  <script>
+    /* ─────────────── Utilities ─────────────── */
+    const $ = id => document.getElementById(id);
+    const show = el => el.classList.remove("hidden");
+    const hide = el => el.classList.add("hidden");
+    const fmt  = v  => (v * 100).toFixed(1) + "%";
+
+    /* ─────────────── File drop zone ─────────────── */
+    const dropZone  = $("file-drop-zone");
+    const fileInput = $("csv-file-input");
+    const fileLabel = $("file-name-display");
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", () => {
+      fileLabel.textContent = fileInput.files[0]?.name || "No file chosen";
+      dropZone.classList.toggle("has-file", !!fileInput.files[0]);
+    });
+    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.classList.remove("drag-over");
+      const dt = e.dataTransfer;
+      if (dt.files.length) {
+        fileInput.files = dt.files;
+        fileLabel.textContent = dt.files[0].name;
+        dropZone.classList.add("has-file");
+      }
+    });
+
+    /* ─────────────── Shared Data Handler ─────────────── */
+    function handleDataLoaded(data) {
+      showStatus(`✅ Successfully trained on ${data.n_rows} job postings with ${data.n_features} technical skill features.`, "success");
+      if (data.hottest_jobs && data.hottest_jobs.length) {
+        renderHottestJobs(data.hottest_jobs);
+      }
+      renderOverview(data);
+      renderClusters(data.clusters);
+      renderMetrics(data.metrics, data.knn_report, data.lr_report);
+      show($("predict-section"));
+    }
+
+    /* ─────────────── Upload & Train ─────────────── */
+    $("upload-form").addEventListener("submit", async e => {
+      e.preventDefault();
+      const statusBox = $("upload-status");
+      const uploadBtn = $("upload-btn");
+
+      if (!fileInput.files[0]) {
+        showStatus("⚠️ Please select a CSV file first, or click 'Quick Load Sample Data'.", "warning");
+        return;
+      }
+
+      uploadBtn.disabled = true;
+      uploadBtn.innerHTML = '<span class="spinner"></span> Training…';
+      showStatus("⏳ Processing dataset and training models…", "info");
+
+      const fd = new FormData();
+      fd.append("csv_file", fileInput.files[0]);
+
+      try {
+        const resp = await fetch("/upload", { method: "POST", body: fd });
+        const data = await resp.json();
+
+        if (!resp.ok || data.error) {
+          showStatus("❌ " + (data.error || "Upload failed."), "error");
+          return;
+        }
+
+        handleDataLoaded(data);
+
+      } catch (err) {
+        showStatus("❌ Network error: " + err.message, "error");
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<span class="btn-icon">⚡</span> Train Models';
+      }
+    });
+
+    /* ─────────────── Quick Load Button ─────────────── */
+    const quickLoadBtn = $("quick-load-btn");
+    if (quickLoadBtn) {
+      quickLoadBtn.addEventListener("click", async () => {
+        quickLoadBtn.disabled = true;
+        quickLoadBtn.innerHTML = '<span class="spinner"></span> Loading…';
+        showStatus("⏳ Loading server dataset (sample_jobs.csv) and fitting models…", "info");
+
+        try {
+          const resp = await fetch("/load-sample", { method: "POST" });
+          const data = await resp.json();
+
+          if (!resp.ok || data.error) {
+            showStatus("❌ " + (data.error || "Could not load sample dataset."), "error");
+            return;
+          }
+
+          handleDataLoaded(data);
+
+        } catch (err) {
+          showStatus("❌ " + err.message, "error");
+        } finally {
+          quickLoadBtn.disabled = false;
+          quickLoadBtn.innerHTML = '<span class="btn-icon">🚀</span> Quick Load Sample Data';
+        }
+      });
+    }
+
+    function showStatus(msg, type) {
+      const box = $("upload-status");
+      box.textContent = msg;
+      box.className = "status-box status-" + type;
+      show(box);
+    }
+
+    /* ─────────────── Top 5 Hottest Jobs ─────────────── */
+    function renderHottestJobs(hottest) {
+      if (!hottest || !hottest.length) return;
+      const grid = $("hottest-grid");
+      const rankBadges = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
+
+      grid.innerHTML = hottest.map((job, idx) => `
+        <div class="hottest-card rank-${job.rank}">
+          <div class="hottest-card-header">
+            <div class="hottest-rank-wrap">
+              <span class="hottest-medal">${rankBadges[idx] || '#' + job.rank}</span>
+              <span class="hottest-rank-num">#${job.rank}</span>
+            </div>
+            <div class="hottest-title-wrap">
+              <h3 class="hottest-title">${job.title}</h3>
+              <span class="tier-pill tier-${job.primary_tier.toLowerCase()}">${job.primary_tier} Level</span>
+            </div>
+            <div class="hottest-flame-score" title="Hotness Index combining Demand Volume + Compensation Tier">
+              🔥 ${job.hotness_score}<span class="score-max">/100</span>
+            </div>
+          </div>
+
+          <div class="hottest-metrics-row">
+            <div class="hottest-m-box">
+              <span class="hm-label">Avg Salary</span>
+              <span class="hm-val hm-salary">${job.avg_salary}</span>
+              <span class="hm-sub">${job.salary_range}</span>
+            </div>
+            <div class="hottest-m-box">
+              <span class="hm-label">Market Demand</span>
+              <span class="hm-val">${job.count} openings</span>
+              <span class="hm-sub">${job.demand_pct}% market share</span>
+            </div>
+          </div>
+
+          <div class="hottest-bar-container">
+            <div class="hottest-bar-label">
+              <span>Hiring Velocity &amp; Demand Index</span>
+              <span>${job.hotness_score}%</span>
+            </div>
+            <div class="hottest-bar-track">
+              <div class="hottest-bar-fill" style="width: ${Math.min(100, Math.max(15, job.hotness_score))}%;"></div>
+            </div>
+          </div>
+
+          <div class="hottest-skills-section">
+            <div class="hottest-skills-heading">Top In-Demand Skills</div>
+            <div class="hottest-skill-tags">
+              ${job.top_skills.map(s => `<span class="h-skill-tag">${s}</span>`).join("")}
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      show($("hottest-jobs-section"));
+    }
+
+    /* ─────────────── Dataset Overview ─────────────── */
+    function renderOverview(data) {
+      const tierColors = { Entry: "#6c63ff", Mid: "#ff6584", Senior: "#43e97b" };
+      const total = Object.values(data.tier_dist).reduce((a, b) => a + b, 0);
+
+      $("stat-grid").innerHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${data.n_rows.toLocaleString()}</div>
+          <div class="stat-label">Job Listings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${data.n_features}</div>
+          <div class="stat-label">Skill Features</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Salary Tiers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${data.clusters.length}</div>
+          <div class="stat-label">K-Means Clusters</div>
+        </div>
+      `;
+
+      $("tier-bars").innerHTML = `
+        <h3 class="tier-bars-title">Salary Tier Distribution</h3>
+        ${Object.entries(data.tier_dist).map(([tier, count]) => `
+          <div class="tier-row">
+            <span class="tier-label" style="color:${tierColors[tier]||'#aaa'}">${tier}</span>
+            <div class="tier-bar-track">
+              <div class="tier-bar-fill" style="width:${(count/total*100).toFixed(1)}%;background:${tierColors[tier]||'#aaa'}"></div>
+            </div>
+            <span class="tier-count">${count} <span class="tier-pct">(${(count/total*100).toFixed(1)}%)</span></span>
+          </div>
+        `).join("")}
+      `;
+      show($("overview-section"));
+    }
+
+    /* ─────────────── Clusters ─────────────── */
+    function renderClusters(clusters) {
+      const clusterColors = ["#6c63ff", "#ff6584", "#43e97b"];
+      $("cluster-grid").innerHTML = clusters.map(c => `
+        <div class="cluster-card">
+          <div class="cluster-badge" style="background:${clusterColors[c.cluster % 3]}">
+            Cluster ${c.cluster + 1}
+          </div>
+          <div class="cluster-size">${c.size} profiles</div>
+          <div class="cluster-skills">
+            <div class="cluster-label">Top Skills</div>
+            <div class="chip-row">
+              ${c.top_skills.map(s => `<span class="tag">${s}</span>`).join("")}
+            </div>
+          </div>
+          <div class="cluster-tiers">
+            <div class="cluster-label">Tier Breakdown</div>
+            ${Object.entries(c.tier_dist).map(([t, n]) => `
+              <div class="mini-tier">
+                <span>${t}</span><span class="mini-count">${n}</span>
+              </div>`).join("")}
+          </div>
+        </div>
+      `).join("");
+      show($("clusters-section"));
+    }
+
+    /* ─────────────── Metrics ─────────────── */
+    function renderMetrics(metrics, knnReport, lrReport) {
+      const knn = metrics.knn;
+      const lr  = metrics.lr;
+      const knnWin = knn.f1 >= lr.f1;
+
+      $("metrics-tbody").innerHTML = `
+        <tr class="${knnWin ? 'winner-row' : ''}">
+          <td><span class="model-badge model-knn">K-Nearest Neighbors</span></td>
+          <td>${fmt(knn.accuracy)}</td>
+          <td>${fmt(knn.precision)}</td>
+          <td>${fmt(knn.recall)}</td>
+          <td>${fmt(knn.f1)}</td>
+          <td>${knnWin ? '<span class="winner-badge">🏆 Winner</span>' : '—'}</td>
+        </tr>
+        <tr class="${!knnWin ? 'winner-row' : ''}">
+          <td><span class="model-badge model-lr">Logistic Regression</span></td>
+          <td>${fmt(lr.accuracy)}</td>
+          <td>${fmt(lr.precision)}</td>
+          <td>${fmt(lr.recall)}</td>
+          <td>${fmt(lr.f1)}</td>
+          <td>${!knnWin ? '<span class="winner-badge">🏆 Winner</span>' : '—'}</td>
+        </tr>
+      `;
+
+      const tiers = ["Entry", "Mid", "Senior"];
+      $("report-grid").innerHTML = `
+        <div class="report-card">
+          <h4 class="report-title model-knn-text">KNN — Per-Class Metrics</h4>
+          ${renderClassTable(knnReport, tiers)}
+        </div>
+        <div class="report-card">
+          <h4 class="report-title model-lr-text">Logistic Regression — Per-Class Metrics</h4>
+          ${renderClassTable(lrReport, tiers)}
+        </div>
+      `;
+      show($("metrics-section"));
+    }
+
+    function renderClassTable(report, tiers) {
+      return `
+        <table class="class-table">
+          <thead><tr><th>Tier</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr></thead>
+          <tbody>
+            ${tiers.filter(t => report[t]).map(t => `
+              <tr>
+                <td>${t}</td>
+                <td>${(report[t].precision * 100).toFixed(1)}%</td>
+                <td>${(report[t].recall    * 100).toFixed(1)}%</td>
+                <td>${(report[t]["f1-score"] * 100).toFixed(1)}%</td>
+                <td>${report[t].support}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    /* ─────────────── Skill Checkboxes ─────────────── */
+    $("skill-search").addEventListener("input", function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll(".skill-chip").forEach(chip => {
+        chip.style.display = chip.querySelector(".chip-label").textContent.toLowerCase().includes(q) ? "" : "none";
+      });
+    });
+    $("select-all-btn").addEventListener("click", () => {
+      document.querySelectorAll(".skill-checkbox").forEach(cb => cb.checked = true);
+    });
+    $("clear-all-btn").addEventListener("click", () => {
+      document.querySelectorAll(".skill-checkbox").forEach(cb => cb.checked = false);
+    });
+
+    /* ─────────────── Predict ─────────────── */
+    $("predict-btn").addEventListener("click", async () => {
+      const selected = [...document.querySelectorAll(".skill-checkbox:checked")].map(cb => cb.value);
+      const resultBox = $("predict-result");
+      const predictBtn = $("predict-btn");
+
+      if (!selected.length) {
+        resultBox.innerHTML = `<div class="result-warn">⚠️ Please select at least one skill.</div>`;
+        show(resultBox);
+        return;
+      }
+
+      predictBtn.disabled = true;
+      predictBtn.innerHTML = '<span class="spinner"></span> Predicting…';
+
+      try {
+        const resp = await fetch("/predict", {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body:    JSON.stringify({ skills: selected }),
+        });
+        const data = await resp.json();
+
+        if (data.error) {
+          resultBox.innerHTML = `<div class="result-warn">❌ ${data.error}</div>`;
+          show(resultBox);
+          return;
+        }
+
+        const tierEmoji = { Entry: "🟢", Mid: "🟡", Senior: "🔴" };
+        const tierColor = { Entry: "#6c63ff", Mid: "#f59e0b", Senior: "#43e97b" };
+
+        resultBox.innerHTML = `
+          <div class="result-header">
+            <h3 class="result-heading">Salary Tier Predictions</h3>
+            <p class="result-sub">Based on ${selected.length} selected skill(s)</p>
+          </div>
+          <div class="result-cards">
+            ${renderPredCard("KNN", data.knn, tierEmoji, tierColor, "model-knn")}
+            ${renderPredCard("Logistic Regression", data.lr, tierEmoji, tierColor, "model-lr")}
+          </div>
+          <div class="selected-skills-list">
+            <span class="sel-label">Your skills:</span>
+            ${selected.map(s => `<span class="tag">${s}</span>`).join("")}
+          </div>
+        `;
+        show(resultBox);
+        resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      } catch (err) {
+        resultBox.innerHTML = `<div class="result-warn">❌ Network error: ${err.message}</div>`;
+        show(resultBox);
+      } finally {
+        predictBtn.disabled = false;
+        predictBtn.innerHTML = '<span class="btn-icon">🔮</span> Predict My Salary Tier';
+      }
+    });
+
+    function renderPredCard(model, res, emoji, color, cls) {
+      const c = color[res.tier] || "#aaa";
+      return `
+        <div class="pred-card">
+          <div class="pred-model ${cls}">${model}</div>
+          <div class="pred-tier" style="color:${c}">
+            ${emoji[res.tier] || ""} ${res.tier}
+          </div>
+          <div class="pred-range">${res.salary_range}</div>
+          <div class="pred-confidence">
+            Confidence: <strong>${res.confidence}%</strong>
+          </div>
+          <div class="prob-bars">
+            ${Object.entries(res.probabilities).map(([t, p]) => `
+              <div class="prob-row">
+                <span class="prob-label">${t}</span>
+                <div class="prob-track">
+                  <div class="prob-fill" style="width:${p}%;background:${color[t]||'#aaa'}"></div>
+                </div>
+                <span class="prob-pct">${p}%</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

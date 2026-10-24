@@ -1,0 +1,501 @@
+job_title,company,location,skills_raw,salary,salary_tier
+ML Engineer,Databricks,"San Francisco, CA","docker, pytorch, aws, python",58024,Entry
+DevOps Engineer,Databricks,"New York, NY","aws, git, azure, docker",46140,Entry
+DevOps Engineer,Netflix,"Seattle, WA","linux, python, aws",58231,Entry
+Data Analyst,Netflix,"Seattle, WA","python, tableau, sql",62059,Entry
+Full Stack Developer,Snowflake,"Seattle, WA","typescript, node.js, javascript, sql, react, aws",215648,Senior
+Backend Engineer,Uber,"Seattle, WA","docker, python, java, flask",78004,Mid
+Software Engineer,Amazon,"Austin, TX","docker, c++, java, linux",98910,Mid
+Data Analyst,Meta,"Boston, MA","r, tableau, excel, powerbi",91044,Mid
+Data Engineer,Apple,"San Francisco, CA","python, dbt, kafka, airflow",127332,Senior
+Backend Engineer,Microsoft,"Seattle, WA","redis, aws, fastapi, flask, docker",194342,Senior
+Data Analyst,Google,"San Francisco, CA","data analysis, excel, python, statistics, tableau, sql",57219,Entry
+Data Analyst,Apple,"Austin, TX","python, tableau, data analysis, powerbi, statistics, excel",119597,Mid
+Data Scientist,Stripe,"San Francisco, CA","statistics, python, scikit-learn, tensorflow, machine learning",82508,Mid
+Full Stack Developer,Databricks,"Austin, TX","typescript, aws, docker, react",219872,Senior
+Backend Engineer,Amazon,"Seattle, WA","aws, redis, python",50587,Entry
+Full Stack Developer,Amazon,"Austin, TX","typescript, docker, node.js",55785,Entry
+Data Analyst,Meta,"Austin, TX","powerbi, r, data analysis, tableau",71148,Entry
+Backend Engineer,Meta,"San Francisco, CA","fastapi, docker, redis, python, java",101149,Mid
+Data Engineer,Meta,"San Francisco, CA","python, scala, aws, dbt",55080,Entry
+Data Scientist,Databricks,"New York, NY","sql, statistics, tensorflow, machine learning",129288,Senior
+Software Engineer,Uber,Remote,"git, python, linux, javascript, c++, java",70996,Entry
+Data Scientist,Netflix,"San Francisco, CA","python, tensorflow, statistics",117349,Mid
+Backend Engineer,Meta,"San Francisco, CA","flask, java, postgresql, redis",69400,Entry
+Software Engineer,Google,"San Francisco, CA","python, docker, sql",192133,Senior
+Backend Engineer,Google,Remote,"redis, flask, fastapi, python, java, aws",71826,Entry
+Full Stack Developer,Microsoft,"New York, NY","aws, docker, git, sql, node.js",179639,Senior
+Full Stack Developer,Snowflake,Remote,"docker, javascript, aws",43832,Entry
+Data Analyst,Amazon,"Boston, MA","excel, sql, powerbi",73281,Entry
+Backend Engineer,Snowflake,"Austin, TX","python, docker, fastapi, redis",112335,Mid
+Data Engineer,Stripe,"Seattle, WA","airflow, kafka, scala, spark, dbt",146773,Senior
+ML Engineer,Microsoft,"Seattle, WA","docker, kubernetes, tensorflow",46552,Entry
+ML Engineer,Databricks,"Seattle, WA","tensorflow, docker, kubernetes, spark, python",168435,Senior
+ML Engineer,Apple,"Seattle, WA","pytorch, python, aws, kubernetes, spark",137602,Senior
+Backend Engineer,Apple,"San Francisco, CA","fastapi, postgresql, python, aws, redis",88343,Mid
+Data Scientist,Databricks,"San Francisco, CA","scikit-learn, statistics, tensorflow, sql, tableau",83574,Mid
+ML Engineer,Microsoft,Remote,"aws, kubernetes, deep learning",49768,Entry
+Data Analyst,Meta,"Boston, MA","statistics, python, r",63897,Entry
+ML Engineer,Microsoft,"Boston, MA","tensorflow, pytorch, deep learning, aws, docker, python",111693,Mid
+Data Engineer,Uber,"San Francisco, CA","sql, spark, aws, python",173965,Senior
+Software Engineer,Meta,Remote,"sql, linux, java, docker, python",70166,Entry
+Data Engineer,Google,"San Francisco, CA","aws, scala, sql, airflow, kafka",44549,Entry
+Full Stack Developer,Netflix,"Boston, MA","typescript, sql, node.js",57397,Entry
+Data Engineer,Apple,"San Francisco, CA","dbt, sql, spark",108517,Mid
+DevOps Engineer,Amazon,"Boston, MA","azure, docker, python, linux, git",52912,Entry
+Full Stack Developer,Uber,"Boston, MA","docker, node.js, git, react, typescript, javascript",118706,Mid
+DevOps Engineer,Meta,Remote,"azure, git, docker, linux, gcp",86406,Mid
+Data Engineer,Amazon,"Seattle, WA","scala, dbt, aws, spark",103978,Mid
+Data Engineer,Google,"New York, NY","airflow, dbt, spark, aws, python",55392,Entry
+Software Engineer,Uber,"New York, NY","linux, docker, sql, java, git, javascript",79773,Mid
+Data Analyst,Databricks,Remote,"data analysis, python, r",75364,Mid
+Data Scientist,Snowflake,"Boston, MA","scikit-learn, tableau, tensorflow, sql, r, machine learning",82954,Mid
+DevOps Engineer,Apple,"Austin, TX","linux, python, aws, azure, gcp, docker",191811,Senior
+Software Engineer,Netflix,"Austin, TX","java, docker, c++, javascript, linux, sql",92997,Mid
+ML Engineer,Netflix,"Austin, TX","tensorflow, aws, pytorch, python, docker, deep learning",55155,Entry
+Software Engineer,Google,"Seattle, WA","linux, javascript, sql, python, git, java",88556,Mid
+Full Stack Developer,Stripe,"San Francisco, CA","git, typescript, react, node.js",174922,Senior
+DevOps Engineer,Snowflake,"Austin, TX","linux, azure, aws, kubernetes, docker, git",119509,Mid
+Data Scientist,Uber,"Seattle, WA","r, machine learning, python, scikit-learn",68089,Entry
+Backend Engineer,Google,"Boston, MA","docker, flask, redis, postgresql, python, java",97119,Mid
+Data Scientist,Google,"New York, NY","machine learning, tableau, statistics, python",165871,Senior
+Backend Engineer,Snowflake,"New York, NY","redis, java, fastapi, python",201440,Senior
+Software Engineer,Amazon,"Austin, TX","java, linux, javascript, c++",99176,Mid
+Data Scientist,Apple,"Boston, MA","tableau, statistics, machine learning, python, r, sql",195471,Senior
+ML Engineer,Netflix,"San Francisco, CA","aws, kubernetes, docker",194178,Senior
+Data Engineer,Microsoft,"Boston, MA","spark, airflow, kafka, dbt, scala, sql",67528,Entry
+Full Stack Developer,Meta,"San Francisco, CA","git, node.js, docker, sql, react, typescript",110270,Mid
+Full Stack Developer,Stripe,"New York, NY","aws, react, javascript, node.js, git, docker",151964,Senior
+Data Engineer,Amazon,"New York, NY","sql, scala, python, dbt, spark",164609,Senior
+DevOps Engineer,Uber,"Boston, MA","gcp, aws, docker, python, linux, git",90750,Mid
+Backend Engineer,Stripe,"Seattle, WA","aws, redis, fastapi, docker, postgresql, java",64184,Entry
+Full Stack Developer,Microsoft,"New York, NY","docker, javascript, git, sql",47907,Entry
+Backend Engineer,Netflix,"New York, NY","java, flask, fastapi, postgresql, aws",156242,Senior
+Full Stack Developer,Stripe,"San Francisco, CA","javascript, git, sql, react, typescript",48295,Entry
+Data Scientist,Amazon,"San Francisco, CA","r, scikit-learn, machine learning, python, tableau, statistics",105763,Mid
+DevOps Engineer,Apple,"San Francisco, CA","linux, kubernetes, git",112816,Mid
+Backend Engineer,Snowflake,Remote,"flask, redis, fastapi, postgresql",67274,Entry
+Full Stack Developer,Apple,"Boston, MA","node.js, docker, typescript",78948,Mid
+ML Engineer,Stripe,"Boston, MA","tensorflow, python, docker",51391,Entry
+Software Engineer,Apple,"Boston, MA","sql, docker, git, python, java",55170,Entry
+Backend Engineer,Google,"New York, NY","postgresql, fastapi, java, python",110689,Mid
+Full Stack Developer,Apple,"Austin, TX","git, javascript, node.js, react, docker",112304,Mid
+Software Engineer,Snowflake,"Seattle, WA","linux, docker, c++",114193,Mid
+Data Scientist,Apple,"New York, NY","python, tableau, machine learning, tensorflow, sql",41359,Entry
+DevOps Engineer,Netflix,"Seattle, WA","gcp, linux, aws",107226,Mid
+ML Engineer,Amazon,"Seattle, WA","spark, tensorflow, aws, docker, python, pytorch",163229,Senior
+Full Stack Developer,Meta,"Austin, TX","git, node.js, javascript",66488,Entry
+Data Engineer,Stripe,"Boston, MA","python, spark, kafka, sql, dbt, airflow",107670,Mid
+Software Engineer,Uber,"San Francisco, CA","sql, javascript, python, linux",55682,Entry
+Backend Engineer,Apple,Remote,"java, aws, fastapi, redis, postgresql, docker",134872,Senior
+Software Engineer,Apple,Remote,"c++, git, java, sql, docker, python",151947,Senior
+Data Engineer,Microsoft,Remote,"python, kafka, aws, dbt, airflow",186551,Senior
+Software Engineer,Uber,"San Francisco, CA","javascript, c++, java, docker, git, python",111171,Mid
+Data Engineer,Microsoft,"Austin, TX","dbt, aws, scala, spark, airflow, python",212436,Senior
+Data Engineer,Microsoft,Remote,"scala, python, aws",177712,Senior
+Data Analyst,Netflix,"Boston, MA","data analysis, statistics, sql, excel, tableau",57368,Entry
+Software Engineer,Apple,"New York, NY","git, docker, linux",124706,Senior
+ML Engineer,Apple,"San Francisco, CA","spark, pytorch, aws",81452,Mid
+Data Scientist,Databricks,Remote,"statistics, scikit-learn, tensorflow, machine learning, sql",43677,Entry
+Data Analyst,Apple,Remote,"tableau, r, powerbi, python, statistics, data analysis",45175,Entry
+Full Stack Developer,Uber,"Boston, MA","react, javascript, node.js, git, sql",105491,Mid
+Full Stack Developer,Meta,Remote,"aws, git, node.js, javascript",94800,Mid
+Data Engineer,Snowflake,"Boston, MA","dbt, kafka, python",94349,Mid
+Data Scientist,Meta,"Austin, TX","sql, tableau, machine learning, r, scikit-learn, python",217672,Senior
+Full Stack Developer,Apple,Remote,"typescript, docker, aws, javascript",118201,Mid
+Data Scientist,Uber,"New York, NY","sql, scikit-learn, statistics",83613,Mid
+Backend Engineer,Amazon,Remote,"postgresql, fastapi, redis, flask, docker",63976,Entry
+ML Engineer,Amazon,Remote,"aws, python, docker, deep learning, tensorflow, spark",54785,Entry
+Data Engineer,Meta,Remote,"dbt, scala, aws, kafka, python",119063,Mid
+Data Scientist,Uber,"San Francisco, CA","tensorflow, statistics, python, r, scikit-learn",111793,Mid
+Data Analyst,Uber,Remote,"r, sql, data analysis, python, powerbi",42438,Entry
+Data Engineer,Uber,"Seattle, WA","kafka, airflow, aws, python, dbt, scala",110403,Mid
+Data Scientist,Netflix,"San Francisco, CA","r, machine learning, scikit-learn, python, statistics, tensorflow",89239,Mid
+DevOps Engineer,Netflix,"New York, NY","kubernetes, python, gcp, git, docker, aws",48005,Entry
+Data Analyst,Meta,"Seattle, WA","tableau, powerbi, python",146897,Senior
+Data Analyst,Microsoft,"Austin, TX","powerbi, data analysis, python",198117,Senior
+Full Stack Developer,Meta,"Austin, TX","react, javascript, git",134409,Senior
+Data Engineer,Databricks,"San Francisco, CA","kafka, aws, airflow",57391,Entry
+ML Engineer,Snowflake,"San Francisco, CA","spark, kubernetes, pytorch",98727,Mid
+Full Stack Developer,Uber,"Boston, MA","git, aws, node.js",77042,Mid
+ML Engineer,Microsoft,"San Francisco, CA","pytorch, tensorflow, kubernetes",104070,Mid
+Data Analyst,Amazon,"Boston, MA","powerbi, tableau, r, statistics, data analysis, sql",61311,Entry
+Backend Engineer,Amazon,"Seattle, WA","aws, flask, redis, fastapi, docker, postgresql",89975,Mid
+DevOps Engineer,Amazon,"San Francisco, CA","linux, python, aws, docker, git",56704,Entry
+DevOps Engineer,Netflix,"Boston, MA","docker, git, azure, python",64421,Entry
+ML Engineer,Snowflake,"Austin, TX","python, tensorflow, kubernetes, deep learning, aws, spark",118604,Mid
+Backend Engineer,Amazon,"Seattle, WA","java, postgresql, docker, flask",71600,Entry
+Backend Engineer,Apple,"Boston, MA","docker, python, java",193527,Senior
+Full Stack Developer,Snowflake,"Boston, MA","react, aws, typescript",166010,Senior
+DevOps Engineer,Stripe,"Seattle, WA","aws, gcp, azure",42009,Entry
+Data Analyst,Snowflake,"San Francisco, CA","sql, python, data analysis",96259,Mid
+ML Engineer,Uber,"San Francisco, CA","spark, docker, tensorflow, pytorch, python, kubernetes",67788,Entry
+Full Stack Developer,Meta,"Seattle, WA","sql, javascript, typescript, node.js, aws, git",113872,Mid
+Backend Engineer,Microsoft,"New York, NY","aws, python, flask, redis, docker",153492,Senior
+DevOps Engineer,Google,Remote,"kubernetes, aws, python, docker, azure",90081,Mid
+ML Engineer,Uber,"San Francisco, CA","deep learning, aws, spark, docker, tensorflow, python",195466,Senior
+Data Engineer,Snowflake,Remote,"spark, airflow, python, scala, dbt",70152,Entry
+ML Engineer,Databricks,"Austin, TX","docker, tensorflow, pytorch, python, kubernetes",95335,Mid
+Backend Engineer,Meta,"New York, NY","postgresql, java, python, flask, fastapi",165794,Senior
+Data Analyst,Stripe,Remote,"excel, data analysis, statistics",205919,Senior
+Software Engineer,Stripe,"Boston, MA","docker, java, git, python, javascript",111995,Mid
+Full Stack Developer,Apple,Remote,"docker, sql, javascript",197519,Senior
+Software Engineer,Stripe,"Austin, TX","java, docker, python, sql, git",64165,Entry
+Data Scientist,Microsoft,"San Francisco, CA","statistics, sql, tensorflow, tableau",112465,Mid
+Software Engineer,Stripe,Remote,"c++, python, java",62507,Entry
+Data Analyst,Netflix,"San Francisco, CA","data analysis, r, excel, powerbi, sql, statistics",93540,Mid
+Data Engineer,Netflix,"San Francisco, CA","sql, aws, dbt, scala, spark",65333,Entry
+Data Analyst,Uber,"Boston, MA","excel, powerbi, statistics, sql, r, tableau",160663,Senior
+Data Engineer,Google,"Seattle, WA","dbt, sql, kafka",207834,Senior
+Full Stack Developer,Amazon,"Seattle, WA","git, typescript, aws, docker, sql",54037,Entry
+ML Engineer,Microsoft,"Austin, TX","aws, deep learning, kubernetes",110375,Mid
+DevOps Engineer,Meta,Remote,"gcp, docker, aws, linux",51851,Entry
+Full Stack Developer,Netflix,"Boston, MA","node.js, react, git, typescript",178842,Senior
+Software Engineer,Google,"Boston, MA","linux, java, javascript, sql, docker, git",93467,Mid
+Software Engineer,Microsoft,"Seattle, WA","java, c++, python",192685,Senior
+Software Engineer,Google,Remote,"java, javascript, git, c++, python, linux",139314,Senior
+Data Engineer,Microsoft,"New York, NY","airflow, python, kafka, dbt, aws",45348,Entry
+Data Scientist,Amazon,"San Francisco, CA","r, tensorflow, sql, python",70962,Entry
+Full Stack Developer,Google,"New York, NY","typescript, aws, react, git, docker, javascript",49798,Entry
+DevOps Engineer,Databricks,"Austin, TX","kubernetes, docker, aws, git, azure, linux",115817,Mid
+Backend Engineer,Amazon,"Austin, TX","python, docker, postgresql, java, redis, fastapi",94089,Mid
+Data Engineer,Google,"Boston, MA","dbt, scala, airflow",74475,Entry
+DevOps Engineer,Netflix,"New York, NY","python, azure, docker",153247,Senior
+ML Engineer,Microsoft,"Boston, MA","tensorflow, python, spark, kubernetes, aws",216363,Senior
+Software Engineer,Google,"Seattle, WA","c++, python, docker, git",182723,Senior
+Backend Engineer,Uber,"Austin, TX","aws, postgresql, docker",53072,Entry
+Software Engineer,Amazon,"Seattle, WA","docker, linux, python, c++, sql",52524,Entry
+DevOps Engineer,Databricks,"Seattle, WA","azure, linux, kubernetes, aws, git, python",217427,Senior
+ML Engineer,Netflix,"Boston, MA","tensorflow, kubernetes, spark, aws, python, docker",80173,Mid
+Full Stack Developer,Netflix,"Austin, TX","git, react, node.js, javascript",67925,Entry
+DevOps Engineer,Microsoft,"San Francisco, CA","azure, linux, git",43759,Entry
+Data Analyst,Uber,"Austin, TX","sql, python, r, data analysis, excel, powerbi",208879,Senior
+Data Scientist,Netflix,Remote,"statistics, scikit-learn, tensorflow, python, machine learning, tableau",119504,Mid
+Data Engineer,Stripe,"Austin, TX","python, aws, spark",91359,Mid
+DevOps Engineer,Stripe,"New York, NY","git, python, aws, kubernetes, linux",135436,Senior
+ML Engineer,Netflix,"Boston, MA","tensorflow, aws, docker, python, spark, deep learning",44853,Entry
+ML Engineer,Databricks,"New York, NY","tensorflow, aws, deep learning, pytorch, spark",94030,Mid
+ML Engineer,Snowflake,"Seattle, WA","spark, python, tensorflow, kubernetes",138203,Senior
+Software Engineer,Stripe,"Austin, TX","java, python, c++, git",192306,Senior
+DevOps Engineer,Amazon,Remote,"linux, gcp, python",195354,Senior
+Software Engineer,Databricks,"San Francisco, CA","c++, linux, java, git",97579,Mid
+ML Engineer,Netflix,"Austin, TX","tensorflow, spark, aws, pytorch",94932,Mid
+Full Stack Developer,Snowflake,"Austin, TX","sql, typescript, docker, react",152848,Senior
+ML Engineer,Netflix,"Austin, TX","tensorflow, aws, kubernetes, deep learning",86052,Mid
+Data Scientist,Apple,"Boston, MA","python, statistics, sql",123719,Senior
+Backend Engineer,Apple,"Boston, MA","fastapi, aws, docker",174603,Senior
+Full Stack Developer,Uber,Remote,"sql, node.js, javascript, docker, typescript, aws",119892,Mid
+Software Engineer,Netflix,"Austin, TX","docker, javascript, c++, git, java",49415,Entry
+ML Engineer,Microsoft,"San Francisco, CA","kubernetes, docker, pytorch",70570,Entry
+Data Scientist,Microsoft,Remote,"tensorflow, tableau, machine learning, scikit-learn, sql, python",65175,Entry
+Software Engineer,Meta,"Austin, TX","python, javascript, git, sql, docker, linux",95221,Mid
+Data Engineer,Microsoft,"Seattle, WA","scala, kafka, sql, python, aws, spark",58438,Entry
+Data Engineer,Databricks,"New York, NY","dbt, python, sql",167965,Senior
+Data Engineer,Amazon,Remote,"scala, dbt, sql, kafka, python, airflow",79819,Mid
+Data Engineer,Databricks,"San Francisco, CA","kafka, spark, sql, aws, airflow",164445,Senior
+Data Scientist,Snowflake,"Seattle, WA","r, machine learning, sql, statistics, tableau, tensorflow",61826,Entry
+Data Analyst,Snowflake,"Seattle, WA","statistics, powerbi, data analysis, r, tableau",115403,Mid
+Software Engineer,Snowflake,Remote,"java, git, sql, c++, python",168282,Senior
+Full Stack Developer,Databricks,"Boston, MA","javascript, sql, node.js, typescript",195822,Senior
+DevOps Engineer,Stripe,"Seattle, WA","kubernetes, gcp, docker",55872,Entry
+DevOps Engineer,Meta,"Austin, TX","gcp, azure, python, docker, kubernetes, linux",53362,Entry
+Data Engineer,Netflix,"Boston, MA","aws, spark, airflow, sql, kafka, scala",182702,Senior
+Full Stack Developer,Apple,"Seattle, WA","sql, git, react, typescript",87601,Mid
+Backend Engineer,Amazon,"Austin, TX","fastapi, postgresql, docker, flask, aws",107048,Mid
+DevOps Engineer,Netflix,Remote,"linux, gcp, docker, azure, python",171713,Senior
+Full Stack Developer,Microsoft,"San Francisco, CA","sql, git, docker, react",148048,Senior
+Backend Engineer,Netflix,"Boston, MA","redis, python, flask, fastapi",74802,Entry
+Software Engineer,Stripe,Remote,"c++, git, docker",49009,Entry
+Backend Engineer,Databricks,"Boston, MA","docker, aws, python, flask, java",157650,Senior
+Data Scientist,Apple,"San Francisco, CA","scikit-learn, python, tensorflow, statistics, machine learning, r",142947,Senior
+Data Scientist,Microsoft,"Austin, TX","sql, tensorflow, statistics, r, tableau",47032,Entry
+Software Engineer,Google,"Boston, MA","c++, docker, git, javascript, java",47382,Entry
+Data Engineer,Uber,"Austin, TX","kafka, sql, aws, airflow",194421,Senior
+Data Engineer,Google,"Seattle, WA","kafka, airflow, scala, spark",46251,Entry
+DevOps Engineer,Apple,"Boston, MA","git, gcp, python, azure, docker",57497,Entry
+Data Engineer,Uber,"Boston, MA","scala, kafka, spark",79072,Mid
+Full Stack Developer,Stripe,"New York, NY","docker, sql, typescript, git, aws",116859,Mid
+Software Engineer,Meta,"Boston, MA","linux, docker, sql, git, java",199396,Senior
+ML Engineer,Snowflake,"Austin, TX","pytorch, kubernetes, python, aws, spark",109615,Mid
+Data Analyst,Databricks,Remote,"python, statistics, r, powerbi, tableau, sql",74101,Entry
+Data Scientist,Apple,"Boston, MA","r, sql, python, tableau, tensorflow, scikit-learn",108637,Mid
+Data Scientist,Amazon,"Austin, TX","machine learning, python, tensorflow, scikit-learn",75198,Mid
+Data Scientist,Uber,"Seattle, WA","python, scikit-learn, tensorflow, machine learning, sql, tableau",129047,Senior
+DevOps Engineer,Netflix,"San Francisco, CA","kubernetes, python, azure, git, gcp, linux",99740,Mid
+Data Analyst,Apple,Remote,"tableau, data analysis, sql, statistics",171519,Senior
+DevOps Engineer,Meta,"Boston, MA","gcp, linux, kubernetes, azure",90052,Mid
+ML Engineer,Amazon,"Austin, TX","docker, pytorch, python",67475,Entry
+Data Scientist,Uber,Remote,"tensorflow, statistics, python",119042,Mid
+Backend Engineer,Netflix,"Austin, TX","docker, java, aws, fastapi",78700,Mid
+Data Engineer,Databricks,"Austin, TX","dbt, kafka, scala, python",49388,Entry
+Data Analyst,Uber,Remote,"sql, excel, statistics, tableau, data analysis, powerbi",102998,Mid
+Data Analyst,Google,"Austin, TX","tableau, data analysis, python, excel, statistics, r",52050,Entry
+DevOps Engineer,Netflix,"Boston, MA","azure, kubernetes, linux, gcp",193045,Senior
+ML Engineer,Uber,"Boston, MA","docker, python, tensorflow",168638,Senior
+Data Scientist,Google,"New York, NY","r, machine learning, scikit-learn, statistics",144663,Senior
+Backend Engineer,Databricks,"Seattle, WA","redis, aws, docker, java, fastapi, python",135377,Senior
+Full Stack Developer,Stripe,"San Francisco, CA","sql, react, aws, git, node.js",109974,Mid
+Software Engineer,Snowflake,"New York, NY","docker, c++, git, python",161974,Senior
+Data Analyst,Snowflake,"New York, NY","excel, python, r, data analysis, tableau",67366,Entry
+Software Engineer,Microsoft,"Boston, MA","sql, linux, git, docker, javascript",119883,Mid
+Data Engineer,Google,"San Francisco, CA","python, sql, scala, aws",72002,Entry
+DevOps Engineer,Databricks,Remote,"linux, docker, kubernetes",55167,Entry
+Data Engineer,Google,"Austin, TX","python, scala, sql, aws, airflow, dbt",71667,Entry
+Full Stack Developer,Amazon,"San Francisco, CA","aws, git, typescript",93789,Mid
+Data Analyst,Uber,Remote,"statistics, excel, tableau, sql, data analysis",74501,Entry
+Backend Engineer,Uber,Remote,"java, aws, flask, python, docker",149604,Senior
+DevOps Engineer,Uber,"Boston, MA","linux, docker, aws",78678,Mid
+Data Engineer,Snowflake,Remote,"airflow, spark, aws",81250,Mid
+Full Stack Developer,Snowflake,"New York, NY","javascript, typescript, react, git, aws",44872,Entry
+DevOps Engineer,Netflix,Remote,"aws, git, gcp, azure",159227,Senior
+Data Analyst,Uber,"New York, NY","statistics, sql, data analysis",210350,Senior
+ML Engineer,Meta,"Seattle, WA","aws, python, spark, tensorflow, docker, pytorch",115231,Mid
+DevOps Engineer,Amazon,"San Francisco, CA","kubernetes, azure, git, linux, gcp, python",119545,Mid
+Full Stack Developer,Stripe,"Seattle, WA","docker, react, javascript, git, sql, typescript",50110,Entry
+Full Stack Developer,Databricks,Remote,"aws, node.js, sql, docker",45721,Entry
+ML Engineer,Google,"Seattle, WA","aws, deep learning, docker",63194,Entry
+DevOps Engineer,Microsoft,"Seattle, WA","linux, python, aws, kubernetes",80551,Mid
+Full Stack Developer,Uber,"Seattle, WA","react, node.js, git",49563,Entry
+Software Engineer,Stripe,"San Francisco, CA","git, docker, linux, javascript, java",167334,Senior
+Data Analyst,Uber,"Boston, MA","data analysis, r, excel, tableau, statistics",65932,Entry
+Data Analyst,Stripe,"Austin, TX","statistics, python, tableau, excel, powerbi, r",53163,Entry
+Backend Engineer,Databricks,"San Francisco, CA","aws, python, docker, java, fastapi, postgresql",58369,Entry
+Software Engineer,Stripe,"New York, NY","sql, linux, docker, python, git, c++",147480,Senior
+Full Stack Developer,Uber,"Austin, TX","aws, javascript, node.js, sql, docker, react",50101,Entry
+DevOps Engineer,Netflix,"New York, NY","kubernetes, azure, gcp",98563,Mid
+Data Scientist,Apple,"New York, NY","statistics, tableau, tensorflow, python, sql, r",117273,Mid
+Backend Engineer,Uber,"San Francisco, CA","postgresql, fastapi, python, redis, aws, java",100634,Mid
+ML Engineer,Meta,"Austin, TX","aws, tensorflow, deep learning, docker",215703,Senior
+Software Engineer,Amazon,"San Francisco, CA","javascript, c++, python, linux, docker, sql",81398,Mid
+Data Engineer,Microsoft,"Seattle, WA","airflow, sql, spark, dbt",119378,Mid
+DevOps Engineer,Snowflake,"New York, NY","linux, kubernetes, python, aws, git, docker",150390,Senior
+Software Engineer,Amazon,"Austin, TX","git, java, c++",100483,Mid
+ML Engineer,Amazon,"Seattle, WA","aws, tensorflow, pytorch, docker",190372,Senior
+Software Engineer,Netflix,"Seattle, WA","linux, sql, git, javascript, python",116885,Mid
+Software Engineer,Meta,"Seattle, WA","java, docker, javascript, c++, python",119145,Mid
+ML Engineer,Microsoft,Remote,"deep learning, kubernetes, pytorch, spark, docker, aws",49264,Entry
+Data Analyst,Netflix,"San Francisco, CA","excel, python, r, tableau, sql",107090,Mid
+Software Engineer,Microsoft,"San Francisco, CA","linux, docker, git, javascript, sql, java",65162,Entry
+Data Scientist,Microsoft,Remote,"python, scikit-learn, machine learning, sql, tableau",148906,Senior
+Software Engineer,Netflix,"Austin, TX","sql, linux, javascript",82420,Mid
+Data Scientist,Apple,"San Francisco, CA","tableau, python, statistics, machine learning",177851,Senior
+Software Engineer,Snowflake,"Boston, MA","java, linux, javascript, docker, c++, git",45700,Entry
+DevOps Engineer,Netflix,"Austin, TX","aws, azure, docker, git",49124,Entry
+Full Stack Developer,Microsoft,Remote,"sql, react, git, aws, javascript",86035,Mid
+Data Scientist,Meta,"Boston, MA","scikit-learn, machine learning, tableau, r",205970,Senior
+DevOps Engineer,Uber,"Austin, TX","azure, aws, gcp, docker, git",112843,Mid
+Full Stack Developer,Stripe,"Boston, MA","git, react, sql, javascript, docker, aws",99188,Mid
+Data Engineer,Apple,"Seattle, WA","airflow, scala, spark, dbt, kafka, aws",190049,Senior
+Data Analyst,Amazon,"New York, NY","sql, r, data analysis, tableau, statistics",106808,Mid
+Software Engineer,Apple,"San Francisco, CA","c++, docker, javascript, java",103037,Mid
+Data Engineer,Meta,Remote,"python, airflow, aws, kafka",64369,Entry
+ML Engineer,Meta,"Austin, TX","spark, python, pytorch, kubernetes",75072,Mid
+Software Engineer,Stripe,"San Francisco, CA","linux, docker, java",62516,Entry
+Backend Engineer,Microsoft,Remote,"aws, postgresql, flask",81713,Mid
+Data Analyst,Snowflake,"Boston, MA","python, powerbi, data analysis, sql",119377,Mid
+Data Analyst,Meta,"San Francisco, CA","data analysis, powerbi, statistics, tableau",88963,Mid
+ML Engineer,Amazon,"New York, NY","aws, docker, tensorflow, pytorch, kubernetes, deep learning",48071,Entry
+Full Stack Developer,Snowflake,"Austin, TX","sql, typescript, git",210503,Senior
+Backend Engineer,Amazon,"New York, NY","redis, fastapi, flask",158738,Senior
+Software Engineer,Uber,"Austin, TX","docker, c++, java",79654,Mid
+DevOps Engineer,Snowflake,"San Francisco, CA","gcp, azure, docker, python",119758,Mid
+Data Scientist,Databricks,Remote,"tableau, sql, scikit-learn",42610,Entry
+DevOps Engineer,Databricks,"New York, NY","git, docker, linux, azure",80402,Mid
+Data Analyst,Meta,"San Francisco, CA","powerbi, statistics, tableau",100607,Mid
+Backend Engineer,Google,"Seattle, WA","fastapi, docker, flask",68474,Entry
+Data Analyst,Databricks,"Austin, TX","excel, tableau, r",48992,Entry
+Full Stack Developer,Apple,"Austin, TX","typescript, aws, javascript, react, node.js",48318,Entry
+ML Engineer,Microsoft,"Seattle, WA","spark, kubernetes, tensorflow, python, docker, aws",45050,Entry
+Data Analyst,Google,"San Francisco, CA","tableau, statistics, powerbi",46743,Entry
+Data Scientist,Meta,"Seattle, WA","tableau, machine learning, r, python, tensorflow",70917,Entry
+Backend Engineer,Microsoft,"New York, NY","java, docker, postgresql, python, flask",95968,Mid
+Data Scientist,Stripe,"San Francisco, CA","sql, tableau, scikit-learn, statistics, python, r",129035,Senior
+Data Engineer,Meta,"Boston, MA","scala, kafka, sql, airflow",59917,Entry
+Backend Engineer,Google,"Seattle, WA","redis, docker, postgresql",66872,Entry
+Data Scientist,Stripe,"San Francisco, CA","machine learning, r, sql, tableau, tensorflow",169320,Senior
+Data Analyst,Uber,"Boston, MA","tableau, data analysis, powerbi",81097,Mid
+Data Engineer,Amazon,"Austin, TX","kafka, aws, airflow",80565,Mid
+Data Scientist,Netflix,"Seattle, WA","sql, scikit-learn, tableau, tensorflow",83567,Mid
+Software Engineer,Microsoft,"San Francisco, CA","c++, linux, sql, python",44894,Entry
+Data Analyst,Stripe,"Seattle, WA","python, powerbi, excel, r, tableau, data analysis",95581,Mid
+ML Engineer,Microsoft,"San Francisco, CA","docker, deep learning, tensorflow",59937,Entry
+Backend Engineer,Google,Remote,"docker, postgresql, java",171937,Senior
+Software Engineer,Amazon,"San Francisco, CA","java, git, python, javascript",111053,Mid
+Data Scientist,Amazon,"Austin, TX","tensorflow, tableau, r, scikit-learn",149136,Senior
+Full Stack Developer,Stripe,"New York, NY","typescript, git, docker",129829,Senior
+ML Engineer,Microsoft,"Austin, TX","python, docker, spark",163457,Senior
+DevOps Engineer,Meta,"New York, NY","docker, aws, python, azure, kubernetes, git",171774,Senior
+Full Stack Developer,Stripe,Remote,"node.js, docker, react",49740,Entry
+Software Engineer,Databricks,"San Francisco, CA","c++, git, java, sql, docker, javascript",58335,Entry
+DevOps Engineer,Apple,"New York, NY","gcp, linux, git, python, azure, kubernetes",167070,Senior
+Data Scientist,Databricks,"Seattle, WA","sql, python, tensorflow",54353,Entry
+Backend Engineer,Meta,"Austin, TX","redis, postgresql, docker, python",133125,Senior
+DevOps Engineer,Snowflake,"San Francisco, CA","aws, git, linux, python",86385,Mid
+Data Engineer,Apple,"New York, NY","airflow, dbt, scala, sql",193874,Senior
+Software Engineer,Google,"Seattle, WA","git, python, sql, javascript",43681,Entry
+Backend Engineer,Snowflake,"Boston, MA","aws, python, flask, java",164664,Senior
+Data Analyst,Netflix,"Seattle, WA","python, excel, statistics, tableau, sql",188983,Senior
+Data Engineer,Snowflake,"New York, NY","scala, aws, kafka, spark, dbt, python",50322,Entry
+DevOps Engineer,Uber,"Austin, TX","linux, python, docker, git",59301,Entry
+Data Scientist,Amazon,"New York, NY","machine learning, tensorflow, r, scikit-learn",60854,Entry
+Data Engineer,Apple,"New York, NY","aws, airflow, python",142006,Senior
+Backend Engineer,Stripe,"Boston, MA","java, aws, python, flask, redis",97970,Mid
+DevOps Engineer,Snowflake,"Boston, MA","azure, linux, git, aws, docker, kubernetes",174267,Senior
+Backend Engineer,Apple,"San Francisco, CA","docker, python, postgresql",44830,Entry
+ML Engineer,Snowflake,"Austin, TX","pytorch, kubernetes, python, tensorflow",99607,Mid
+Software Engineer,Netflix,"New York, NY","linux, java, python, docker",103268,Mid
+Backend Engineer,Uber,"Austin, TX","docker, postgresql, java, python, fastapi",111315,Mid
+Software Engineer,Snowflake,Remote,"linux, python, c++",63647,Entry
+Backend Engineer,Apple,Remote,"docker, python, redis, flask",53562,Entry
+Software Engineer,Netflix,Remote,"java, docker, sql, git, javascript",118322,Mid
+Data Engineer,Snowflake,"San Francisco, CA","scala, airflow, kafka, spark, aws",42924,Entry
+Data Analyst,Databricks,Remote,"python, statistics, excel",207487,Senior
+Backend Engineer,Uber,"Boston, MA","fastapi, docker, java, redis, postgresql, python",100370,Mid
+Data Scientist,Microsoft,"New York, NY","machine learning, tableau, tensorflow, r",108871,Mid
+Backend Engineer,Microsoft,"Austin, TX","flask, java, aws",67746,Entry
+Full Stack Developer,Databricks,"Seattle, WA","aws, sql, node.js",44391,Entry
+Full Stack Developer,Snowflake,"San Francisco, CA","typescript, node.js, git, docker, javascript, aws",75811,Mid
+Full Stack Developer,Microsoft,"Seattle, WA","sql, node.js, docker, aws, git, javascript",165072,Senior
+DevOps Engineer,Meta,"San Francisco, CA","azure, linux, python",66327,Entry
+Software Engineer,Apple,"Seattle, WA","docker, linux, c++",168817,Senior
+Software Engineer,Stripe,"Seattle, WA","git, java, c++",209765,Senior
+Full Stack Developer,Uber,"Boston, MA","node.js, git, typescript",114648,Mid
+Software Engineer,Databricks,Remote,"c++, python, javascript",169010,Senior
+Data Analyst,Google,"New York, NY","excel, python, data analysis",188720,Senior
+Data Scientist,Uber,"Boston, MA","sql, scikit-learn, tensorflow, r",98618,Mid
+ML Engineer,Snowflake,"Austin, TX","spark, kubernetes, docker, pytorch, aws",90856,Mid
+Data Engineer,Google,"New York, NY","sql, python, airflow",91952,Mid
+Backend Engineer,Databricks,"San Francisco, CA","redis, postgresql, aws, fastapi",204854,Senior
+Data Scientist,Apple,"Boston, MA","python, machine learning, scikit-learn, sql",83672,Mid
+Full Stack Developer,Databricks,"Austin, TX","git, react, typescript, node.js, aws",99673,Mid
+DevOps Engineer,Amazon,"Seattle, WA","git, linux, python, docker, aws",75482,Mid
+Full Stack Developer,Google,"Austin, TX","sql, typescript, aws, git, docker",93146,Mid
+DevOps Engineer,Apple,Remote,"docker, python, aws, linux",119615,Mid
+DevOps Engineer,Databricks,"Boston, MA","python, gcp, azure, kubernetes",77315,Mid
+Software Engineer,Apple,"San Francisco, CA","sql, linux, java, javascript, docker",208064,Senior
+Software Engineer,Netflix,"New York, NY","docker, javascript, python, java",56951,Entry
+Full Stack Developer,Stripe,"San Francisco, CA","sql, git, react, node.js, javascript",96714,Mid
+ML Engineer,Uber,"San Francisco, CA","deep learning, kubernetes, tensorflow",87750,Mid
+Data Analyst,Microsoft,"San Francisco, CA","data analysis, powerbi, tableau, python, excel",53126,Entry
+Software Engineer,Microsoft,"Austin, TX","python, javascript, git, c++, java",86589,Mid
+Data Analyst,Uber,Remote,"data analysis, statistics, tableau, r",80770,Mid
+DevOps Engineer,Meta,"San Francisco, CA","python, docker, linux, git",74981,Entry
+Data Scientist,Uber,"Austin, TX","statistics, scikit-learn, machine learning, python",91307,Mid
+Full Stack Developer,Uber,"Boston, MA","sql, node.js, docker, git, react",42996,Entry
+Data Analyst,Meta,"Boston, MA","tableau, python, r, sql, data analysis",107125,Mid
+Data Analyst,Uber,"Boston, MA","python, excel, statistics, sql",41436,Entry
+Full Stack Developer,Google,"San Francisco, CA","javascript, docker, git",201676,Senior
+ML Engineer,Microsoft,"New York, NY","kubernetes, docker, aws",99921,Mid
+Data Scientist,Apple,"San Francisco, CA","scikit-learn, tensorflow, python, sql, statistics",46617,Entry
+ML Engineer,Netflix,"Boston, MA","kubernetes, deep learning, spark, pytorch",114912,Mid
+DevOps Engineer,Google,"Boston, MA","aws, python, gcp, linux, kubernetes, docker",42582,Entry
+ML Engineer,Meta,Remote,"tensorflow, python, kubernetes, deep learning, aws, pytorch",195256,Senior
+Full Stack Developer,Apple,"Seattle, WA","react, aws, javascript",43282,Entry
+Data Engineer,Microsoft,"Seattle, WA","python, scala, spark",82596,Mid
+Data Engineer,Uber,Remote,"spark, kafka, dbt, scala, python",201502,Senior
+Software Engineer,Google,"New York, NY","linux, docker, java, python, javascript, c++",65278,Entry
+ML Engineer,Google,"Boston, MA","spark, pytorch, kubernetes, docker, tensorflow, aws",113716,Mid
+Data Analyst,Amazon,"Seattle, WA","data analysis, tableau, sql",106990,Mid
+Data Engineer,Amazon,Remote,"aws, sql, dbt, scala",74394,Entry
+Backend Engineer,Microsoft,"Austin, TX","postgresql, flask, docker, aws, python, redis",118497,Mid
+Software Engineer,Netflix,"Seattle, WA","javascript, c++, java",141680,Senior
+Data Scientist,Snowflake,Remote,"tableau, r, machine learning, python, tensorflow, statistics",111078,Mid
+ML Engineer,Uber,Remote,"pytorch, docker, aws, python, kubernetes",178599,Senior
+Data Scientist,Meta,"Boston, MA","sql, r, tableau",75012,Mid
+Software Engineer,Netflix,"Austin, TX","git, linux, javascript",167625,Senior
+Software Engineer,Netflix,"Boston, MA","java, python, docker, javascript, linux, sql",98809,Mid
+Full Stack Developer,Microsoft,"Boston, MA","javascript, typescript, node.js",99504,Mid
+DevOps Engineer,Stripe,"New York, NY","kubernetes, azure, aws, gcp",52839,Entry
+Data Engineer,Stripe,"Boston, MA","spark, dbt, airflow",67162,Entry
+Data Analyst,Stripe,"Austin, TX","data analysis, r, powerbi",120569,Senior
+Data Analyst,Snowflake,"Seattle, WA","python, tableau, statistics, powerbi",86381,Mid
+DevOps Engineer,Stripe,"New York, NY","git, aws, linux, python",114912,Mid
+Data Analyst,Meta,"New York, NY","statistics, r, data analysis, powerbi, python",108574,Mid
+Full Stack Developer,Amazon,"Seattle, WA","react, sql, aws, git",119065,Mid
+Software Engineer,Uber,"New York, NY","sql, linux, git, python, javascript, docker",118723,Mid
+Data Scientist,Google,"Boston, MA","scikit-learn, r, statistics, tableau, machine learning",88101,Mid
+Full Stack Developer,Databricks,Remote,"git, javascript, sql, docker, typescript",42117,Entry
+Backend Engineer,Netflix,"Austin, TX","flask, redis, fastapi",93851,Mid
+Data Scientist,Snowflake,"Austin, TX","r, tableau, machine learning, scikit-learn",56471,Entry
+Backend Engineer,Microsoft,"Boston, MA","fastapi, java, aws, python, flask",145363,Senior
+ML Engineer,Google,"Seattle, WA","kubernetes, pytorch, deep learning, spark, tensorflow",103083,Mid
+Software Engineer,Google,"Boston, MA","c++, javascript, sql",85146,Mid
+Full Stack Developer,Microsoft,"Austin, TX","typescript, aws, docker, react, git",112531,Mid
+ML Engineer,Netflix,"Seattle, WA","deep learning, python, tensorflow, pytorch, kubernetes, aws",140890,Senior
+Data Engineer,Snowflake,"Austin, TX","python, scala, aws, kafka, airflow, dbt",74766,Entry
+Backend Engineer,Databricks,"Boston, MA","flask, fastapi, python, redis, postgresql",209464,Senior
+Full Stack Developer,Netflix,"Austin, TX","git, node.js, javascript, react, typescript",73873,Entry
+ML Engineer,Meta,"Boston, MA","pytorch, spark, aws",141941,Senior
+DevOps Engineer,Netflix,"San Francisco, CA","kubernetes, python, azure, gcp, docker, git",146946,Senior
+ML Engineer,Uber,Remote,"pytorch, kubernetes, spark, tensorflow, docker",51664,Entry
+DevOps Engineer,Snowflake,"San Francisco, CA","kubernetes, git, docker, azure, python, linux",76107,Mid
+ML Engineer,Apple,"Austin, TX","kubernetes, deep learning, aws",107954,Mid
+ML Engineer,Databricks,"New York, NY","deep learning, spark, aws, python, docker, kubernetes",68683,Entry
+Data Analyst,Databricks,"Austin, TX","excel, r, statistics, data analysis, sql",191530,Senior
+Data Analyst,Databricks,"New York, NY","python, excel, r, data analysis, statistics, tableau",40329,Entry
+Data Analyst,Google,"Austin, TX","python, r, statistics, powerbi",56563,Entry
+Software Engineer,Netflix,"Seattle, WA","java, c++, python, javascript, git",79794,Mid
+Data Analyst,Meta,"Seattle, WA","powerbi, r, sql",90371,Mid
+Software Engineer,Uber,"New York, NY","c++, sql, linux, javascript, docker",115393,Mid
+Data Scientist,Stripe,Remote,"sql, tableau, scikit-learn, machine learning, statistics, r",54517,Entry
+Data Engineer,Amazon,"Seattle, WA","kafka, aws, sql",183829,Senior
+Data Analyst,Snowflake,"Austin, TX","python, statistics, sql, data analysis, powerbi",145747,Senior
+DevOps Engineer,Stripe,"Boston, MA","git, gcp, azure",147887,Senior
+Data Analyst,Uber,"Seattle, WA","excel, tableau, powerbi, statistics, sql",89635,Mid
+Data Scientist,Snowflake,"Austin, TX","scikit-learn, tensorflow, machine learning, statistics",115242,Mid
+Data Analyst,Apple,"Seattle, WA","sql, python, tableau, data analysis, r",183374,Senior
+Backend Engineer,Netflix,"San Francisco, CA","flask, redis, fastapi, python, docker",53551,Entry
+Full Stack Developer,Snowflake,"Boston, MA","aws, docker, node.js, react",154514,Senior
+ML Engineer,Stripe,"Austin, TX","deep learning, tensorflow, spark, docker",99664,Mid
+Data Scientist,Microsoft,"New York, NY","scikit-learn, machine learning, python, sql, r, statistics",84108,Mid
+Data Analyst,Stripe,"Boston, MA","data analysis, r, excel, sql",82755,Mid
+Software Engineer,Microsoft,"Austin, TX","linux, python, java, javascript",113719,Mid
+Data Analyst,Apple,"New York, NY","excel, sql, python",73596,Entry
+DevOps Engineer,Stripe,"Austin, TX","git, docker, kubernetes",111937,Mid
+Software Engineer,Microsoft,"Austin, TX","linux, sql, java, javascript",142357,Senior
+Full Stack Developer,Google,"New York, NY","typescript, git, node.js, docker, aws, javascript",62457,Entry
+DevOps Engineer,Snowflake,"San Francisco, CA","linux, aws, git",199366,Senior
+ML Engineer,Netflix,"San Francisco, CA","deep learning, kubernetes, docker",48541,Entry
+DevOps Engineer,Microsoft,"Seattle, WA","python, git, gcp, azure, docker, kubernetes",71596,Entry
+Software Engineer,Snowflake,"Austin, TX","linux, c++, java, python, sql",130987,Senior
+ML Engineer,Microsoft,Remote,"aws, docker, tensorflow, python",99578,Mid
+Full Stack Developer,Databricks,"Austin, TX","sql, docker, node.js, typescript, aws",67758,Entry
+Software Engineer,Amazon,"Boston, MA","sql, javascript, c++, git, java",71703,Entry
+Backend Engineer,Netflix,"Austin, TX","redis, docker, fastapi",85604,Mid
+Data Scientist,Uber,"San Francisco, CA","scikit-learn, tensorflow, sql",40346,Entry
+ML Engineer,Uber,"Austin, TX","python, aws, docker",64303,Entry
+Full Stack Developer,Stripe,"San Francisco, CA","react, docker, node.js",114156,Mid
+Backend Engineer,Snowflake,"New York, NY","redis, python, docker, aws, java",187916,Senior
+Data Scientist,Uber,"Seattle, WA","scikit-learn, python, r",117928,Mid
+DevOps Engineer,Apple,"Boston, MA","kubernetes, docker, git",88128,Mid
+Data Engineer,Google,"Seattle, WA","airflow, scala, dbt, sql",93122,Mid
+Data Analyst,Databricks,"Seattle, WA","powerbi, excel, sql",81978,Mid
+Full Stack Developer,Google,Remote,"node.js, aws, react, git, sql, docker",99713,Mid
+ML Engineer,Netflix,"Austin, TX","docker, deep learning, tensorflow, spark",65078,Entry
+Data Scientist,Amazon,"Austin, TX","sql, python, tensorflow, scikit-learn",92259,Mid
+Data Analyst,Stripe,"Boston, MA","powerbi, python, statistics, data analysis",98170,Mid
+Backend Engineer,Microsoft,"San Francisco, CA","redis, java, flask, aws, postgresql",55863,Entry
+ML Engineer,Snowflake,"Seattle, WA","python, deep learning, kubernetes, spark, docker, pytorch",208581,Senior
+Software Engineer,Meta,"Austin, TX","javascript, java, sql, c++, git",195304,Senior
+Data Analyst,Amazon,"Boston, MA","sql, powerbi, excel, tableau, python, data analysis",67733,Entry
+Software Engineer,Amazon,"Seattle, WA","git, javascript, sql",40551,Entry
+Data Engineer,Snowflake,"Seattle, WA","sql, spark, kafka, airflow",92020,Mid
+Data Engineer,Uber,"Seattle, WA","dbt, aws, kafka, scala",67783,Entry
+Software Engineer,Databricks,Remote,"java, docker, c++, javascript",48594,Entry
+DevOps Engineer,Databricks,"Austin, TX","docker, kubernetes, aws, python, azure, linux",49800,Entry
+Data Engineer,Meta,"Seattle, WA","python, airflow, scala, spark, aws",159327,Senior
+Software Engineer,Google,Remote,"docker, c++, linux, javascript, sql, java",132623,Senior
+ML Engineer,Netflix,"Boston, MA","tensorflow, deep learning, spark, aws",119538,Mid
+Software Engineer,Stripe,"Boston, MA","linux, sql, c++",178581,Senior
+Data Analyst,Amazon,"San Francisco, CA","data analysis, statistics, powerbi, r, tableau",203963,Senior
+Data Analyst,Apple,Remote,"powerbi, statistics, excel, r, tableau",95545,Mid
+Data Engineer,Meta,"Boston, MA","dbt, spark, scala, python, aws, kafka",188281,Senior
+Full Stack Developer,Amazon,"San Francisco, CA","node.js, typescript, git",211842,Senior
+ML Engineer,Databricks,"San Francisco, CA","python, deep learning, docker",182022,Senior
+ML Engineer,Meta,"Boston, MA","deep learning, tensorflow, pytorch",50176,Entry
+Full Stack Developer,Netflix,Remote,"react, javascript, aws, git",83285,Mid
+Software Engineer,Snowflake,"Austin, TX","javascript, java, docker, sql, linux",190856,Senior
+Software Engineer,Stripe,"Seattle, WA","sql, c++, git, javascript, java, python",116672,Mid
+Data Engineer,Apple,Remote,"python, scala, sql, spark, kafka",85206,Mid
+Data Scientist,Databricks,"Seattle, WA","sql, python, tensorflow, scikit-learn, machine learning, tableau",107240,Mid
+Backend Engineer,Apple,"San Francisco, CA","flask, java, fastapi, redis, docker, python",111737,Mid
