@@ -20,8 +20,11 @@ import re
 import io
 import json
 import random
+import datetime
 from typing import Dict, List, Any, Optional
 
+from dotenv import load_dotenv
+from pymongo import MongoClient
 import numpy as np
 import pandas as pd
 from flask import Flask, request, jsonify, send_file
@@ -31,6 +34,26 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+# ──────────────────────────────────────────────────────────────
+# Load Environment & MongoDB Atlas Setup
+# ──────────────────────────────────────────────────────────────
+# Look for .env in current directory or parent directory
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
+
+MONGO_URI = os.getenv("MONGO_URI")
+mongo_client = None
+evaluations_collection = None
+
+if MONGO_URI:
+    try:
+        mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        db = mongo_client.get_database("maharashtra_skill_align")
+        evaluations_collection = db["evaluation_history"]
+        print("Connected to MongoDB Atlas successfully.")
+    except Exception as e:
+        print(f"MongoDB Atlas initialization notice: {e}")
 
 # ──────────────────────────────────────────────────────────────
 # Flask App Setup
@@ -657,6 +680,10 @@ def api_evaluate():
         }), 400
 
     result = perform_curriculum_evaluation(selected_skills, course_name)
+
+    if evaluations_collection is not None:
+        evaluations_collection.insert_one({"skills": selected_skills, "status": result.get("curriculum_status"), "timestamp": datetime.datetime.utcnow()})
+
     return jsonify(result)
 
 
@@ -784,6 +811,35 @@ def download_sample_csv():
     if not os.path.exists(path):
         path = os.path.join(os.path.dirname(__file__), "sample_jobs.csv")
     return send_file(path, mimetype="text/csv", as_attachment=True, download_name="maharashtra_jobs.csv")
+
+
+@app.route("/api/history", methods=["GET"])
+def get_evaluation_history():
+    """GET /api/history: Returns past curriculum evaluations logged in MongoDB Atlas."""
+    if evaluations_collection is None:
+        return jsonify({
+            "status": "warning",
+            "message": "MongoDB Atlas connection not configured or inactive. Provide a valid MONGO_URI in .env.",
+            "history": []
+        }), 200
+
+    try:
+        limit = request.args.get("limit", default=50, type=int)
+        cursor = evaluations_collection.find({}, {"_id": 0}).sort("timestamp", -1).limit(limit)
+        history = list(cursor)
+        for entry in history:
+            if isinstance(entry.get("timestamp"), (datetime.datetime, datetime.date)):
+                entry["timestamp"] = entry["timestamp"].isoformat()
+        return jsonify({
+            "status": "success",
+            "count": len(history),
+            "history": history
+        })
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Failed to retrieve history: {str(e)}"
+        }), 500
 
 
 # ──────────────────────────────────────────────────────────────
