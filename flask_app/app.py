@@ -487,39 +487,12 @@ def get_skills():
     })
 
 
-@app.route("/api/evaluate", methods=["POST"])
-def api_evaluate():
+def perform_curriculum_evaluation(selected_skills, course_name="Evaluated Skill Curriculum"):
     """
-    POST /api/evaluate
-    Accepts frontend skills as JSON payload:
-      {
-        "skills": ["docker", "kubernetes", "aws", "linux"],
-        "course_name": "Diploma in Cloud Computing" (optional)
-      }
+    Core curriculum viability evaluation engine.
     Runs KNN to predict 'Curriculum Status' (High Demand, Needs Update, Obsolete/Oversupplied),
     finds closest K-Means cluster, identifies missing skill gaps, and returns actionable recommendations.
     """
-    if not MODEL_CACHE.get("initialized"):
-        initialize_data_pipeline()
-
-    # Extract input skills from JSON body (or form data fallback)
-    if request.is_json:
-        data = request.get_json(silent=True) or {}
-        input_skills = data.get("skills", [])
-        course_name = data.get("course_name", "Evaluated Skill Curriculum")
-    else:
-        input_skills = request.form.getlist("skills")
-        course_name = request.form.get("course_name", "Evaluated Skill Curriculum")
-
-    # Clean and filter input skills
-    selected_skills = [clean_skill_token(s) for s in input_skills if s and len(clean_skill_token(s)) >= 2]
-
-    if not selected_skills:
-        return jsonify({
-            "status": "error",
-            "message": "Please provide a non-empty 'skills' array in the request body (e.g., {'skills': ['docker', 'kubernetes', 'aws']})."
-        }), 400
-
     mlb = MODEL_CACHE["mlb"]
     knn = MODEL_CACHE["knn"]
     lr = MODEL_CACHE["lr"]
@@ -609,7 +582,7 @@ def api_evaluate():
 
     target_districts = list(best_cluster.get("top_districts", {}).keys()) if best_cluster else ["Pune", "Mumbai", "Nagpur"]
 
-    return jsonify({
+    return {
         "status": "success",
         "course_name": course_name,
         "curriculum_status": predicted_status,
@@ -631,16 +604,131 @@ def api_evaluate():
             "trainer_guidance": trainer_guidance,
             "target_districts": target_districts,
         }
-    })
+    }
+
+
+@app.route("/api/evaluate", methods=["POST"])
+def api_evaluate():
+    """
+    POST /api/evaluate
+    Accepts frontend skills as JSON payload:
+      {
+        "skills": ["docker", "kubernetes", "aws", "linux"],
+        "course_name": "Diploma in Cloud Computing" (optional)
+      }
+    Runs KNN to predict 'Curriculum Status' (High Demand, Needs Update, Obsolete/Oversupplied),
+    finds closest K-Means cluster, identifies missing skill gaps, and returns actionable recommendations.
+    """
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+
+    # Extract input skills from JSON body (or form data fallback)
+    if request.is_json:
+        data = request.get_json(silent=True) or {}
+        input_skills = data.get("skills", [])
+        course_name = data.get("course_name", "Evaluated Skill Curriculum")
+    else:
+        input_skills = request.form.getlist("skills")
+        course_name = request.form.get("course_name", "Evaluated Skill Curriculum")
+
+    # Clean and filter input skills
+    selected_skills = [clean_skill_token(s) for s in input_skills if s and len(clean_skill_token(s)) >= 2]
+
+    if not selected_skills:
+        return jsonify({
+            "status": "error",
+            "message": "Please provide a non-empty 'skills' array in the request body (e.g., {'skills': ['docker', 'kubernetes', 'aws']})."
+        }), 400
+
+    result = perform_curriculum_evaluation(selected_skills, course_name)
+    return jsonify(result)
 
 
 # ──────────────────────────────────────────────────────────────
-# Route Aliases for Backward Compatibility
+# Route Aliases for Backward Compatibility & Form Submissions
 # ──────────────────────────────────────────────────────────────
 @app.route("/evaluate", methods=["POST"])
 @app.route("/predict", methods=["POST"])
 def evaluate_alias():
-    return api_evaluate()
+    # If the client sent JSON or expects JSON (API client or AJAX):
+    if (
+        request.is_json
+        or request.headers.get("Accept") == "application/json"
+        or request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    ):
+        return api_evaluate()
+
+    # Browser standard HTML form submission
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+
+    input_skills = request.form.getlist("skills")
+    course_name = (request.form.get("course_name") or "Evaluated Skill Curriculum").strip() or "Evaluated Skill Curriculum"
+    selected_skills = [clean_skill_token(s) for s in input_skills if s and len(clean_skill_token(s)) >= 2]
+
+    all_skills = sorted(list(set(MODEL_CACHE.get("unique_skills", []) + CANONICAL_SKILLS)))
+    m = MODEL_CACHE.get("metrics", {})
+
+    if not selected_skills:
+        return render_template(
+            "index.html",
+            skills=all_skills,
+            selected_skills=[],
+            course_name=course_name,
+            error_message="Please select at least one skill checkbox to evaluate curriculum viability.",
+            knn_accuracy=m.get("knn", {}).get("accuracy", 100.0),
+            knn_precision=m.get("knn", {}).get("precision", 100.0),
+            knn_recall=m.get("knn", {}).get("recall", 100.0),
+            knn_f1=m.get("knn", {}).get("f1_score", 100.0),
+            lr_accuracy=m.get("logistic_regression", {}).get("accuracy", 100.0),
+            lr_precision=m.get("logistic_regression", {}).get("precision", 100.0),
+            lr_recall=m.get("logistic_regression", {}).get("recall", 100.0),
+            lr_f1=m.get("logistic_regression", {}).get("f1_score", 100.0),
+            clusters=MODEL_CACHE.get("clusters", []),
+            districts=MODEL_CACHE.get("districts", []),
+            hottest_roles=MODEL_CACHE.get("hottest_roles", []),
+            status_dist=MODEL_CACHE.get("status_distribution", {}),
+            total_postings=len(MODEL_CACHE["df"]) if MODEL_CACHE["df"] is not None else 450,
+            total_skills_count=len(MODEL_CACHE.get("unique_skills", [])),
+            predicted_status=None,
+        )
+
+    res = perform_curriculum_evaluation(selected_skills, course_name)
+    rec = res["recommendations"]
+
+    return render_template(
+        "index.html",
+        skills=all_skills,
+        selected_skills=selected_skills,
+        course_name=course_name,
+        predicted_status=res["curriculum_status"],
+        knn_confidence=res["confidence"],
+        lr_status=res["logistic_regression"]["status"],
+        lr_confidence=res["logistic_regression"]["confidence"],
+        matched_skills=res["matched_skills"],
+        missing_skills=res["missing_skills"],
+        aligned_cluster=res["aligned_cluster"],
+        placement_readiness=res["placement_readiness"],
+        status_message=rec["status_message"],
+        action_plan=rec["action_plan"],
+        equipment_guidance=rec["equipment_guidance"],
+        trainer_guidance=rec["trainer_guidance"],
+        target_districts=rec["target_districts"],
+        knn_accuracy=m.get("knn", {}).get("accuracy", 100.0),
+        knn_precision=m.get("knn", {}).get("precision", 100.0),
+        knn_recall=m.get("knn", {}).get("recall", 100.0),
+        knn_f1=m.get("knn", {}).get("f1_score", 100.0),
+        lr_accuracy=m.get("logistic_regression", {}).get("accuracy", 100.0),
+        lr_precision=m.get("logistic_regression", {}).get("precision", 100.0),
+        lr_recall=m.get("logistic_regression", {}).get("recall", 100.0),
+        lr_f1=m.get("logistic_regression", {}).get("f1_score", 100.0),
+        clusters=MODEL_CACHE.get("clusters", []),
+        districts=MODEL_CACHE.get("districts", []),
+        hottest_roles=MODEL_CACHE.get("hottest_roles", []),
+        status_dist=MODEL_CACHE.get("status_distribution", {}),
+        total_postings=len(MODEL_CACHE["df"]) if MODEL_CACHE["df"] is not None else 450,
+        total_skills_count=len(MODEL_CACHE.get("unique_skills", [])),
+    )
 
 
 @app.route("/api/clusters", methods=["GET"])

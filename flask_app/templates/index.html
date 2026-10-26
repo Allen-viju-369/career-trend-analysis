@@ -139,124 +139,126 @@
         </div>
       </form>
 
-      <!-- ════════════ LIVE EVALUATION RESULTS CARD (Jinja2) ════════════ -->
-      {% if predicted_status %}
-      <div id="predict-result" class="predict-result mt-8 pt-6 border-t border-[#2d3250]">
-        <div class="result-header flex flex-wrap items-center justify-between gap-4 p-5 bg-[#12172a] rounded-xl border border-[#2d3250] mb-6">
-          <div>
-            <span class="eval-tag inline-block px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-indigo-900/50 text-indigo-300 border border-indigo-500/30 mb-2">
-              Maharashtra Skill Align · Evaluation Report
-            </span>
-            <h3 class="result-heading text-xl font-bold text-white">{{ course_name or 'Evaluated Skill Curriculum' }}</h3>
-            <p class="result-sub text-sm text-gray-400 mt-1">{{ status_message }}</p>
-          </div>
-          <div class="status-verdict-box p-4 rounded-xl bg-[#1a1f2e] border-2 {% if predicted_status == 'High Demand' %}border-emerald-500/60{% elif predicted_status == 'Needs Update' %}border-amber-500/60{% else %}border-rose-500/60{% endif %} text-right">
-            <span class="verdict-label block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Predicted Curriculum Status</span>
-            <span class="verdict-badge inline-block px-4 py-1.5 rounded-full font-extrabold text-sm text-white shadow-md {% if predicted_status == 'High Demand' %}bg-emerald-600{% elif predicted_status == 'Needs Update' %}bg-amber-600{% else %}bg-rose-600{% endif %}">
-              {% if predicted_status == 'High Demand' %}🟢 High Demand{% elif predicted_status == 'Needs Update' %}🟡 Needs Update{% else %}🔴 Obsolete / Oversupplied{% endif %}
-            </span>
-            <span class="block text-xs text-gray-400 mt-1">KNN Model Confidence: <strong>{{ knn_confidence }}%</strong></span>
-          </div>
-        </div>
-
-        <!-- Model Comparison Cards -->
-        <div class="result-cards grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
-            <div class="pred-model text-xs font-semibold uppercase text-indigo-400 mb-1">K-Nearest Neighbors (KNN)</div>
-            <div class="pred-tier text-2xl font-bold {% if predicted_status == 'High Demand' %}text-emerald-400{% elif predicted_status == 'Needs Update' %}text-amber-400{% else %}text-rose-400{% endif %} mb-1">
-              {{ predicted_status }}
+      <!-- ════════════ LIVE EVALUATION RESULTS CONTAINER ════════════ -->
+      <div id="predict-result-container">
+        {% if predicted_status %}
+        <div id="predict-result" class="predict-result mt-8 pt-6 border-t border-[#2d3250]">
+          <div class="result-header flex flex-wrap items-center justify-between gap-4 p-5 bg-[#12172a] rounded-xl border border-[#2d3250] mb-6">
+            <div>
+              <span class="eval-tag inline-block px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-indigo-900/50 text-indigo-300 border border-indigo-500/30 mb-2">
+                Maharashtra Skill Align · Evaluation Report
+              </span>
+              <h3 class="result-heading text-xl font-bold text-white">{{ course_name or 'Evaluated Skill Curriculum' }}</h3>
+              <p class="result-sub text-sm text-gray-400 mt-1">{{ status_message }}</p>
             </div>
-            <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>{{ knn_confidence }}%</strong></div>
-          </div>
-          <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
-            <div class="pred-model text-xs font-semibold uppercase text-purple-400 mb-1">Logistic Regression</div>
-            <div class="pred-tier text-2xl font-bold {% if lr_status == 'High Demand' %}text-emerald-400{% elif lr_status == 'Needs Update' %}text-amber-400{% else %}text-rose-400{% endif %} mb-1">
-              {{ lr_status }}
-            </div>
-            <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>{{ lr_confidence }}%</strong></div>
-          </div>
-        </div>
-
-        <!-- Gap Analysis Card -->
-        <div class="gap-analysis-card bg-[#12172a] p-6 rounded-2xl border border-[#2d3250]">
-          <h4 class="gap-card-title text-lg font-bold text-white mb-4">🔍 Evidence-Based Skill Gap Analysis</h4>
-          
-          <div class="gap-meta-row flex flex-wrap items-center justify-between gap-4 p-4 bg-[#1a1f2e] rounded-xl border border-[#2d3250] mb-6">
-            <div class="gap-meta-item">
-              <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Nearest Industry Cluster:</span>
-              <span class="gm-val font-semibold text-white ml-2">{{ aligned_cluster }}</span>
-            </div>
-            <div class="gap-meta-item">
-              <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Estimated Candidate Placement Readiness:</span>
-              <span class="gm-val gm-score text-xl font-bold text-emerald-400 ml-2">{{ placement_readiness }}%</span>
+            <div class="status-verdict-box p-4 rounded-xl bg-[#1a1f2e] border-2 {% if predicted_status == 'High Demand' %}border-emerald-500/60{% elif predicted_status == 'Needs Update' %}border-amber-500/60{% else %}border-rose-500/60{% endif %} text-right">
+              <span class="verdict-label block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Predicted Curriculum Status</span>
+              <span class="verdict-badge inline-block px-4 py-1.5 rounded-full font-extrabold text-sm text-white shadow-md {% if predicted_status == 'High Demand' %}bg-emerald-600{% elif predicted_status == 'Needs Update' %}bg-amber-600{% else %}bg-rose-600{% endif %}">
+                {% if predicted_status == 'High Demand' %}🟢 High Demand{% elif predicted_status == 'Needs Update' %}🟡 Needs Update{% else %}🔴 Obsolete / Oversupplied{% endif %}
+              </span>
+              <span class="block text-xs text-gray-400 mt-1">KNN Model Confidence: <strong>{{ knn_confidence }}%</strong></span>
             </div>
           </div>
 
-          <div class="gap-skills-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div class="gap-skill-col col-matched p-4 bg-[#161c2d] rounded-xl border border-emerald-500/20">
-              <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">
-                ✅ Covered Competencies ({{ matched_skills|length }})
+          <!-- Model Comparison Cards -->
+          <div class="result-cards grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
+              <div class="pred-model text-xs font-semibold uppercase text-indigo-400 mb-1">K-Nearest Neighbors (KNN)</div>
+              <div class="pred-tier text-2xl font-bold {% if predicted_status == 'High Demand' %}text-emerald-400{% elif predicted_status == 'Needs Update' %}text-amber-400{% else %}text-rose-400{% endif %} mb-1">
+                {{ predicted_status }}
               </div>
-              <div class="chip-row flex flex-wrap gap-2">
-                {% for s in matched_skills %}
-                  <span class="tag tag-matched text-xs px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">{{ s }}</span>
-                {% else %}
-                  <em class="text-xs text-gray-400">None matched with primary industry cluster</em>
-                {% endfor %}
-              </div>
+              <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>{{ knn_confidence }}%</strong></div>
             </div>
-
-            <div class="gap-skill-col col-missing p-4 bg-[#161c2d] rounded-xl border border-amber-500/20">
-              <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
-                ⚠️ Critical Industry Gaps to Add ({{ missing_skills|length }})
+            <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
+              <div class="pred-model text-xs font-semibold uppercase text-purple-400 mb-1">Logistic Regression</div>
+              <div class="pred-tier text-2xl font-bold {% if lr_status == 'High Demand' %}text-emerald-400{% elif lr_status == 'Needs Update' %}text-amber-400{% else %}text-rose-400{% endif %} mb-1">
+                {{ lr_status }}
               </div>
-              <div class="chip-row flex flex-wrap gap-2">
-                {% for s in missing_skills %}
-                  <span class="tag tag-missing text-xs px-2.5 py-1 rounded bg-amber-950/60 border border-amber-500/40 text-amber-300 font-semibold">+ {{ s }}</span>
-                {% else %}
-                  <em class="text-xs text-emerald-400">No critical gaps! Curriculum matches industry cluster core.</em>
-                {% endfor %}
-              </div>
+              <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>{{ lr_confidence }}%</strong></div>
             </div>
           </div>
 
-          <!-- Actionable Recommendations Grid -->
-          <div class="recommendations-box border-t border-[#2d3250] pt-6">
-            <h4 class="rec-heading text-base font-bold text-white mb-3">📋 Actionable Curriculum Planning &amp; Modernization (MSINS ID26134)</h4>
+          <!-- Gap Analysis Card -->
+          <div class="gap-analysis-card bg-[#12172a] p-6 rounded-2xl border border-[#2d3250]">
+            <h4 class="gap-card-title text-lg font-bold text-white mb-4">🔍 Evidence-Based Skill Gap Analysis</h4>
             
-            <div class="action-items-list space-y-2 mb-6">
-              {% for item in action_plan %}
-              <div class="action-item flex items-start gap-3 p-3 bg-[#1a1f2e] border-l-4 border-indigo-500 rounded-r-lg text-sm text-gray-200 leading-relaxed">
-                <span class="action-bullet text-indigo-400 font-bold">📌</span>
-                <span>{{ item }}</span>
+            <div class="gap-meta-row flex flex-wrap items-center justify-between gap-4 p-4 bg-[#1a1f2e] rounded-xl border border-[#2d3250] mb-6">
+              <div class="gap-meta-item">
+                <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Nearest Industry Cluster:</span>
+                <span class="gm-val font-semibold text-white ml-2">{{ aligned_cluster }}</span>
               </div>
-              {% endfor %}
-            </div>
-
-            <div class="planning-guidance-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
-                <div class="guidance-title text-xs font-bold uppercase tracking-wider text-sky-400 mb-2">🛠️ Equipment &amp; Lab Infrastructure Guidance</div>
-                <p class="guidance-text text-xs text-gray-300 leading-relaxed">{{ equipment_guidance }}</p>
-              </div>
-              <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
-                <div class="guidance-title text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2">👨‍🏫 Trainer Capacity &amp; Faculty Upskilling Plan</div>
-                <p class="guidance-text text-xs text-gray-300 leading-relaxed">{{ trainer_guidance }}</p>
+              <div class="gap-meta-item">
+                <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Estimated Candidate Placement Readiness:</span>
+                <span class="gm-val gm-score text-xl font-bold text-emerald-400 ml-2">{{ placement_readiness }}%</span>
               </div>
             </div>
 
-            <div class="placement-hotspots p-4 bg-sky-950/20 border border-sky-500/20 rounded-xl flex flex-wrap items-center gap-3">
-              <span class="ph-label text-xs font-bold uppercase tracking-wider text-sky-400">📍 Priority Maharashtra Placement Corridors:</span>
-              <div class="ph-tags flex flex-wrap gap-2">
-                {% for d in target_districts %}
-                <span class="ph-district-pill text-xs px-3 py-1 rounded-full bg-sky-900/50 border border-sky-500/40 text-sky-200">{{ d }} Tech Corridor</span>
+            <div class="gap-skills-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="gap-skill-col col-matched p-4 bg-[#161c2d] rounded-xl border border-emerald-500/20">
+                <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">
+                  ✅ Covered Competencies ({{ matched_skills|length }})
+                </div>
+                <div class="chip-row flex flex-wrap gap-2">
+                  {% for s in matched_skills %}
+                    <span class="tag tag-matched text-xs px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">{{ s }}</span>
+                  {% else %}
+                    <em class="text-xs text-gray-400">None matched with primary industry cluster</em>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="gap-skill-col col-missing p-4 bg-[#161c2d] rounded-xl border border-amber-500/20">
+                <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
+                  ⚠️ Critical Industry Gaps to Add ({{ missing_skills|length }})
+                </div>
+                <div class="chip-row flex flex-wrap gap-2">
+                  {% for s in missing_skills %}
+                    <span class="tag tag-missing text-xs px-2.5 py-1 rounded bg-amber-950/60 border border-amber-500/40 text-amber-300 font-semibold">+ {{ s }}</span>
+                  {% else %}
+                    <em class="text-xs text-emerald-400">No critical gaps! Curriculum matches industry cluster core.</em>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Actionable Recommendations Grid -->
+            <div class="recommendations-box border-t border-[#2d3250] pt-6">
+              <h4 class="rec-heading text-base font-bold text-white mb-3">📋 Actionable Curriculum Planning &amp; Modernization (MSINS ID26134)</h4>
+              
+              <div class="action-items-list space-y-2 mb-6">
+                {% for item in action_plan %}
+                <div class="action-item flex items-start gap-3 p-3 bg-[#1a1f2e] border-l-4 border-indigo-500 rounded-r-lg text-sm text-gray-200 leading-relaxed">
+                  <span class="action-bullet text-indigo-400 font-bold">📌</span>
+                  <span>{{ item }}</span>
+                </div>
                 {% endfor %}
               </div>
-            </div>
-          </div>
 
+              <div class="planning-guidance-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
+                  <div class="guidance-title text-xs font-bold uppercase tracking-wider text-sky-400 mb-2">🛠️ Equipment &amp; Lab Infrastructure Guidance</div>
+                  <p class="guidance-text text-xs text-gray-300 leading-relaxed">{{ equipment_guidance }}</p>
+                </div>
+                <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
+                  <div class="guidance-title text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2">👨‍🏫 Trainer Capacity &amp; Faculty Upskilling Plan</div>
+                  <p class="guidance-text text-xs text-gray-300 leading-relaxed">{{ trainer_guidance }}</p>
+                </div>
+              </div>
+
+              <div class="placement-hotspots p-4 bg-sky-950/20 border border-sky-500/20 rounded-xl flex flex-wrap items-center gap-3">
+                <span class="ph-label text-xs font-bold uppercase tracking-wider text-sky-400">📍 Priority Maharashtra Placement Corridors:</span>
+                <div class="ph-tags flex flex-wrap gap-2">
+                  {% for d in target_districts %}
+                  <span class="ph-district-pill text-xs px-3 py-1 rounded-full bg-sky-900/50 border border-sky-500/40 text-sky-200">{{ d }} Tech Corridor</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
+        {% endif %}
       </div>
-      {% endif %}
     </section>
 
     <!-- ═══════════════════════ DATASET OVERVIEW & RE-INGESTION ═══════════════════════ -->
@@ -576,6 +578,239 @@
         } finally {
           quickLoadBtn.disabled = false;
           quickLoadBtn.textContent = "🚀 Reload Dataset";
+        }
+      });
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Course Curriculum Viability Evaluator Form Handler (AJAX)
+    // ──────────────────────────────────────────────────────────────
+    const evalForm = $("eval-form");
+    const predictBtn = $("predict-btn");
+    const resultContainer = $("predict-result-container");
+
+    function renderEvaluationResult(data) {
+      const status = data.curriculum_status || "Needs Update";
+      let borderClass = "border-rose-500/60";
+      let badgeBgClass = "bg-rose-600";
+      let statusIcon = "🔴 Obsolete / Oversupplied";
+      let knnTextClass = "text-rose-400";
+
+      if (status === "High Demand") {
+        borderClass = "border-emerald-500/60";
+        badgeBgClass = "bg-emerald-600";
+        statusIcon = "🟢 High Demand";
+        knnTextClass = "text-emerald-400";
+      } else if (status === "Needs Update") {
+        borderClass = "border-amber-500/60";
+        badgeBgClass = "bg-amber-600";
+        statusIcon = "🟡 Needs Update";
+        knnTextClass = "text-amber-400";
+      }
+
+      const lrObj = data.logistic_regression || {};
+      const lrStatus = lrObj.status || status;
+      const lrConfidence = lrObj.confidence !== undefined ? lrObj.confidence : data.confidence;
+      let lrTextClass = "text-rose-400";
+      if (lrStatus === "High Demand") {
+        lrTextClass = "text-emerald-400";
+      } else if (lrStatus === "Needs Update") {
+        lrTextClass = "text-amber-400";
+      }
+
+      const matchedSkills = data.matched_skills || [];
+      const matchedChips = matchedSkills.length > 0
+        ? matchedSkills.map(s => `<span class="tag tag-matched text-xs px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">${s}</span>`).join(" ")
+        : '<em class="text-xs text-gray-400">None matched with primary industry cluster</em>';
+
+      const missingSkills = data.missing_skills || [];
+      const missingChips = missingSkills.length > 0
+        ? missingSkills.map(s => `<span class="tag tag-missing text-xs px-2.5 py-1 rounded bg-amber-950/60 border border-amber-500/40 text-amber-300 font-semibold">+ ${s}</span>`).join(" ")
+        : '<em class="text-xs text-emerald-400">No critical gaps! Curriculum matches industry cluster core.</em>';
+
+      const rec = data.recommendations || {};
+      const actionPlan = rec.action_plan || [];
+      const actionItems = actionPlan.map(item => `
+        <div class="action-item flex items-start gap-3 p-3 bg-[#1a1f2e] border-l-4 border-indigo-500 rounded-r-lg text-sm text-gray-200 leading-relaxed">
+          <span class="action-bullet text-indigo-400 font-bold">📌</span>
+          <span>${item}</span>
+        </div>
+      `).join("");
+
+      const districts = rec.target_districts || ["Pune", "Mumbai", "Nagpur"];
+      const districtPills = districts.map(d => `
+        <span class="ph-district-pill text-xs px-3 py-1 rounded-full bg-sky-900/50 border border-sky-500/40 text-sky-200">${d} Tech Corridor</span>
+      `).join(" ");
+
+      const html = `
+        <div id="predict-result" class="predict-result mt-8 pt-6 border-t border-[#2d3250] animate-fade">
+          <div class="result-header flex flex-wrap items-center justify-between gap-4 p-5 bg-[#12172a] rounded-xl border border-[#2d3250] mb-6">
+            <div>
+              <span class="eval-tag inline-block px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-indigo-900/50 text-indigo-300 border border-indigo-500/30 mb-2">
+                Maharashtra Skill Align · Evaluation Report
+              </span>
+              <h3 class="result-heading text-xl font-bold text-white">${data.course_name || 'Evaluated Skill Curriculum'}</h3>
+              <p class="result-sub text-sm text-gray-400 mt-1">${rec.status_message || ''}</p>
+            </div>
+            <div class="status-verdict-box p-4 rounded-xl bg-[#1a1f2e] border-2 ${borderClass} text-right">
+              <span class="verdict-label block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Predicted Curriculum Status</span>
+              <span class="verdict-badge inline-block px-4 py-1.5 rounded-full font-extrabold text-sm text-white shadow-md ${badgeBgClass}">
+                ${statusIcon}
+              </span>
+              <span class="block text-xs text-gray-400 mt-1">KNN Model Confidence: <strong>${data.confidence}%</strong></span>
+            </div>
+          </div>
+
+          <!-- Model Comparison Cards -->
+          <div class="result-cards grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
+              <div class="pred-model text-xs font-semibold uppercase text-indigo-400 mb-1">K-Nearest Neighbors (KNN)</div>
+              <div class="pred-tier text-2xl font-bold ${knnTextClass} mb-1">
+                ${status}
+              </div>
+              <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>${data.confidence}%</strong></div>
+            </div>
+            <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
+              <div class="pred-model text-xs font-semibold uppercase text-purple-400 mb-1">Logistic Regression</div>
+              <div class="pred-tier text-2xl font-bold ${lrTextClass} mb-1">
+                ${lrStatus}
+              </div>
+              <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>${lrConfidence}%</strong></div>
+            </div>
+          </div>
+
+          <!-- Gap Analysis Card -->
+          <div class="gap-analysis-card bg-[#12172a] p-6 rounded-2xl border border-[#2d3250]">
+            <h4 class="gap-card-title text-lg font-bold text-white mb-4">🔍 Evidence-Based Skill Gap Analysis</h4>
+            
+            <div class="gap-meta-row flex flex-wrap items-center justify-between gap-4 p-4 bg-[#1a1f2e] rounded-xl border border-[#2d3250] mb-6">
+              <div class="gap-meta-item">
+                <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Nearest Industry Cluster:</span>
+                <span class="gm-val font-semibold text-white ml-2">${data.aligned_cluster || 'General Industry Stack'}</span>
+              </div>
+              <div class="gap-meta-item">
+                <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Estimated Candidate Placement Readiness:</span>
+                <span class="gm-val gm-score text-xl font-bold text-emerald-400 ml-2">${data.placement_readiness}%</span>
+              </div>
+            </div>
+
+            <div class="gap-skills-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="gap-skill-col col-matched p-4 bg-[#161c2d] rounded-xl border border-emerald-500/20">
+                <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">
+                  ✅ Covered Competencies (${matchedSkills.length})
+                </div>
+                <div class="chip-row flex flex-wrap gap-2">
+                  ${matchedChips}
+                </div>
+              </div>
+
+              <div class="gap-skill-col col-missing p-4 bg-[#161c2d] rounded-xl border border-amber-500/20">
+                <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
+                  ⚠️ Critical Industry Gaps to Add (${missingSkills.length})
+                </div>
+                <div class="chip-row flex flex-wrap gap-2">
+                  ${missingChips}
+                </div>
+              </div>
+            </div>
+
+            <!-- Actionable Recommendations Grid -->
+            <div class="recommendations-box border-t border-[#2d3250] pt-6">
+              <h4 class="rec-heading text-base font-bold text-white mb-3">📋 Actionable Curriculum Planning &amp; Modernization (MSINS ID26134)</h4>
+              
+              <div class="action-items-list space-y-2 mb-6">
+                ${actionItems}
+              </div>
+
+              <div class="planning-guidance-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
+                  <div class="guidance-title text-xs font-bold uppercase tracking-wider text-sky-400 mb-2">🛠️ Equipment &amp; Lab Infrastructure Guidance</div>
+                  <p class="guidance-text text-xs text-gray-300 leading-relaxed">${rec.equipment_guidance || ''}</p>
+                </div>
+                <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
+                  <div class="guidance-title text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2">👨‍🏫 Trainer Capacity &amp; Faculty Upskilling Plan</div>
+                  <p class="guidance-text text-xs text-gray-300 leading-relaxed">${rec.trainer_guidance || ''}</p>
+                </div>
+              </div>
+
+              <div class="placement-hotspots p-4 bg-sky-950/20 border border-sky-500/20 rounded-xl flex flex-wrap items-center gap-3">
+                <span class="ph-label text-xs font-bold uppercase tracking-wider text-sky-400">📍 Priority Maharashtra Placement Corridors:</span>
+                <div class="ph-tags flex flex-wrap gap-2">
+                  ${districtPills}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      if (resultContainer) {
+        resultContainer.innerHTML = html;
+      }
+    }
+
+    if (evalForm) {
+      evalForm.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        // Clear existing error banner if any
+        const existingErr = $("eval-error-banner");
+        if (existingErr) existingErr.remove();
+
+        const courseNameInput = $("course-title-input");
+        const courseName = courseNameInput ? courseNameInput.value.trim() : "";
+        const checkedBoxes = Array.from(document.querySelectorAll(".skill-checkbox:checked"));
+        const selectedSkills = checkedBoxes.map(cb => cb.value);
+
+        if (selectedSkills.length === 0) {
+          const errDiv = document.createElement("div");
+          errDiv.id = "eval-error-banner";
+          errDiv.className = "p-4 mb-6 bg-amber-950/60 border border-amber-500/50 rounded-xl text-amber-200 text-sm flex items-center gap-3";
+          errDiv.innerHTML = "<span>⚠️</span> Please select at least one skill checkbox to evaluate curriculum viability.";
+          evalForm.parentNode.insertBefore(errDiv, evalForm);
+          errDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+
+        const originalBtnHTML = predictBtn.innerHTML;
+        predictBtn.disabled = true;
+        predictBtn.innerHTML = '<span class="inline-block mr-2 animate-pulse">⏳</span> Evaluating Curriculum (KNN &amp; LR)...';
+
+        try {
+          const response = await fetch("/api/evaluate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json"
+            },
+            body: JSON.stringify({
+              skills: selectedSkills,
+              course_name: courseName || "Evaluated Skill Curriculum"
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP error " + response.status);
+          }
+
+          const data = await response.json();
+          if (data.status !== "success") {
+            throw new Error(data.message || "Evaluation error");
+          }
+
+          renderEvaluationResult(data);
+
+          const resultElem = $("predict-result");
+          if (resultElem) {
+            resultElem.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        } catch (err) {
+          console.warn("AJAX evaluation failed; falling back to standard form submit:", err);
+          evalForm.submit();
+        } finally {
+          predictBtn.disabled = false;
+          predictBtn.innerHTML = originalBtnHTML;
         }
       });
     }
