@@ -21,8 +21,18 @@ import random
 import datetime
 from typing import Dict, List, Any, Optional
 
-from dotenv import load_dotenv
-from pymongo import MongoClient
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
+except ImportError:
+    load_dotenv = None
+
+try:
+    from pymongo import MongoClient
+except ImportError:
+    MongoClient = None
+
 import numpy as np
 import pandas as pd
 from flask import Flask, request, jsonify, send_file, render_template
@@ -36,15 +46,11 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 # ──────────────────────────────────────────────────────────────
 # Load Environment & MongoDB Atlas Setup
 # ──────────────────────────────────────────────────────────────
-# Look for .env in current directory or parent directory
-load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
-load_dotenv(os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"))
-
 MONGO_URI = os.getenv("MONGO_URI")
 mongo_client = None
 evaluations_collection = None
 
-if MONGO_URI:
+if MONGO_URI and MongoClient is not None:
     try:
         mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
         db = mongo_client.get_database("maharashtra_skill_align")
