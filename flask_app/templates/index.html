@@ -3,31 +3,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Career Trend Analysis System</title>
-  <meta name="description" content="Upload job data, discover salary clusters, compare ML models, and predict your salary tier." />
+  <title>MSINS ID26134 — Labour-Market Intelligence &amp; Curriculum-Alignment Platform</title>
+  <meta name="description" content="Government of Maharashtra MSINS Problem Statement ID26134: Labour-market intelligence, K-Means skill clustering, and curriculum viability alignment." />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
+
+  <!-- ═══════════════════════════ GOVT / MSINS TOP BAR ═══════════════════════════ -->
+  <div class="msins-gov-bar">
+    <div class="container gov-bar-inner">
+      <div class="gov-identity">
+        <span class="gov-emblem">🏛️</span>
+        <span class="gov-title">Government of Maharashtra · Department of Skills, Employment, Entrepreneurship &amp; Innovation</span>
+      </div>
+      <div class="gov-meta">
+        <span class="msins-pill">Maharashtra State Innovation Society (MSINS)</span>
+        <span class="ps-badge">Problem Statement ID: 26134</span>
+      </div>
+    </div>
+  </div>
 
   <!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
   <header class="site-header">
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-icon">📊</span>
+        <span class="logo-icon">📈</span>
         <div>
-          <span class="logo-title">Career Trend Analysis</span>
-          <span class="logo-sub">ML-Powered Salary Intelligence</span>
+          <span class="logo-title">Labour-Market Intelligence Platform</span>
+          <span class="logo-sub">Curriculum Alignment &amp; Capacity Planning System</span>
         </div>
       </div>
       <nav class="header-nav">
-        <a href="#upload-section"  class="nav-link">Upload Data</a>
-        <a href="#hottest-jobs-section" class="nav-link">🔥 Hot Jobs</a>
-        <a href="#clusters-section" class="nav-link">Clusters</a>
-        <a href="#metrics-section"  class="nav-link">Model Metrics</a>
-        <a href="#predict-section"  class="nav-link">Predict</a>
-        <a href="/sample-csv" class="btn btn-outline" id="download-sample-btn">⬇ Sample CSV</a>
+        <a href="#upload-section" class="nav-link">Data Ingestion</a>
+        <a href="#district-section" class="nav-link">District Intelligence</a>
+        <a href="#roles-section" class="nav-link">Industry Roles</a>
+        <a href="#clusters-section" class="nav-link">Skill Clusters</a>
+        <a href="#metrics-section" class="nav-link">Model Metrics</a>
+        <a href="#evaluator-section" class="nav-link highlight-link">Curriculum Evaluator</a>
+        <a href="/sample-csv" class="btn btn-outline" id="download-sample-btn">⬇ Download Dataset</a>
       </nav>
     </div>
   </header>
@@ -35,20 +50,21 @@
   <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
   <section class="hero">
     <div class="container">
-      <div class="hero-badge">Powered by K-Means · KNN · Logistic Regression</div>
-      <h1 class="hero-title">Decode the Job Market.<br>Predict Your Salary Tier.</h1>
+      <div class="hero-badge">Evidence-Based Solution for MSINS Problem Statement ID26134</div>
+      <h1 class="hero-title">Continuous Alignment of Skill Programs with Emerging Labour-Market Demand</h1>
       <p class="hero-sub">
-        Upload a job listings CSV, discover hidden skill clusters, compare ML model performance,
-        then select your own skills to get an instant salary tier prediction.
+        Translate scraped job postings into curriculum revisions, flag obsolete/oversupplied courses,
+        discover emerging skill clusters with <strong>K-Means</strong>, evaluate course viability using 
+        <strong>KNN &amp; Logistic Regression</strong>, and formulate district-level capacity plans for Maharashtra.
       </p>
       <div class="hero-steps">
-        <div class="hero-step"><span class="step-num">01</span><span>Upload CSV</span></div>
+        <div class="hero-step"><span class="step-num">01</span><span>Job Postings Ingestion</span></div>
         <div class="hero-arrow">→</div>
-        <div class="hero-step"><span class="step-num">02</span><span>Train Models</span></div>
+        <div class="hero-step"><span class="step-num">02</span><span>K-Means Skill Clustering</span></div>
         <div class="hero-arrow">→</div>
-        <div class="hero-step"><span class="step-num">03</span><span>View Clusters</span></div>
+        <div class="hero-step"><span class="step-num">03</span><span>Supervised Viability Models</span></div>
         <div class="hero-arrow">→</div>
-        <div class="hero-step"><span class="step-num">04</span><span>Get Prediction</span></div>
+        <div class="hero-step"><span class="step-num">04</span><span>Curriculum Gap Recommendations</span></div>
       </div>
     </div>
   </section>
@@ -60,8 +76,11 @@
       <div class="card-header">
         <span class="card-icon">📂</span>
         <div>
-          <h2 class="card-title">Step 1 — Upload Your Dataset</h2>
-          <p class="card-sub">Universal Compatibility: Upload <strong>any</strong> tech job dataset (Kaggle, LinkedIn, etc.). Columns like Title, Skills/Description, Salary, and Experience are automatically detected and mapped.</p>
+          <h2 class="card-title">1. Ingest Labour-Market Job Postings Dataset</h2>
+          <p class="card-sub">
+            Accepts CSV with fields: <code>Job Role</code>, <code>Required Skills</code>, <code>District/Location</code>, and <code>Demand Volume</code>.
+            Automatic header mapping handles Kaggle, LinkedIn, or custom scrapers seamlessly.
+          </p>
         </div>
       </div>
 
@@ -70,83 +89,118 @@
           <input type="file" name="csv_file" id="csv-file-input" accept=".csv" class="file-input" />
           <div class="file-drop-inner">
             <span class="drop-icon">☁️</span>
-            <p class="drop-label">Drag &amp; drop your CSV here, or <span class="browse-link">browse</span></p>
+            <p class="drop-label">Drag &amp; drop job postings CSV here, or <span class="browse-link">browse file</span></p>
             <p class="drop-hint" id="file-name-display">No file chosen</p>
           </div>
         </div>
 
         <div class="upload-actions">
           <button type="submit" class="btn btn-primary" id="upload-btn">
-            <span class="btn-icon">⚡</span> Train Models
+            <span class="btn-icon">⚡</span> Run Market Analysis &amp; Train Models
           </button>
-          <button type="button" class="btn btn-secondary" id="quick-load-btn" title="Instant load sample_jobs.csv from server">
-            <span class="btn-icon">🚀</span> Quick Load Sample Data
+          <button type="button" class="btn btn-secondary" id="quick-load-btn" title="Instant load Maharashtra MSINS dataset from server">
+            <span class="btn-icon">🚀</span> Quick Load Maharashtra MSINS Dataset (400 Roles)
           </button>
-          <a href="/sample-csv" class="btn btn-ghost">⬇ Download Sample CSV</a>
+          <a href="/sample-csv" class="btn btn-ghost">⬇ Download Sample Maharashtra CSV</a>
         </div>
       </form>
 
-      <!-- Upload progress / status -->
+      <!-- Upload status box -->
       <div id="upload-status" class="status-box hidden"></div>
-    </section>
-
-    <!-- ═══════════════════════ HOTTEST JOBS SECTION ═══════════════════════ -->
-    <section id="hottest-jobs-section" class="hidden">
-      <div class="section-title-wrap">
-        <div>
-          <h2 class="section-title"><span>🔥</span> Top 5 Hottest Jobs in Market</h2>
-          <p class="section-sub">
-            Ranked by live industry hiring demand, salary competitiveness, and required technical depth.
-          </p>
-        </div>
-        <span class="badge badge-hot">Market Trends</span>
-      </div>
-      <div class="hottest-grid" id="hottest-grid">
-        <!-- Populated dynamically by JS -->
-      </div>
     </section>
 
     <!-- ═══════════════════════ DATASET OVERVIEW ═══════════════════════ -->
     <section id="overview-section" class="hidden">
-      <h2 class="section-title"><span>📋</span> Dataset Overview</h2>
+      <div class="section-title-wrap">
+        <div>
+          <h2 class="section-title"><span>📊</span> Labour-Market Ingestion Overview</h2>
+          <p class="section-sub">Aggregated job posting signals, skill feature vectors, and curriculum status distribution.</p>
+        </div>
+        <span class="badge badge-primary">Market Signals</span>
+      </div>
+
       <div class="stat-grid" id="stat-grid">
         <!-- Populated by JS -->
       </div>
-      <div class="tier-bars" id="tier-bars">
+      <div class="tier-bars" id="status-bars">
         <!-- Populated by JS -->
       </div>
     </section>
 
-    <!-- ═══════════════════════ CLUSTERS SECTION ═══════════════════════ -->
+    <!-- ═══════════════════════ DISTRICT INTELLIGENCE SECTION ═══════════════════════ -->
+    <section id="district-section" class="hidden">
+      <div class="section-title-wrap">
+        <div>
+          <h2 class="section-title"><span>🗺️</span> Maharashtra District Training &amp; Capacity Intelligence</h2>
+          <p class="section-sub">
+            District-level training plans: Identifying hiring demand volume, dominant skill requirements, and high-demand job roles across Pune, Mumbai, Nagpur, Nashik, and other industrial clusters.
+          </p>
+        </div>
+        <span class="badge badge-accent">District Plans</span>
+      </div>
+
+      <div class="district-grid" id="district-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ HOTTEST INDUSTRY ROLES ═══════════════════════ -->
+    <section id="roles-section" class="hidden">
+      <div class="section-title-wrap">
+        <div>
+          <h2 class="section-title"><span>🔥</span> Top Emerging Industry Roles in Maharashtra</h2>
+          <p class="section-sub">
+            Ranked by live industry hiring volume (openings), required technical depth, and primary Maharashtra district corridors.
+          </p>
+        </div>
+        <span class="badge badge-hot">High Growth Roles</span>
+      </div>
+      <div class="hottest-grid" id="roles-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ═══════════════════════ SKILL DEMAND CLUSTERS (K-MEANS) ═══════════════════════ -->
     <section id="clusters-section" class="hidden">
-      <h2 class="section-title"><span>🔵</span> K-Means Clustering Results <span class="badge">k = 3</span></h2>
-      <p class="section-sub">
-        K-Means groups job profiles into 3 clusters based on their skill vectors,
-        revealing natural segments in the job market.
-      </p>
+      <div class="section-title-wrap">
+        <div>
+          <h2 class="section-title"><span>🔵</span> Unsupervised Skill Demand Clusters (K-Means)</h2>
+          <p class="section-sub">
+            K-Means algorithm automatically partitions technical competencies into distinct industry domain clusters, revealing emerging technology requirements and legacy skill groups.
+          </p>
+        </div>
+        <span class="badge">Unsupervised ML</span>
+      </div>
       <div class="cluster-grid" id="cluster-grid">
         <!-- Populated by JS -->
       </div>
     </section>
 
-    <!-- ═══════════════════════ METRICS SECTION ═══════════════════════ -->
+    <!-- ═══════════════════════ MODEL COMPARISON (KNN vs LR) ═══════════════════════ -->
     <section id="metrics-section" class="hidden">
-      <h2 class="section-title"><span>🤖</span> Model Comparison</h2>
-      <p class="section-sub">
-        Both models are trained on one-hot encoded skill features to predict
-        <strong>Salary Tier</strong> (Entry / Mid / Senior).
-      </p>
+      <div class="section-title-wrap">
+        <div>
+          <h2 class="section-title"><span>🤖</span> Supervised Model Comparison for Course Viability</h2>
+          <p class="section-sub">
+            Evaluating <strong>K-Nearest Neighbors (KNN)</strong> and <strong>Logistic Regression</strong> trained to predict course viability: 
+            <span class="pill-inline pill-high">High Demand</span>, 
+            <span class="pill-inline pill-update">Needs Update</span>, or 
+            <span class="pill-inline pill-obsolete">Obsolete/Oversupplied</span>.
+          </p>
+        </div>
+        <span class="badge">Model Validation</span>
+      </div>
 
       <div class="metrics-table-wrap">
         <table class="metrics-table" id="metrics-table">
           <thead>
             <tr>
-              <th>Model</th>
+              <th>Model Architecture</th>
               <th>Accuracy</th>
-              <th>Precision</th>
-              <th>Recall</th>
-              <th>F1-Score</th>
-              <th>Winner</th>
+              <th>Precision (Weighted)</th>
+              <th>Recall (Weighted)</th>
+              <th>F1-Score (Weighted)</th>
+              <th>Evaluation Winner</th>
             </tr>
           </thead>
           <tbody id="metrics-tbody">
@@ -161,18 +215,27 @@
       </div>
     </section>
 
-    <!-- ═══════════════════════ PREDICT SECTION ═══════════════════════ -->
-    <section id="predict-section" class="card predict-card hidden">
+    <!-- ═══════════════════════ CURRICULUM EVALUATOR & GAP ANALYZER ═══════════════════════ -->
+    <section id="evaluator-section" class="card predict-card hidden">
       <div class="card-header">
-        <span class="card-icon">🔮</span>
+        <span class="card-icon">🎯</span>
         <div>
-          <h2 class="card-title">Step 2 — Predict Your Salary Tier</h2>
-          <p class="card-sub">Select the technical skills you possess and click Predict.</p>
+          <h2 class="card-title">2. Course Curriculum Viability &amp; Gap Recommendation Analyzer</h2>
+          <p class="card-sub">
+            Select the technical competencies currently taught in your course syllabus. The AI will evaluate market viability, benchmark against industry clusters, and produce evidence-based recommendations.
+          </p>
+        </div>
+      </div>
+
+      <div class="curriculum-input-bar">
+        <div class="course-meta-input">
+          <label for="course-title-input" class="input-label">Course / Qualification Name (Optional):</label>
+          <input type="text" id="course-title-input" class="text-input" placeholder="e.g. Diploma in Cloud Computing &amp; DevOps / B.Voc Web Development" />
         </div>
       </div>
 
       <div class="skills-filter-bar">
-        <input type="text" id="skill-search" placeholder="🔍 Filter skills…" class="skill-search-input" />
+        <input type="text" id="skill-search" placeholder="🔍 Search curriculum competencies (e.g., Docker, Python, React)…" class="skill-search-input" />
         <button class="btn btn-ghost btn-sm" id="select-all-btn">Select All</button>
         <button class="btn btn-ghost btn-sm" id="clear-all-btn">Clear All</button>
       </div>
@@ -189,13 +252,13 @@
 
       <div class="predict-actions">
         <button class="btn btn-primary btn-lg" id="predict-btn">
-          <span class="btn-icon">🔮</span> Predict My Salary Tier
+          <span class="btn-icon">⚡</span> Evaluate Curriculum Viability &amp; Detect Skill Gaps
         </button>
       </div>
 
-      <!-- Result box -->
+      <!-- Result and Actionable Plan Box -->
       <div id="predict-result" class="predict-result hidden">
-        <!-- Populated by JS -->
+        <!-- Populated dynamically by JS -->
       </div>
     </section>
 
@@ -204,15 +267,18 @@
   <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <span>Career Trend Analysis System</span>
+      <div>
+        <strong>Labour-Market Intelligence and Curriculum-Alignment Platform</strong>
+        <p class="footer-sub">Designed for MSINS Problem Statement ID26134 · Government of Maharashtra</p>
+      </div>
       <span class="footer-sep">·</span>
-      <span>Built with Flask, Scikit-learn &amp; Vanilla JS</span>
+      <span>Algorithms: K-Means Clustering · KNN · Logistic Regression</span>
       <span class="footer-sep">·</span>
-      <span>Models: K-Means · KNN · Logistic Regression</span>
+      <span>Maharashtra District Training Plans</span>
     </div>
   </footer>
 
-  <!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
+  <!-- ═══════════════════════ JAVASCRIPT LOGIC ═══════════════════════ -->
   <script>
     /* ─────────────── Utilities ─────────────── */
     const $ = id => document.getElementById(id);
@@ -220,7 +286,7 @@
     const hide = el => el.classList.add("hidden");
     const fmt  = v  => (v * 100).toFixed(1) + "%";
 
-    /* ─────────────── File drop zone ─────────────── */
+    /* ─────────────── File Drop Zone ─────────────── */
     const dropZone  = $("file-drop-zone");
     const fileInput = $("csv-file-input");
     const fileLabel = $("file-name-display");
@@ -243,32 +309,34 @@
       }
     });
 
-    /* ─────────────── Shared Data Handler ─────────────── */
+    /* ─────────────── Master Data Loaded Handler ─────────────── */
     function handleDataLoaded(data) {
-      showStatus(`✅ Successfully trained on ${data.n_rows} job postings with ${data.n_features} technical skill features.`, "success");
-      if (data.hottest_jobs && data.hottest_jobs.length) {
-        renderHottestJobs(data.hottest_jobs);
-      }
+      showStatus(`✅ Successfully analyzed ${data.n_rows} job postings with ${data.n_features} technical skill competencies across Maharashtra districts.`, "success");
       renderOverview(data);
+      if (data.district_summary && data.district_summary.length) {
+        renderDistricts(data.district_summary);
+      }
+      if (data.hottest_roles && data.hottest_roles.length) {
+        renderRoles(data.hottest_roles);
+      }
       renderClusters(data.clusters);
       renderMetrics(data.metrics, data.knn_report, data.lr_report);
-      show($("predict-section"));
+      show($("evaluator-section"));
     }
 
-    /* ─────────────── Upload & Train ─────────────── */
+    /* ─────────────── Upload & Train Form ─────────────── */
     $("upload-form").addEventListener("submit", async e => {
       e.preventDefault();
-      const statusBox = $("upload-status");
       const uploadBtn = $("upload-btn");
 
       if (!fileInput.files[0]) {
-        showStatus("⚠️ Please select a CSV file first, or click 'Quick Load Sample Data'.", "warning");
+        showStatus("⚠️ Please select a CSV file first, or click 'Quick Load Maharashtra MSINS Dataset'.", "warning");
         return;
       }
 
       uploadBtn.disabled = true;
-      uploadBtn.innerHTML = '<span class="spinner"></span> Training…';
-      showStatus("⏳ Processing dataset and training models…", "info");
+      uploadBtn.innerHTML = '<span class="spinner"></span> Processing Market Signals…';
+      showStatus("⏳ Parsing dataset, running K-Means clustering & fitting supervised models…", "info");
 
       const fd = new FormData();
       fd.append("csv_file", fileInput.files[0]);
@@ -288,7 +356,7 @@
         showStatus("❌ Network error: " + err.message, "error");
       } finally {
         uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<span class="btn-icon">⚡</span> Train Models';
+        uploadBtn.innerHTML = '<span class="btn-icon">⚡</span> Run Market Analysis &amp; Train Models';
       }
     });
 
@@ -297,8 +365,8 @@
     if (quickLoadBtn) {
       quickLoadBtn.addEventListener("click", async () => {
         quickLoadBtn.disabled = true;
-        quickLoadBtn.innerHTML = '<span class="spinner"></span> Loading…';
-        showStatus("⏳ Loading server dataset (sample_jobs.csv) and fitting models…", "info");
+        quickLoadBtn.innerHTML = '<span class="spinner"></span> Ingesting MSINS Data…';
+        showStatus("⏳ Loading pre-compiled Maharashtra MSINS labour dataset & fitting models…", "info");
 
         try {
           const resp = await fetch("/load-sample", { method: "POST" });
@@ -315,7 +383,7 @@
           showStatus("❌ " + err.message, "error");
         } finally {
           quickLoadBtn.disabled = false;
-          quickLoadBtn.innerHTML = '<span class="btn-icon">🚀</span> Quick Load Sample Data';
+          quickLoadBtn.innerHTML = '<span class="btn-icon">🚀</span> Quick Load Maharashtra MSINS Dataset (400 Roles)';
         }
       });
     }
@@ -327,94 +395,41 @@
       show(box);
     }
 
-    /* ─────────────── Top 5 Hottest Jobs ─────────────── */
-    function renderHottestJobs(hottest) {
-      if (!hottest || !hottest.length) return;
-      const grid = $("hottest-grid");
-      const rankBadges = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
-
-      grid.innerHTML = hottest.map((job, idx) => `
-        <div class="hottest-card rank-${job.rank}">
-          <div class="hottest-card-header">
-            <div class="hottest-rank-wrap">
-              <span class="hottest-medal">${rankBadges[idx] || '#' + job.rank}</span>
-              <span class="hottest-rank-num">#${job.rank}</span>
-            </div>
-            <div class="hottest-title-wrap">
-              <h3 class="hottest-title">${job.title}</h3>
-              <span class="tier-pill tier-${job.primary_tier.toLowerCase()}">${job.primary_tier} Level</span>
-            </div>
-            <div class="hottest-flame-score" title="Hotness Index combining Demand Volume + Compensation Tier">
-              🔥 ${job.hotness_score}<span class="score-max">/100</span>
-            </div>
-          </div>
-
-          <div class="hottest-metrics-row">
-            <div class="hottest-m-box">
-              <span class="hm-label">Avg Salary</span>
-              <span class="hm-val hm-salary">${job.avg_salary}</span>
-              <span class="hm-sub">${job.salary_range}</span>
-            </div>
-            <div class="hottest-m-box">
-              <span class="hm-label">Market Demand</span>
-              <span class="hm-val">${job.count} openings</span>
-              <span class="hm-sub">${job.demand_pct}% market share</span>
-            </div>
-          </div>
-
-          <div class="hottest-bar-container">
-            <div class="hottest-bar-label">
-              <span>Hiring Velocity &amp; Demand Index</span>
-              <span>${job.hotness_score}%</span>
-            </div>
-            <div class="hottest-bar-track">
-              <div class="hottest-bar-fill" style="width: ${Math.min(100, Math.max(15, job.hotness_score))}%;"></div>
-            </div>
-          </div>
-
-          <div class="hottest-skills-section">
-            <div class="hottest-skills-heading">Top In-Demand Skills</div>
-            <div class="hottest-skill-tags">
-              ${job.top_skills.map(s => `<span class="h-skill-tag">${s}</span>`).join("")}
-            </div>
-          </div>
-        </div>
-      `).join("");
-
-      show($("hottest-jobs-section"));
-    }
-
-    /* ─────────────── Dataset Overview ─────────────── */
+    /* ─────────────── Overview Rendering ─────────────── */
     function renderOverview(data) {
-      const tierColors = { Entry: "#6c63ff", Mid: "#ff6584", Senior: "#43e97b" };
-      const total = Object.values(data.tier_dist).reduce((a, b) => a + b, 0);
+      const statusColors = {
+        "High Demand": "#10b981",
+        "Needs Update": "#f59e0b",
+        "Obsolete/Oversupplied": "#ef4444"
+      };
+      const total = Object.values(data.status_dist).reduce((a, b) => a + b, 0);
 
       $("stat-grid").innerHTML = `
         <div class="stat-card">
           <div class="stat-value">${data.n_rows.toLocaleString()}</div>
-          <div class="stat-label">Job Listings</div>
+          <div class="stat-label">Total Job Postings</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">${data.n_features}</div>
-          <div class="stat-label">Skill Features</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">3</div>
-          <div class="stat-label">Salary Tiers</div>
+          <div class="stat-label">Skill Competencies</div>
         </div>
         <div class="stat-card">
           <div class="stat-value">${data.clusters.length}</div>
-          <div class="stat-label">K-Means Clusters</div>
+          <div class="stat-label">K-Means Domains</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">3</div>
+          <div class="stat-label">Viability Classes</div>
         </div>
       `;
 
-      $("tier-bars").innerHTML = `
-        <h3 class="tier-bars-title">Salary Tier Distribution</h3>
-        ${Object.entries(data.tier_dist).map(([tier, count]) => `
+      $("status-bars").innerHTML = `
+        <h3 class="tier-bars-title">Course Viability Distribution in Ingested Job Postings</h3>
+        ${Object.entries(data.status_dist).map(([st, count]) => `
           <div class="tier-row">
-            <span class="tier-label" style="color:${tierColors[tier]||'#aaa'}">${tier}</span>
+            <span class="tier-label" style="color:${statusColors[st]||'#aaa'}">${st}</span>
             <div class="tier-bar-track">
-              <div class="tier-bar-fill" style="width:${(count/total*100).toFixed(1)}%;background:${tierColors[tier]||'#aaa'}"></div>
+              <div class="tier-bar-fill" style="width:${(count/total*100).toFixed(1)}%;background:${statusColors[st]||'#aaa'}"></div>
             </div>
             <span class="tier-count">${count} <span class="tier-pct">(${(count/total*100).toFixed(1)}%)</span></span>
           </div>
@@ -423,34 +438,140 @@
       show($("overview-section"));
     }
 
-    /* ─────────────── Clusters ─────────────── */
-    function renderClusters(clusters) {
-      const clusterColors = ["#6c63ff", "#ff6584", "#43e97b"];
-      $("cluster-grid").innerHTML = clusters.map(c => `
-        <div class="cluster-card">
-          <div class="cluster-badge" style="background:${clusterColors[c.cluster % 3]}">
-            Cluster ${c.cluster + 1}
+    /* ─────────────── Maharashtra District Intelligence ─────────────── */
+    function renderDistricts(districts) {
+      const grid = $("district-grid");
+      grid.innerHTML = districts.map(d => `
+        <div class="district-card">
+          <div class="district-header">
+            <div class="district-title-wrap">
+              <span class="district-icon">📍</span>
+              <h3 class="district-name">${d.district}</h3>
+            </div>
+            <span class="district-openings-badge">${d.total_openings.toLocaleString()} Openings</span>
           </div>
-          <div class="cluster-size">${c.size} profiles</div>
+
+          <div class="district-metric-row">
+            <div class="dm-item">
+              <span class="dm-label">Postings Sample</span>
+              <span class="dm-val">${d.postings_count} roles</span>
+            </div>
+            <div class="dm-item">
+              <span class="dm-label">High-Demand Share</span>
+              <span class="dm-val dm-high">${d.high_demand_share}%</span>
+            </div>
+          </div>
+
+          <div class="district-sub-section">
+            <div class="district-sub-title">Key In-Demand Roles</div>
+            <div class="district-role-tags">
+              ${d.top_roles.map(r => `<span class="d-role-tag">${r}</span>`).join("")}
+            </div>
+          </div>
+
+          <div class="district-sub-section">
+            <div class="district-sub-title">Dominant Competencies</div>
+            <div class="district-skill-tags">
+              ${d.top_skills.map(s => `<span class="d-skill-tag">${s}</span>`).join("")}
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      show($("district-section"));
+    }
+
+    /* ─────────────── Top Emerging Roles ─────────────── */
+    function renderRoles(roles) {
+      const grid = $("roles-grid");
+      const medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
+
+      grid.innerHTML = roles.map((job, idx) => {
+        const statusClass = job.status.toLowerCase().replace(/[^a-z]/g, "-");
+        return `
+          <div class="hottest-card rank-${job.rank}">
+            <div class="hottest-card-header">
+              <div class="hottest-rank-wrap">
+                <span class="hottest-medal">${medals[idx] || '#' + job.rank}</span>
+                <span class="hottest-rank-num">#${job.rank}</span>
+              </div>
+              <div class="hottest-title-wrap">
+                <h3 class="hottest-title">${job.role}</h3>
+                <span class="status-pill status-${statusClass}">${job.status}</span>
+              </div>
+              <div class="hottest-flame-score" title="Viability Index combining Hiring Openings and Market Modernity">
+                📈 ${job.viability_index}<span class="score-max">/100</span>
+              </div>
+            </div>
+
+            <div class="hottest-metrics-row">
+              <div class="hottest-m-box">
+                <span class="hm-label">Hiring Demand</span>
+                <span class="hm-val">${job.openings.toLocaleString()} Openings</span>
+                <span class="hm-sub">${job.postings} job posts</span>
+              </div>
+              <div class="hottest-m-box">
+                <span class="hm-label">Primary Corridor</span>
+                <span class="hm-val">${job.primary_district}</span>
+                <span class="hm-sub">Maharashtra Hub</span>
+              </div>
+            </div>
+
+            <div class="hottest-skills-section">
+              <div class="hottest-skills-heading">Required Technical Skills</div>
+              <div class="hottest-skill-tags">
+                ${job.top_skills.map(s => `<span class="h-skill-tag">${s}</span>`).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      show($("roles-section"));
+    }
+
+    /* ─────────────── K-Means Clusters ─────────────── */
+    function renderClusters(clusters) {
+      const clusterColors = ["#6366f1", "#10b981", "#ec4899", "#f59e0b"];
+      $("cluster-grid").innerHTML = clusters.map((c, i) => `
+        <div class="cluster-card">
+          <div class="cluster-badge" style="background:${clusterColors[i % clusterColors.length]}">
+            Cluster ${c.cluster_id + 1}
+          </div>
+          <h3 class="cluster-domain-title">${c.domain_label}</h3>
+          <div class="cluster-size">
+            <strong>${c.size}</strong> postings · <strong>${c.total_openings.toLocaleString()}</strong> openings
+          </div>
+
           <div class="cluster-skills">
-            <div class="cluster-label">Top Skills</div>
+            <div class="cluster-label">Core Technical Competencies</div>
             <div class="chip-row">
               ${c.top_skills.map(s => `<span class="tag">${s}</span>`).join("")}
             </div>
           </div>
+
           <div class="cluster-tiers">
-            <div class="cluster-label">Tier Breakdown</div>
-            ${Object.entries(c.tier_dist).map(([t, n]) => `
+            <div class="cluster-label">Viability Breakdown</div>
+            ${Object.entries(c.status_dist).map(([st, n]) => `
               <div class="mini-tier">
-                <span>${t}</span><span class="mini-count">${n}</span>
+                <span>${st}</span><span class="mini-count">${n}</span>
               </div>`).join("")}
+          </div>
+
+          <div class="cluster-districts">
+            <div class="cluster-label">Key District Corridors</div>
+            <div class="chip-row">
+              ${Object.entries(c.top_districts).map(([d, count]) => `
+                <span class="district-tag">${d} (${count})</span>
+              `).join("")}
+            </div>
           </div>
         </div>
       `).join("");
       show($("clusters-section"));
     }
 
-    /* ─────────────── Metrics ─────────────── */
+    /* ─────────────── Model Metrics ─────────────── */
     function renderMetrics(metrics, knnReport, lrReport) {
       const knn = metrics.knn;
       const lr  = metrics.lr;
@@ -458,7 +579,7 @@
 
       $("metrics-tbody").innerHTML = `
         <tr class="${knnWin ? 'winner-row' : ''}">
-          <td><span class="model-badge model-knn">K-Nearest Neighbors</span></td>
+          <td><span class="model-badge model-knn">K-Nearest Neighbors (KNN)</span></td>
           <td>${fmt(knn.accuracy)}</td>
           <td>${fmt(knn.precision)}</td>
           <td>${fmt(knn.recall)}</td>
@@ -475,28 +596,28 @@
         </tr>
       `;
 
-      const tiers = ["Entry", "Mid", "Senior"];
+      const classes = ["High Demand", "Needs Update", "Obsolete/Oversupplied"];
       $("report-grid").innerHTML = `
         <div class="report-card">
-          <h4 class="report-title model-knn-text">KNN — Per-Class Metrics</h4>
-          ${renderClassTable(knnReport, tiers)}
+          <h4 class="report-title model-knn-text">KNN — Per-Class Viability Metrics</h4>
+          ${renderClassTable(knnReport, classes)}
         </div>
         <div class="report-card">
-          <h4 class="report-title model-lr-text">Logistic Regression — Per-Class Metrics</h4>
-          ${renderClassTable(lrReport, tiers)}
+          <h4 class="report-title model-lr-text">Logistic Regression — Per-Class Viability Metrics</h4>
+          ${renderClassTable(lrReport, classes)}
         </div>
       `;
       show($("metrics-section"));
     }
 
-    function renderClassTable(report, tiers) {
+    function renderClassTable(report, classes) {
       return `
         <table class="class-table">
-          <thead><tr><th>Tier</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th></tr></thead>
+          <thead><tr><th>Status Class</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr></thead>
           <tbody>
-            ${tiers.filter(t => report[t]).map(t => `
+            ${classes.filter(t => report[t]).map(t => `
               <tr>
-                <td>${t}</td>
+                <td><strong>${t}</strong></td>
                 <td>${(report[t].precision * 100).toFixed(1)}%</td>
                 <td>${(report[t].recall    * 100).toFixed(1)}%</td>
                 <td>${(report[t]["f1-score"] * 100).toFixed(1)}%</td>
@@ -508,7 +629,7 @@
       `;
     }
 
-    /* ─────────────── Skill Checkboxes ─────────────── */
+    /* ─────────────── Skill Search & Checkboxes ─────────────── */
     $("skill-search").addEventListener("input", function() {
       const q = this.value.toLowerCase();
       document.querySelectorAll(".skill-chip").forEach(chip => {
@@ -522,20 +643,21 @@
       document.querySelectorAll(".skill-checkbox").forEach(cb => cb.checked = false);
     });
 
-    /* ─────────────── Predict ─────────────── */
+    /* ─────────────── Predict & Gap Recommendation Engine ─────────────── */
     $("predict-btn").addEventListener("click", async () => {
       const selected = [...document.querySelectorAll(".skill-checkbox:checked")].map(cb => cb.value);
       const resultBox = $("predict-result");
       const predictBtn = $("predict-btn");
+      const courseTitle = $("course-title-input").value.trim() || "Evaluated Skill Curriculum";
 
       if (!selected.length) {
-        resultBox.innerHTML = `<div class="result-warn">⚠️ Please select at least one skill.</div>`;
+        resultBox.innerHTML = `<div class="result-warn">⚠️ Please select at least one curriculum skill to evaluate course viability.</div>`;
         show(resultBox);
         return;
       }
 
       predictBtn.disabled = true;
-      predictBtn.innerHTML = '<span class="spinner"></span> Predicting…';
+      predictBtn.innerHTML = '<span class="spinner"></span> Analyzing Curriculum Gaps…';
 
       try {
         const resp = await fetch("/predict", {
@@ -551,23 +673,100 @@
           return;
         }
 
-        const tierEmoji = { Entry: "🟢", Mid: "🟡", Senior: "🔴" };
-        const tierColor = { Entry: "#6c63ff", Mid: "#f59e0b", Senior: "#43e97b" };
+        const rec = data.recommendations;
+        const statusPills = {
+          "High Demand": "🟢 High Demand",
+          "Needs Update": "🟡 Needs Update",
+          "Obsolete/Oversupplied": "🔴 Obsolete / Oversupplied"
+        };
+        const statusColors = {
+          "High Demand": "#10b981",
+          "Needs Update": "#f59e0b",
+          "Obsolete/Oversupplied": "#ef4444"
+        };
 
         resultBox.innerHTML = `
           <div class="result-header">
-            <h3 class="result-heading">Salary Tier Predictions</h3>
-            <p class="result-sub">Based on ${selected.length} selected skill(s)</p>
+            <div>
+              <span class="eval-tag">Curriculum Alignment Report</span>
+              <h3 class="result-heading">${courseTitle}</h3>
+              <p class="result-sub">${rec.status_message}</p>
+            </div>
+            <div class="status-verdict-box" style="border-color:${statusColors[data.primary_status]}">
+              <span class="verdict-label">Predicted Market Status</span>
+              <span class="verdict-badge" style="background:${statusColors[data.primary_status]}">${statusPills[data.primary_status]}</span>
+            </div>
           </div>
+
+          <!-- Model Comparison Cards -->
           <div class="result-cards">
-            ${renderPredCard("KNN", data.knn, tierEmoji, tierColor, "model-knn")}
-            ${renderPredCard("Logistic Regression", data.lr, tierEmoji, tierColor, "model-lr")}
+            ${renderPredCard("K-Nearest Neighbors (KNN)", data.knn, statusColors)}
+            ${renderPredCard("Logistic Regression", data.lr, statusColors)}
           </div>
-          <div class="selected-skills-list">
-            <span class="sel-label">Your skills:</span>
-            ${selected.map(s => `<span class="tag">${s}</span>`).join("")}
+
+          <!-- Curriculum Gap Analysis Card -->
+          <div class="gap-analysis-card">
+            <h4 class="gap-card-title">🔍 Evidence-Based Skill Gap Analysis</h4>
+            <div class="gap-meta-row">
+              <div class="gap-meta-item">
+                <span class="gm-label">Nearest Industry Cluster:</span>
+                <span class="gm-val">${rec.aligned_cluster}</span>
+              </div>
+              <div class="gap-meta-item">
+                <span class="gm-label">Estimated Candidate Placement Readiness:</span>
+                <span class="gm-val gm-score">${rec.placement_readiness}%</span>
+              </div>
+            </div>
+
+            <div class="gap-skills-grid">
+              <div class="gap-skill-col col-matched">
+                <div class="gap-col-header">✅ Covered Competencies (${rec.matched_skills.length})</div>
+                <div class="chip-row">
+                  ${rec.matched_skills.length ? rec.matched_skills.map(s => `<span class="tag tag-matched">${s}</span>`).join("") : '<em>None matched with primary industry cluster</em>'}
+                </div>
+              </div>
+              <div class="gap-skill-col col-missing">
+                <div class="gap-col-header">⚠️ Critical Industry Gaps to Add (${rec.missing_skills.length})</div>
+                <div class="chip-row">
+                  ${rec.missing_skills.length ? rec.missing_skills.map(s => `<span class="tag tag-missing">+ ${s}</span>`).join("") : '<em>No critical gaps! Curriculum matches industry cluster core.</em>'}
+                </div>
+              </div>
+            </div>
+
+            <!-- Actionable Recommendations Grid -->
+            <div class="recommendations-box">
+              <h4 class="rec-heading">📋 Actionable Revision &amp; Planning Recommendations (MSINS ID26134)</h4>
+              <div class="action-items-list">
+                ${rec.action_plan.map(item => `
+                  <div class="action-item">
+                    <span class="action-bullet">📌</span>
+                    <span>${item}</span>
+                  </div>
+                `).join("")}
+              </div>
+
+              <div class="planning-guidance-grid">
+                <div class="guidance-box">
+                  <div class="guidance-title">🛠️ Equipment &amp; Lab Infrastructure Guidance</div>
+                  <p class="guidance-text">${rec.equipment_guidance}</p>
+                </div>
+                <div class="guidance-box">
+                  <div class="guidance-title">👨‍🏫 Trainer Capacity &amp; Faculty Upskilling Plan</div>
+                  <p class="guidance-text">${rec.trainer_guidance}</p>
+                </div>
+              </div>
+
+              <div class="placement-hotspots">
+                <span class="ph-label">📍 Priority Maharashtra Placement Corridors:</span>
+                <div class="ph-tags">
+                  ${rec.target_districts.map(d => `<span class="ph-district-pill">${d} Tech Corridor</span>`).join("")}
+                </div>
+              </div>
+            </div>
+
           </div>
         `;
+
         show(resultBox);
         resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
 
@@ -576,19 +775,18 @@
         show(resultBox);
       } finally {
         predictBtn.disabled = false;
-        predictBtn.innerHTML = '<span class="btn-icon">🔮</span> Predict My Salary Tier';
+        predictBtn.innerHTML = '<span class="btn-icon">⚡</span> Evaluate Curriculum Viability &amp; Detect Skill Gaps';
       }
     });
 
-    function renderPredCard(model, res, emoji, color, cls) {
-      const c = color[res.tier] || "#aaa";
+    function renderPredCard(model, res, colors) {
+      const c = colors[res.status] || "#aaa";
       return `
         <div class="pred-card">
-          <div class="pred-model ${cls}">${model}</div>
+          <div class="pred-model">${model}</div>
           <div class="pred-tier" style="color:${c}">
-            ${emoji[res.tier] || ""} ${res.tier}
+            ${res.status}
           </div>
-          <div class="pred-range">${res.salary_range}</div>
           <div class="pred-confidence">
             Confidence: <strong>${res.confidence}%</strong>
           </div>
@@ -597,7 +795,7 @@
               <div class="prob-row">
                 <span class="prob-label">${t}</span>
                 <div class="prob-track">
-                  <div class="prob-fill" style="width:${p}%;background:${color[t]||'#aaa'}"></div>
+                  <div class="prob-fill" style="width:${p}%;background:${colors[t]||'#aaa'}"></div>
                 </div>
                 <span class="prob-pct">${p}%</span>
               </div>

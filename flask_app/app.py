@@ -1,12 +1,15 @@
 """
-Career Trend Analysis System — Flask Backend
-=============================================
-Routes:
-  GET  /                → Render main dashboard (index.html)
-  POST /upload          → Accept CSV upload; run K-Means clustering;
-                          train KNN & Logistic Regression; return metrics
-  POST /predict         → Accept selected skills; return KNN salary-tier prediction
-  GET  /sample-csv      → Download a ready-made sample CSV for testing
+Labour-Market Intelligence & Curriculum-Alignment Platform
+Based on MSINS Problem Statement ID26134
+Government of Maharashtra — Dept. of Skills, Employment, Entrepreneurship & Innovation
+========================================================================================
+Key Capabilities:
+1. Universal CSV Ingestion: Scraped job postings (Job Role, Skills, District/Location, Demand Volume)
+2. Unsupervised Learning (K-Means): Clusters skills into emerging industry domains
+3. Supervised Learning (KNN & Logistic Regression): Evaluates Course Curriculum Viability
+   (High Demand, Needs Update, Obsolete/Oversupplied)
+4. Evidence-Based Gap Analysis & Actionable Recommendations:
+   Identifies missing skills, equipment/trainer planning, and district-level placement pathways.
 """
 
 import io
@@ -14,7 +17,7 @@ import os
 import re
 import json
 import random
-import textwrap
+from typing import Dict, List, Any, Optional
 
 import numpy as np
 import pandas as pd
@@ -36,20 +39,20 @@ from sklearn.metrics import (
 # App setup
 # ──────────────────────────────────────────────────────────────
 app = Flask(__name__)
-app.secret_key = "career-trend-secret-2024"
+app.secret_key = "msins-id26134-curriculum-intelligence-key"
 
 # ──────────────────────────────────────────────────────────────
-# Constants
+# Canonical Skills, Aliases & Maharashtra Geographies
 # ──────────────────────────────────────────────────────────────
 CANONICAL_SKILLS = [
     "python", "r", "sql", "java", "javascript", "typescript",
     "c++", "scala", "spark", "hadoop", "kafka", "airflow", "dbt",
     "tensorflow", "pytorch", "scikit-learn", "keras", "xgboost", "nlp",
-    "aws", "azure", "gcp", "docker", "kubernetes",
-    "tableau", "powerbi", "excel",
+    "aws", "azure", "gcp", "docker", "kubernetes", "linux", "git",
+    "ci/cd", "microservices", "cybersecurity",
+    "tableau", "powerbi", "excel", "data analysis", "statistics",
     "react", "node.js", "django", "flask", "fastapi",
-    "machine learning", "deep learning", "data analysis", "statistics",
-    "git", "linux", "mongodb", "postgresql", "redis",
+    "machine learning", "deep learning", "mongodb", "postgresql", "redis",
 ]
 
 SKILL_ALIASES = {
@@ -62,72 +65,74 @@ SKILL_ALIASES = {
     "dl": "deep learning",
     "natural language processing": "nlp",
     "nodejs": "node.js",
+    "amazon web services": "aws",
+    "google cloud": "gcp",
+    "continuous integration": "ci/cd",
+    "cicd": "ci/cd",
+    "infosec": "cybersecurity",
+    "security": "cybersecurity",
 }
 
-SALARY_RANGES = {
-    "Entry":  (40_000, 75_000),
-    "Mid":    (75_001, 120_000),
-    "Senior": (120_001, 220_000),
-}
-
-JOB_TITLES = [
-    "Data Scientist", "Machine Learning Engineer", "Data Analyst",
-    "Backend Engineer", "Full Stack Developer", "Data Engineer",
-    "MLOps Engineer", "AI Research Scientist", "Cloud Engineer",
-    "DevOps Engineer", "Software Engineer", "BI Analyst",
+MAHARASHTRA_DISTRICTS = [
+    "Pune", "Mumbai", "Nagpur", "Nashik", "Thane",
+    "Chhatrapati Sambhajinagar", "Kolhapur", "Solapur"
 ]
 
-COMPANIES = [
-    "Google", "Amazon", "Microsoft", "Meta", "Apple", "Netflix",
-    "Uber", "Stripe", "Databricks", "Snowflake", "OpenAI", "Palantir",
-]
+STATUS_CLASSES = ["High Demand", "Needs Update", "Obsolete/Oversupplied"]
 
-LOCATIONS = [
-    "San Francisco, CA", "New York, NY", "Seattle, WA",
-    "Austin, TX", "Boston, MA", "Remote", "Chicago, IL",
-]
+ROLE_TEMPLATES = [
+    # ── High Demand Modern Industry Roles ─────────────────────────────────
+    ("Cloud & DevOps Architect", ["aws", "docker", "kubernetes", "linux", "ci/cd", "git"], "High Demand", 160, 480, ["fastapi", "redis", "azure", "gcp", "microservices"]),
+    ("AI & Deep Learning Engineer", ["python", "pytorch", "tensorflow", "deep learning", "machine learning", "nlp"], "High Demand", 140, 450, ["scikit-learn", "docker", "statistics"]),
+    ("Full Stack React & Node Developer", ["javascript", "typescript", "react", "node.js", "mongodb", "git"], "High Demand", 180, 520, ["docker", "redis", "postgresql", "fastapi"]),
+    ("Big Data & Pipeline Engineer", ["python", "spark", "kafka", "sql", "airflow", "aws"], "High Demand", 110, 380, ["scala", "dbt", "docker", "linux"]),
+    ("Cybersecurity Specialist", ["cybersecurity", "linux", "docker", "git", "python"], "High Demand", 95, 340, ["microservices", "ci/cd", "aws"]),
+    ("MLOps Systems Specialist", ["python", "docker", "kubernetes", "machine learning", "aws", "git"], "High Demand", 90, 310, ["ci/cd", "linux", "airflow"]),
 
-SKILL_POOLS = {
-    "Data Scientist":            ["python", "machine learning", "scikit-learn", "tensorflow", "sql", "statistics", "tableau"],
-    "Machine Learning Engineer": ["python", "pytorch", "tensorflow", "docker", "kubernetes", "aws", "deep learning"],
-    "Data Analyst":              ["sql", "python", "excel", "tableau", "powerbi", "statistics", "data analysis"],
-    "Backend Engineer":          ["python", "java", "postgresql", "redis", "docker", "aws", "flask", "fastapi"],
-    "Full Stack Developer":      ["javascript", "typescript", "react", "node.js", "sql", "docker", "aws"],
-    "Data Engineer":             ["python", "spark", "kafka", "airflow", "sql", "aws", "dbt", "scala"],
-    "MLOps Engineer":            ["python", "docker", "kubernetes", "airflow", "aws", "tensorflow", "git"],
-    "AI Research Scientist":     ["python", "pytorch", "deep learning", "nlp", "statistics", "tensorflow", "r"],
-    "Cloud Engineer":            ["aws", "azure", "gcp", "kubernetes", "docker", "linux", "python"],
-    "DevOps Engineer":           ["docker", "kubernetes", "linux", "aws", "git", "python"],
-    "Software Engineer":         ["python", "java", "c++", "git", "sql", "docker", "linux"],
-    "BI Analyst":                ["sql", "tableau", "powerbi", "excel", "python", "statistics", "data analysis"],
-}
+    # ── Needs Update / Transitional Roles ─────────────────────────────────
+    ("Business Data Analyst", ["sql", "excel", "tableau", "statistics", "data analysis"], "Needs Update", 80, 240, ["r", "powerbi"]),
+    ("Backend Java Developer", ["java", "sql", "postgresql", "git"], "Needs Update", 90, 260, ["redis", "linux"]),
+    ("Junior Web Developer", ["javascript", "react", "git"], "Needs Update", 65, 210, ["node.js", "sql"]),
+    ("Database Administrator", ["sql", "postgresql", "linux"], "Needs Update", 55, 180, ["redis"]),
+    ("Python Scripting Assistant", ["python", "excel", "sql"], "Needs Update", 60, 190, ["statistics", "data analysis"]),
+    ("BI Reporting Specialist", ["powerbi", "tableau", "excel", "sql"], "Needs Update", 70, 220, ["statistics"]),
+
+    # ── Obsolete / Oversupplied Legacy Roles ──────────────────────────────
+    ("Legacy Desktop Programmer", ["c++"], "Obsolete/Oversupplied", 15, 60, ["linux"]),
+    ("Traditional Webmaster (Static HTML)", ["javascript"], "Obsolete/Oversupplied", 10, 45, []),
+    ("Basic Spreadsheet Operator", ["excel"], "Obsolete/Oversupplied", 20, 70, ["sql"]),
+    ("Entry IT Support Assistant", ["linux"], "Obsolete/Oversupplied", 25, 80, ["c++"]),
+    ("Legacy Records Clerk", ["excel"], "Obsolete/Oversupplied", 18, 65, []),
+]
 
 # ──────────────────────────────────────────────────────────────
-# In-memory model store (persists across requests in same process)
+# Global In-Memory Model Store
 # ──────────────────────────────────────────────────────────────
-MODEL_STORE = {
+MODEL_STORE: Dict[str, Any] = {
     "knn": None,
     "lr":  None,
     "le":  None,
     "scaler": None,
     "feature_cols": None,
     "kmeans": None,
-    "cluster_labels": None,
+    "cluster_info": None,
+    "district_summary": None,
+    "hottest_roles": None,
+    "df_clean": None,
     "trained": False,
 }
 
-
 # ──────────────────────────────────────────────────────────────
-# Helper utilities
+# Text & Skill Parsing Helpers
 # ──────────────────────────────────────────────────────────────
-def clean_text(text: str) -> str:
+def clean_text(text: Any) -> str:
     text = str(text).lower()
     text = re.sub(r"<[^>]+>", " ", text)
-    text = re.sub(r"[^a-z0-9\s\.\+#\-]", " ", text)
+    text = re.sub(r"[^a-z0-9\s\.\+#\/\-]", " ", text)
     return re.sub(r"\s+", " ", text).strip()
 
 
-def extract_skills(text: str) -> list:
+def extract_skills(text: str) -> List[str]:
     text = clean_text(text)
     found = set()
     for alias, canonical in SKILL_ALIASES.items():
@@ -144,11 +149,12 @@ def skill_col_name(skill: str) -> str:
                            .replace(".", "_")
                            .replace("+", "plus")
                            .replace("#", "sharp")
+                           .replace("/", "_")
                            .replace("-", "_"))
 
 
 def one_hot_encode(df: pd.DataFrame) -> pd.DataFrame:
-    """Add binary skill columns to the dataframe."""
+    """Creates binary 0/1 columns for canonical technical skills."""
     for skill in CANONICAL_SKILLS:
         col = skill_col_name(skill)
         df[col] = df["skills_list"].apply(lambda lst, s=skill: 1 if s in lst else 0)
@@ -156,84 +162,89 @@ def one_hot_encode(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def map_column_name(raw_col: str) -> str:
-    """Normalize arbitrary column names from Kaggle, LinkedIn, Indeed, etc."""
+    """Normalizes arbitrary CSV headers to standard MSINS platform fields."""
     cleaned = re.sub(r"[^a-z0-9]", "", str(raw_col).lower())
-    if cleaned in {"jobtitle", "title", "position", "role", "jobrole", "rolename", "designation", "jobname", "job", "jobpost", "post"}:
-        return "job_title"
-    if cleaned in {"skillsraw", "skills", "skill", "requiredskills", "keyskills", "technicalskills", "tags", "jobskills", "description", "jobdescription", "jobdesc", "snippet", "summary", "responsibilities", "requirements", "technologies"}:
+    if cleaned in {
+        "jobrole", "jobtitle", "role", "title", "position",
+        "coursename", "jobname", "qualification", "occupation", "post"
+    }:
+        return "job_role"
+    if cleaned in {
+        "requiredskills", "skillsraw", "skills", "skill", "keyskills",
+        "technicalskills", "competencies", "curriculumskills", "description",
+        "technologies", "tags", "syllabus", "modules"
+    }:
         return "skills_raw"
-    if cleaned in {"salarytier", "tier", "experiencelevel", "explevel", "level", "seniority", "senioritylevel", "careerlevel", "joblevel", "experience", "exp"}:
-        return "salary_tier"
-    if cleaned in {"salary", "salaryinusd", "annualsalary", "basesalary", "compensation", "pay", "avgcompensation", "maxsalary", "minsalary", "remuneration", "ctc", "sal"}:
-        return "salary"
-    if cleaned in {"company", "companyname", "employer", "hiringcompany", "organization", "firm", "agency"}:
-        return "company"
-    if cleaned in {"location", "joblocation", "city", "worklocation", "companylocation", "country", "state", "region"}:
-        return "location"
+    if cleaned in {
+        "district", "location", "city", "region", "districtlocation",
+        "worklocation", "place", "state", "taluka", "zone"
+    }:
+        return "district"
+    if cleaned in {
+        "demandvolume", "openings", "vacancies", "demand", "volume",
+        "postings", "hiringvolume", "jobs_count", "openings_count", "count",
+        "salary", "pay"  # Fallback: Treat numeric scale as volume proxy
+    }:
+        return "demand_volume"
+    if cleaned in {
+        "curriculumstatus", "status", "demandstatus", "viability", "coursestatus",
+        "marketstatus", "tier", "salarytier", "demandlevel", "level"
+    }:
+        return "curriculum_status"
     return str(raw_col)
 
 
-def parse_numeric_salary(val):
-    """Extract numeric salary value from various formats ($120k, 120000, 80k-100k, LPA)."""
+def parse_numeric_volume(val: Any) -> Optional[int]:
+    """Parses openings or demand volume into an integer."""
     if pd.isnull(val):
         return None
     if isinstance(val, (int, float)):
-        return float(val) if val > 0 else None
-
+        return int(val) if val > 0 else None
     s = str(val).lower().replace(",", "")
-    k_matches = re.findall(r"(\d+(?:\.\d+)?)\s*k\b", s)
-    if k_matches:
-        vals = [float(m) * 1000 for m in k_matches]
-        return sum(vals) / len(vals)
-
-    nums = re.findall(r"\d+(?:\.\d+)?", s)
+    nums = re.findall(r"\d+", s)
     if nums:
-        floats = [float(n) for n in nums if float(n) > 500]
-        if floats:
-            return sum(floats) / len(floats)
+        # Avoid astronomically large salaries; scale down if necessary
+        n = int(nums[0])
+        if n > 10000:
+            n = int(n / 1000)
+        return max(5, n)
     return None
 
 
-def normalize_salary_tier(val, salary_num=None, title_str="") -> str:
-    """Normalize any tier notation, or infer from numeric salary or job title."""
+def normalize_curriculum_status(val: Any, demand_num: Optional[int] = None, skills_list: Optional[List[str]] = None) -> str:
+    """Maps diverse status tags or infers status based on market indicators."""
     s = str(val).strip().lower() if pd.notnull(val) else ""
 
-    # Kaggle conventions & common abbreviations
-    if s in {"en", "entry", "entry level", "entry-level", "junior", "jr", "intern", "internship", "fresher", "trainee", "associate", "0-2"}:
-        return "Entry"
-    if s in {"mi", "mid", "mid-level", "mid level", "intermediate", "experienced", "2-5"}:
-        return "Mid"
-    if s in {"se", "ex", "senior", "sr", "lead", "principal", "staff", "architect", "manager", "director", "head", "executive", "5+"}:
-        return "Senior"
+    if any(w in s for w in ["high", "emerging", "critical", "senior", "advanced", "growth", "top"]):
+        return "High Demand"
+    if any(w in s for w in ["update", "moderate", "mid", "intermediate", "evolving", "revision"]):
+        return "Needs Update"
+    if any(w in s for w in ["obsolete", "oversupplied", "declining", "entry", "legacy", "low", "saturated"]):
+        return "Obsolete/Oversupplied"
 
-    # Infer from numerical salary if provided
-    if salary_num is not None and pd.notnull(salary_num):
-        try:
-            num = float(salary_num)
-            if num > 0:
-                if num < 100:  # Indian LPA scale (e.g. 6 to 30)
-                    num = num * 12000
-                if num < 75000:
-                    return "Entry"
-                elif num <= 120000:
-                    return "Mid"
-                else:
-                    return "Senior"
-        except (ValueError, TypeError):
-            pass
+    # Heuristic based on extracted skills modernity
+    if skills_list:
+        high_demand_stack = {"docker", "kubernetes", "aws", "pytorch", "tensorflow", "ci/cd", "microservices", "kafka"}
+        modern_overlap = len(set(skills_list) & high_demand_stack)
+        if modern_overlap >= 2:
+            return "High Demand"
+        elif len(skills_list) >= 2:
+            return "Needs Update"
 
-    # Infer from job title keywords
-    t = str(title_str).lower()
-    if re.search(r"\b(senior|sr|lead|principal|staff|architect|director|head|vp|manager|chief)\b", t):
-        return "Senior"
-    if re.search(r"\b(junior|jr|intern|internship|entry|trainee|fresher|graduate|associate|assistant)\b", t):
-        return "Entry"
+    # Heuristic based on demand volume
+    if demand_num is not None:
+        if demand_num >= 150:
+            return "High Demand"
+        elif demand_num >= 60:
+            return "Needs Update"
+        else:
+            return "Obsolete/Oversupplied"
 
-    return "Mid"
+    return "Needs Update"
 
 
 def read_uploaded_csv(file_storage) -> pd.DataFrame:
-    """Read CSV with automatic encoding detection and delimiter sniffing."""
+    """Reads CSV with encoding auto-detection and flexible delimiter parsing."""
     raw_bytes = file_storage.read()
     file_storage.seek(0)
     for enc in ["utf-8", "utf-8-sig", "latin1", "cp1252", "iso-8859-1"]:
@@ -256,54 +267,55 @@ def read_uploaded_csv(file_storage) -> pd.DataFrame:
     return pd.read_csv(io.StringIO(text), sep=",")
 
 
-def ensure_balanced_tiers(df: pd.DataFrame) -> pd.DataFrame:
+def ensure_balanced_classes(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Ensure the dataset has all 3 tiers (Entry, Mid, Senior) so ML models can train properly.
-    Uses quantiles if numeric salaries exist, or sensible heuristics based on titles/rank.
+    Guarantees all 3 classes (High Demand, Needs Update, Obsolete/Oversupplied)
+    are present with adequate support so supervised models train reliably.
     """
-    counts = df["salary_tier"].value_counts()
+    counts = df["curriculum_status"].value_counts()
     if len(counts) >= 3 and counts.min() >= 2:
         return df
 
-    # If numeric salaries exist with enough unique values, partition into 3 balanced tertiles
-    if "salary" in df.columns:
-        s = pd.to_numeric(df["salary"], errors="coerce").dropna()
-        if len(s.unique()) >= 3:
-            try:
-                df["salary_tier"] = pd.qcut(s, q=3, labels=["Entry", "Mid", "Senior"], duplicates="drop")
-                if len(df["salary_tier"].value_counts()) >= 3 and df["salary_tier"].value_counts().min() >= 2:
-                    return df
-            except Exception:
-                pass
-
-    # Assign balanced distribution across Entry, Mid, Senior
-    tier_assignments = []
+    # Rebalance dynamically across the 3 classes based on skills and volume
+    reassigned = []
     for idx, row in df.iterrows():
-        t = str(row.get("job_title", "")).lower()
-        if re.search(r"\b(senior|sr|lead|principal|staff|architect|director|head|vp|manager|chief)\b", t):
-            tier_assignments.append("Senior")
-        elif re.search(r"\b(junior|jr|intern|internship|entry|trainee|fresher|graduate|associate|assistant)\b", t):
-            tier_assignments.append("Entry")
+        skills = row.get("skills_list", [])
+        vol = row.get("demand_volume", 50)
+        high_stack = {"docker", "kubernetes", "aws", "pytorch", "tensorflow", "ci/cd", "microservices"}
+        if len(set(skills) & high_stack) >= 2 or vol > 140:
+            reassigned.append("High Demand")
+        elif len(skills) >= 2 or vol >= 50:
+            reassigned.append("Needs Update")
         else:
-            pos = idx % 3
-            tier_assignments.append("Entry" if pos == 0 else ("Mid" if pos == 1 else "Senior"))
+            reassigned.append("Obsolete/Oversupplied")
 
-    df["salary_tier"] = tier_assignments
+    df["curriculum_status"] = reassigned
+    counts = df["curriculum_status"].value_counts()
+
+    # Guarantee at least 2 instances of each class
+    for cls in STATUS_CLASSES:
+        if df[df["curriculum_status"] == cls].shape[0] < 2:
+            # Overwrite indices cyclically to guarantee class balance
+            sample_idxs = df.index.tolist()
+            if sample_idxs:
+                target_idx = sample_idxs[len(sample_idxs) - 1 - STATUS_CLASSES.index(cls)]
+                df.at[target_idx, "curriculum_status"] = cls
+
     return df
 
 
 def preprocess_df(df_raw: pd.DataFrame) -> pd.DataFrame:
     """
-    Universally preprocess ANY uploaded job dataset:
-    - Auto-detects columns (Title, Skills/Description, Salary, Company, Location, Tier)
-    - Maps diverse naming conventions (Kaggle, LinkedIn, Indeed, etc.)
-    - Auto-infers missing columns with smart heuristics
-    - Extracts 41 canonical technical skills via Regex
-    - Normalizes and balances salary tiers to Entry, Mid, Senior
+    Normalizes dataset to MSINS specifications:
+    - Standardizes columns: Job Role, Required Skills, District/Location, Demand Volume, Status
+    - Normalizes Maharashtra districts
+    - Extracts canonical technical skills
+    - Balances curriculum status classes
+    - Generates binary feature vectors
     """
     df = df_raw.copy()
 
-    # 1. Map columns using fuzzy/synonym matching
+    # 1. Rename columns using fuzzy synonyms
     col_mapping = {}
     for col in df.columns:
         std_name = map_column_name(col)
@@ -311,140 +323,153 @@ def preprocess_df(df_raw: pd.DataFrame) -> pd.DataFrame:
             col_mapping[col] = std_name
     df = df.rename(columns=col_mapping)
 
-    # 2. Resolve required columns with smart fallbacks
-    if "job_title" not in df.columns:
+    # 2. Assign standard fallbacks for missing columns
+    if "job_role" not in df.columns:
         text_cols = [c for c in df.columns if df[c].dtype == "object"]
-        df["job_title"] = df[text_cols[0]] if text_cols else "Software Engineer"
+        df["job_role"] = df[text_cols[0]] if text_cols else "Software Developer"
 
-    if "company" not in df.columns:
-        df["company"] = "Tech Enterprise"
-
-    if "location" not in df.columns:
-        df["location"] = "Remote"
+    if "district" not in df.columns:
+        random.seed(42)
+        df["district"] = [random.choice(MAHARASHTRA_DISTRICTS) for _ in range(len(df))]
+    else:
+        # Standardize Maharashtra district names
+        def standardize_district(val):
+            s = str(val).strip().title()
+            for dist in MAHARASHTRA_DISTRICTS:
+                if dist.lower() in s.lower() or s.lower() in dist.lower():
+                    return dist
+            if "pune" in s.lower(): return "Pune"
+            if "mumbai" in s.lower(): return "Mumbai"
+            if "nagpur" in s.lower(): return "Nagpur"
+            if "nashik" in s.lower(): return "Nashik"
+            if "aurangabad" in s.lower() or "sambhajinagar" in s.lower(): return "Chhatrapati Sambhajinagar"
+            if "thane" in s.lower(): return "Thane"
+            return random.choice(MAHARASHTRA_DISTRICTS)
+        df["district"] = df["district"].apply(standardize_district)
 
     if "skills_raw" not in df.columns:
-        # Check for description columns
         desc_cols = [c for c in df.columns if any(w in str(c).lower() for w in ["desc", "detail", "text", "body", "summary"])]
         if desc_cols:
             df["skills_raw"] = df[desc_cols[0]].fillna("")
         else:
-            df["skills_raw"] = df["job_title"].fillna("")
+            df["skills_raw"] = df["job_role"].fillna("")
 
-    # Parse numerical salary
-    if "salary" in df.columns:
-        df["salary_clean"] = df["salary"].apply(parse_numeric_salary)
+    # Parse demand volume
+    if "demand_volume" in df.columns:
+        df["demand_volume"] = df["demand_volume"].apply(parse_numeric_volume)
     else:
-        df["salary_clean"] = None
+        df["demand_volume"] = None
 
-    # Salary tier resolution
-    if "salary_tier" in df.columns:
-        df["salary_tier"] = [
-            normalize_salary_tier(row.get("salary_tier"), row.get("salary_clean"), row.get("job_title"))
-            for _, row in df.iterrows()
-        ]
-    else:
-        df["salary_tier"] = [
-            normalize_salary_tier(None, row.get("salary_clean"), row.get("job_title"))
-            for _, row in df.iterrows()
-        ]
-
-    # Ensure valid salary values for analytics
-    tier_salary_defaults = {"Entry": 65000, "Mid": 98000, "Senior": 160000}
-    if "salary_clean" not in df.columns or df["salary_clean"].isnull().all():
+    if df["demand_volume"].isnull().all() or df["demand_volume"].empty:
         random.seed(42)
-        df["salary"] = df["salary_tier"].map(
-            lambda t: random.randint(
-                int(tier_salary_defaults.get(t, 90000) * 0.85),
-                int(tier_salary_defaults.get(t, 90000) * 1.25)
-            )
-        )
+        df["demand_volume"] = [random.randint(25, 320) for _ in range(len(df))]
     else:
-        df["salary"] = df["salary_clean"].fillna(
-            df["salary_tier"].map(tier_salary_defaults)
-        ).astype(int)
+        df["demand_volume"] = df["demand_volume"].fillna(75).astype(int)
 
-    # Ensure balanced tiers so supervised models always have all classes
-    df = ensure_balanced_tiers(df)
+    # 3. Clean and extract skills
+    df["display_role"] = df["job_role"].astype(str).str.strip().str.title()
+    df["job_role"]     = df["job_role"].apply(clean_text)
+    df["skills_raw"]   = df["skills_raw"].apply(clean_text)
+    df["skills_list"]  = df["skills_raw"].apply(extract_skills)
 
-    # 3. Clean text & extract skills
-    df["display_title"] = df["job_title"].astype(str).str.strip().str.title()
-    df["job_title"]   = df["job_title"].apply(clean_text)
-    df["company"]     = df["company"].apply(clean_text)
-    df["location"]    = df["location"].apply(clean_text)
-    df["skills_raw"]  = df["skills_raw"].apply(clean_text)
-
-    df["skills_list"] = df["skills_raw"].apply(extract_skills)
-
-    # If row has no technical skills found in skills_raw, assign realistic role-based skills
-    fallback_options = [
-        ["python", "sql", "git"],
-        ["docker", "kubernetes", "linux", "aws"],
-        ["javascript", "react", "typescript", "node.js"],
-        ["machine learning", "python", "statistics", "tableau"],
-        ["java", "postgresql", "redis", "fastapi"]
-    ]
-
+    # Fallback skills assignment only if job row contains NO recognized skills
     for i, row in df.iterrows():
         skills = row["skills_list"]
-        if len(skills) < 2:
-            title_clean = str(row["job_title"]).lower()
-            assigned = []
-            for known_title, pool in SKILL_POOLS.items():
-                if known_title.lower() in title_clean or any(word in title_clean for word in known_title.lower().split() if len(word) > 3):
-                    assigned.extend(pool[:4])
-                    break
-            if not assigned:
-                assigned = fallback_options[i % len(fallback_options)]
-            merged = sorted(set(skills + assigned))
-            df.at[i, "skills_list"] = merged
+        if not skills:
+            title_clean = str(row["job_role"]).lower()
+            if any(w in title_clean for w in ["ai", "machine learning", "deep learning", "scientist", "vision"]):
+                assigned = ["python", "machine learning", "tensorflow"]
+            elif any(w in title_clean for w in ["cloud", "devops", "kubernetes", "docker", "infra"]):
+                assigned = ["aws", "docker", "linux", "git"]
+            elif any(w in title_clean for w in ["web", "react", "node", "frontend", "fullstack"]):
+                assigned = ["javascript", "react", "git"]
+            elif any(w in title_clean for w in ["data", "analyst", "bi", "report"]):
+                assigned = ["sql", "excel", "tableau"]
+            elif any(w in title_clean for w in ["legacy", "desktop", "clerk", "operator", "support"]):
+                assigned = ["excel"] if ("clerk" in title_clean or "operator" in title_clean) else ["linux"]
+            else:
+                assigned = ["python", "sql", "git"]
+            df.at[i, "skills_list"] = assigned
 
+    # 4. Resolve curriculum status
+    if "curriculum_status" in df.columns:
+        df["curriculum_status"] = [
+            normalize_curriculum_status(row.get("curriculum_status"), row.get("demand_volume"), row.get("skills_list"))
+            for _, row in df.iterrows()
+        ]
+    else:
+        df["curriculum_status"] = [
+            normalize_curriculum_status(None, row.get("demand_volume"), row.get("skills_list"))
+            for _, row in df.iterrows()
+        ]
+
+    df = ensure_balanced_classes(df)
     df = one_hot_encode(df)
     df = df.reset_index(drop=True)
     return df
 
 
-def get_hottest_jobs(df: pd.DataFrame, top_n: int = 5) -> list:
-    """
-    Computes the top N hottest/most trending jobs in the dataset based on:
-    - Postings demand volume & share (%)
-    - Average salary (numeric if available, or estimated by salary_tier)
-    - Key in-demand skills for each role
-    - Hotness Score (0–100 index combining market demand & compensation)
-    """
-    title_col = "display_title" if "display_title" in df.columns else "job_title"
-    total_jobs = len(df)
-    if total_jobs == 0:
-        return []
-
-    tier_est = {
-        "Entry": 62000,
-        "Mid": 98000,
-        "Senior": 165000,
-    }
-
+# ──────────────────────────────────────────────────────────────
+# Analytics & Market Insights Engines
+# ──────────────────────────────────────────────────────────────
+def compute_district_summary(df: pd.DataFrame) -> List[Dict[str, Any]]:
+    """Generates district-level training & recruitment plans for Maharashtra."""
     feature_cols = [c for c in df.columns if c.startswith("skill_")]
-    has_num_salary = "salary" in df.columns and pd.to_numeric(df["salary"], errors="coerce").notnull().any()
+    results = []
 
-    grouped = df.groupby(title_col)
-    ranked = grouped.size().sort_values(ascending=False).head(top_n)
-    max_count = ranked.iloc[0] if len(ranked) > 0 else 1
+    for district, group in df.groupby("district"):
+        total_openings = int(group["demand_volume"].sum())
+        role_counts = group["display_role"].value_counts()
+        top_roles = role_counts.head(2).index.tolist()
+
+        # Dominant skills in this district
+        top_skills = []
+        if feature_cols:
+            sums = group[feature_cols].sum().sort_values(ascending=False).head(3)
+            top_skills = [
+                s.replace("skill_", "").replace("_", " ").replace("plus", "+").replace("sharp", "#")
+                for s in sums.index if sums[s] > 0
+            ]
+
+        # Status distribution in district
+        status_counts = group["curriculum_status"].value_counts().to_dict()
+        high_demand_share = round((status_counts.get("High Demand", 0) / len(group)) * 100, 1)
+
+        results.append({
+            "district": district,
+            "postings_count": int(len(group)),
+            "total_openings": total_openings,
+            "top_roles": top_roles,
+            "top_skills": top_skills,
+            "high_demand_share": high_demand_share,
+            "status_breakdown": status_counts,
+        })
+
+    # Sort districts by total hiring demand volume
+    results.sort(key=lambda x: x["total_openings"], reverse=True)
+    return results
+
+
+def get_hottest_industry_roles(df: pd.DataFrame, top_n: int = 5) -> List[Dict[str, Any]]:
+    """Calculates top emerging roles in the Maharashtra market."""
+    feature_cols = [c for c in df.columns if c.startswith("skill_")]
+    grouped = df.groupby("display_role")
+    
+    ranked = grouped["demand_volume"].sum().sort_values(ascending=False).head(top_n)
+    max_volume = ranked.iloc[0] if len(ranked) > 0 else 1
 
     hottest = []
-    for rank, (title, count) in enumerate(ranked.items(), 1):
-        sub = df[df[title_col] == title]
-        demand_pct = round((count / total_jobs) * 100, 1)
+    for rank, (role_name, total_openings) in enumerate(ranked.items(), 1):
+        sub = df[df["display_role"] == role_name]
+        postings_count = len(sub)
+        
+        # Dominant district for this role
+        top_district = sub["district"].mode().iloc[0] if not sub["district"].empty else "Pune"
+        
+        # Primary curriculum viability status
+        primary_status = sub["curriculum_status"].mode().iloc[0] if not sub["curriculum_status"].empty else "High Demand"
 
-        if has_num_salary:
-            s_num = pd.to_numeric(sub["salary"], errors="coerce")
-            avg_val = int(s_num.mean()) if not s_num.dropna().empty else 95000
-            min_val = int(s_num.min()) if not s_num.dropna().empty else 60000
-            max_val = int(s_num.max()) if not s_num.dropna().empty else 160000
-        else:
-            avg_val = int(sub["salary_tier"].map(tier_est).mean())
-            min_val = int(avg_val * 0.75)
-            max_val = int(avg_val * 1.35)
-
-        # Top skills for this specific job
+        # Top skills
         top_skills = []
         if feature_cols:
             sums = sub[feature_cols].sum().sort_values(ascending=False).head(4)
@@ -453,29 +478,26 @@ def get_hottest_jobs(df: pd.DataFrame, top_n: int = 5) -> list:
                 for s in sums.index if sums[s] > 0
             ]
 
-        primary_tier = sub["salary_tier"].mode().iloc[0] if not sub["salary_tier"].empty else "Mid"
-
-        # Hotness score (60% demand volume, 40% salary level)
-        demand_score = (count / max_count) * 60.0
-        salary_factor = min(1.0, max(0.0, (avg_val - 45000) / 135000)) * 40.0
-        hotness_score = round(demand_score + salary_factor, 1)
+        # Market Viability Index (0–100)
+        volume_score = (total_openings / max_volume) * 70.0
+        status_boost = 30.0 if primary_status == "High Demand" else (18.0 if primary_status == "Needs Update" else 8.0)
+        viability_index = round(min(100.0, volume_score + status_boost), 1)
 
         hottest.append({
             "rank": rank,
-            "title": str(title).title(),
-            "count": int(count),
-            "demand_pct": demand_pct,
-            "avg_salary": f"${avg_val:,.0f}",
-            "salary_range": f"${min_val:,.0f} – ${max_val:,.0f}",
-            "primary_tier": primary_tier,
+            "role": role_name,
+            "openings": int(total_openings),
+            "postings": postings_count,
+            "primary_district": top_district,
+            "status": primary_status,
             "top_skills": top_skills,
-            "hotness_score": hotness_score,
+            "viability_index": viability_index,
         })
 
     return hottest
 
 
-def compute_metrics(y_true, y_pred, model_name: str) -> dict:
+def compute_metrics(y_true, y_pred, model_name: str) -> Dict[str, Any]:
     return {
         "model":     model_name,
         "accuracy":  round(accuracy_score(y_true, y_pred), 4),
@@ -485,43 +507,66 @@ def compute_metrics(y_true, y_pred, model_name: str) -> dict:
     }
 
 
-def train_and_evaluate(df: pd.DataFrame) -> dict:
-    """Core ML pipeline: feature matrix, K-Means, KNN, Logistic Regression."""
+# ──────────────────────────────────────────────────────────────
+# Core ML Pipeline (K-Means, KNN, Logistic Regression)
+# ──────────────────────────────────────────────────────────────
+def train_and_evaluate(df: pd.DataFrame) -> Dict[str, Any]:
+    """
+    Executes:
+    1. Unsupervised K-Means on technical skill vectors (groups skills into domain demand clusters).
+    2. Supervised KNN & Logistic Regression on Course Curriculum Viability Status.
+    3. Model evaluation & performance metrics comparison.
+    """
     feature_cols = [c for c in df.columns if c.startswith("skill_")]
     X = df[feature_cols].values.astype(float)
 
     le = LabelEncoder()
-    y  = le.fit_transform(df["salary_tier"])
+    y = le.fit_transform(df["curriculum_status"])
 
-    # ── K-Means Clustering ──────────────────────────────────
+    # ── 1. Unsupervised Learning: K-Means Clustering ────────────
     n_unique_X = len(np.unique(X, axis=0))
-    n_clusters = max(1, min(3, n_unique_X, len(df)))
+    n_clusters = max(2, min(4, n_unique_X, len(df)))
     kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
     cluster_ids = kmeans.fit_predict(X)
     df["cluster"] = cluster_ids
 
+    # Cluster archetype domain naming
+    cluster_names = [
+        "Cloud, DevOps & Distributed Systems",
+        "Data Science, Analytics & Applied AI",
+        "Modern Fullstack & Web Application Engineering",
+        "Enterprise Systems, Databases & Backend"
+    ]
+
     cluster_summary = []
+    centroids = kmeans.cluster_centers_
+
     for cid in sorted(df["cluster"].unique()):
         sub = df[df["cluster"] == cid]
         skill_counts = sub[feature_cols].sum().sort_values(ascending=False)
         top_skills = [
             c.replace("skill_", "").replace("_", " ").replace("plus", "+").replace("sharp", "#")
-            for c in skill_counts.head(3).index
+            for c in skill_counts.head(5).index if skill_counts[c] > 0
         ]
-        tier_dist = sub["salary_tier"].value_counts().to_dict()
+        status_dist = sub["curriculum_status"].value_counts().to_dict()
+        top_districts = sub["district"].value_counts().head(3).to_dict()
+        total_openings = int(sub["demand_volume"].sum())
+
+        domain_label = cluster_names[cid % len(cluster_names)]
+
         cluster_summary.append({
-            "cluster":    int(cid),
-            "size":       int(len(sub)),
+            "cluster_id": int(cid),
+            "cluster_name": f"Cluster {cid + 1}: {domain_label}",
+            "domain_label": domain_label,
+            "size": int(len(sub)),
+            "total_openings": total_openings,
             "top_skills": top_skills,
-            "tier_dist":  tier_dist,
+            "status_dist": status_dist,
+            "top_districts": top_districts,
+            "centroid": centroids[cid].tolist(),
         })
 
-    MODEL_STORE["kmeans"]         = kmeans
-    MODEL_STORE["cluster_labels"] = cluster_ids.tolist()
-
-    if len(df) < 5:
-        raise ValueError("Dataset is too small (need at least 5 rows to analyze).")
-
+    # ── 2. Supervised Learning: KNN & Logistic Regression ───────
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
@@ -542,11 +587,13 @@ def train_and_evaluate(df: pd.DataFrame) -> dict:
         stratify=y if can_stratify else None
     )
 
+    # Train K-Nearest Neighbors
     k = min(5, max(1, len(X_train) - 1))
     knn = KNeighborsClassifier(n_neighbors=k, metric="euclidean")
     knn.fit(X_train, y_train)
     knn_pred = knn.predict(X_test)
 
+    # Train Logistic Regression
     lr = LogisticRegression(max_iter=1000, class_weight="balanced", random_state=42)
     if len(np.unique(y_train)) >= 2:
         lr.fit(X_train, y_train)
@@ -555,16 +602,22 @@ def train_and_evaluate(df: pd.DataFrame) -> dict:
         lr.fit(X_scaled, y)
         lr_pred = lr.predict(X_test)
 
+    # Store models in memory
     MODEL_STORE.update({
         "knn":          knn,
         "lr":           lr,
         "le":           le,
         "scaler":       scaler,
         "feature_cols": feature_cols,
+        "kmeans":       kmeans,
+        "cluster_info": cluster_summary,
+        "district_summary": compute_district_summary(df),
+        "hottest_roles": get_hottest_industry_roles(df, top_n=5),
+        "df_clean":     df,
         "trained":      True,
     })
 
-    tier_counts = df["salary_tier"].value_counts().to_dict()
+    status_dist = df["curriculum_status"].value_counts().to_dict()
     all_label_indices = list(range(len(le.classes_)))
     all_label_names = [str(c) for c in le.classes_]
 
@@ -575,21 +628,116 @@ def train_and_evaluate(df: pd.DataFrame) -> dict:
         y_test, lr_pred, labels=all_label_indices, target_names=all_label_names, output_dict=True, zero_division=0
     )
 
-    hottest_jobs = get_hottest_jobs(df, top_n=5)
-
     return {
-        "success":       True,
-        "n_rows":        len(df),
-        "n_features":    len(feature_cols),
-        "tier_dist":     tier_counts,
-        "clusters":      cluster_summary,
-        "hottest_jobs":  hottest_jobs,
+        "success":          True,
+        "n_rows":           len(df),
+        "n_features":       len(feature_cols),
+        "status_dist":      status_dist,
+        "clusters":         cluster_summary,
+        "hottest_roles":    MODEL_STORE["hottest_roles"],
+        "district_summary": MODEL_STORE["district_summary"],
         "metrics": {
             "knn": compute_metrics(y_test, knn_pred, "KNN"),
-            "lr":  compute_metrics(y_test, lr_pred,  "Logistic Regression"),
+            "lr":  compute_metrics(y_pred=lr_pred, y_true=y_test, model_name="Logistic Regression"),
         },
         "knn_report": knn_report,
         "lr_report":  lr_report,
+    }
+
+
+# ──────────────────────────────────────────────────────────────
+# Curriculum Gap & Recommendation Engine
+# ──────────────────────────────────────────────────────────────
+def generate_curriculum_recommendations(selected_skills: List[str], predicted_status: str) -> Dict[str, Any]:
+    """
+    Translates ML predictions into evidence-based curriculum recommendations,
+    trainer capacity guidance, and equipment planning in accordance with MSINS ID26134.
+    """
+    clusters = MODEL_STORE.get("cluster_info", [])
+    feature_cols = MODEL_STORE.get("feature_cols", [])
+    selected_set = set(selected_skills)
+    COL_TO_SKILL = {skill_col_name(s): s for s in CANONICAL_SKILLS}
+
+    # Convert selected skills into binary vector for centroid similarity
+    vec = np.zeros(len(feature_cols))
+    for i, col in enumerate(feature_cols):
+        canonical = COL_TO_SKILL.get(col)
+        if canonical and (canonical in selected_set or any(alias in selected_set for alias, target in SKILL_ALIASES.items() if target == canonical)):
+            vec[i] = 1.0
+
+    # Match closest cluster via cosine similarity to centroid or skill overlap
+    best_cluster = None
+    best_sim = -1.0
+    for c in clusters:
+        centroid = np.array(c.get("centroid", []))
+        if len(centroid) == len(vec) and np.linalg.norm(vec) > 0 and np.linalg.norm(centroid) > 0:
+            sim = float(np.dot(vec, centroid) / (np.linalg.norm(vec) * np.linalg.norm(centroid)))
+        else:
+            sim = float(len(selected_set & set(c.get("top_skills", []))))
+        if sim > best_sim:
+            best_sim = sim
+            best_cluster = c
+
+    if not best_cluster and clusters:
+        best_cluster = clusters[0]
+
+    cluster_top_skills = best_cluster["top_skills"] if best_cluster else []
+    missing_skills = [s for s in cluster_top_skills if s not in selected_set]
+
+    # Concrete Actionable Advice
+    if predicted_status == "High Demand":
+        status_color = "emerald"
+        status_msg = "Curriculum is strongly aligned with emerging industry demand."
+        placement_readiness = 94
+        action_plan = [
+            f"Maintain course competitiveness by adding advanced modules in {', '.join(missing_skills[:2]) or 'System Design'}."
+            if missing_skills else "Maintain current industry-validated curriculum.",
+            "Schedule guest lectures with tech recruiters from Pune & Mumbai technology parks.",
+            "Establish industry micro-credentials and fast-track placement interviews."
+        ]
+        equipment_guidance = "Maintain cloud sandbox environment and modern dual-monitor workstations."
+        trainer_guidance = "Certify faculty in advanced system architecture and industry project mentorship."
+
+    elif predicted_status == "Needs Update":
+        status_color = "amber"
+        status_msg = "Curriculum covers foundational skills but lacks industry-critical modern tooling."
+        placement_readiness = 68
+        recommended_additions = missing_skills[:3] or ["docker", "aws", "ci/cd"]
+        action_plan = [
+            f"Integrate modern industry tools into syllabus: add {', '.join(recommended_additions)}.",
+            "Transition 35% of traditional lectures into hands-on lab projects with Git version control.",
+            "Align capstone projects with active hiring requirements in Maharashtra district hubs."
+        ]
+        equipment_guidance = "Provision cloud container labs (Docker/Kubernetes access) and updated Linux workstations."
+        trainer_guidance = f"Conduct faculty upskilling workshops on {', '.join(recommended_additions)} via industry trainer partnerships."
+
+    else:  # Obsolete/Oversupplied
+        status_color = "rose"
+        status_msg = "Curriculum relies on legacy, oversaturated, or low-demand technologies with poor hiring potential."
+        placement_readiness = 32
+        pivotal_skills = ["python", "sql", "git", "docker", "aws"]
+        action_plan = [
+            f"Phase out legacy modules and replace with contemporary technology stacks: {', '.join(pivotal_skills[:3])}.",
+            "Re-structure qualification framework to comply with NSQF & MSINS emerging technology standards.",
+            "Conduct urgent curriculum revision workshop with Maharashtra State Innovation Society industry board."
+        ]
+        equipment_guidance = "Retire legacy hardware/software; install modern Linux operating environments and high-speed network access.",
+        trainer_guidance = "Complete retraining and re-skilling program for trainers on Python, Cloud & Modern Web stacks."
+
+    # Top target districts for this cluster
+    target_districts = list(best_cluster.get("top_districts", {}).keys()) if best_cluster else ["Pune", "Mumbai"]
+
+    return {
+        "aligned_cluster": best_cluster["cluster_name"] if best_cluster else "General Industry Stack",
+        "matched_skills": [s for s in selected_skills if s in cluster_top_skills],
+        "missing_skills": missing_skills,
+        "placement_readiness": placement_readiness,
+        "status_color": status_color,
+        "status_message": status_msg,
+        "action_plan": action_plan,
+        "equipment_guidance": equipment_guidance,
+        "trainer_guidance": trainer_guidance,
+        "target_districts": target_districts,
     }
 
 
@@ -601,12 +749,17 @@ def index():
     sample_exists = os.path.exists("sample_jobs.csv") or os.path.exists(
         os.path.join(os.path.dirname(__file__), "sample_jobs.csv")
     )
-    return render_template("index.html", skills=CANONICAL_SKILLS, has_sample_csv=sample_exists)
+    return render_template(
+        "index.html",
+        skills=CANONICAL_SKILLS,
+        has_sample_csv=sample_exists,
+        districts=MAHARASHTRA_DISTRICTS,
+    )
 
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    """Accepts a CSV file upload, trains models, returns metrics & top 5 hottest jobs."""
+    """Accepts a job postings CSV, runs K-Means, trains KNN & Logistic Regression."""
     if "csv_file" not in request.files:
         return jsonify({"error": "No file uploaded."}), 400
 
@@ -633,7 +786,7 @@ def upload():
 
 @app.route("/load-sample", methods=["GET", "POST"])
 def load_sample():
-    """Quick-loads the pre-generated sample_jobs.csv without manual file browsing."""
+    """Quick-loads the pre-generated MSINS sample dataset from server."""
     paths_to_check = [
         "sample_jobs.csv",
         os.path.join(os.path.dirname(__file__), "sample_jobs.csv"),
@@ -659,29 +812,40 @@ def load_sample():
 @app.route("/predict", methods=["POST"])
 def predict():
     """
-    Accepts a JSON list of selected skills.
-    Returns KNN and LR salary-tier predictions with probabilities.
+    Accepts user's Course Curriculum Skills.
+    Predicts Course Viability Status using KNN & Logistic Regression.
+    Generates actionable curriculum recommendations and skill gap analysis.
     """
     if not MODEL_STORE["trained"]:
-        return jsonify({"error": "No model trained yet. Please upload a CSV first."}), 400
+        return jsonify({"error": "No model trained yet. Please upload a dataset first."}), 400
 
     data = request.get_json(silent=True)
     if not data or "skills" not in data:
-        return jsonify({"error": "Provide {'skills': [...]} in the request body."}), 400
+        return jsonify({"error": "Provide {'skills': [...]} in request body."}), 400
 
     selected = [s.lower().strip() for s in data["skills"]]
+    if not selected:
+        return jsonify({"error": "Please provide at least one curriculum skill."}), 400
+
     feature_cols = MODEL_STORE["feature_cols"]
     le     = MODEL_STORE["le"]
     scaler = MODEL_STORE["scaler"]
+    COL_TO_SKILL = {skill_col_name(s): s for s in CANONICAL_SKILLS}
 
-    # Build feature vector
+    # Build feature vector reliably
     vec = []
     for col in feature_cols:
-        skill_name = (col.replace("skill_", "")
-                         .replace("_", " ")
-                         .replace("plus", "+")
-                         .replace("sharp", "#"))
-        vec.append(1.0 if skill_name in selected else 0.0)
+        canonical = COL_TO_SKILL.get(col)
+        is_active = 0.0
+        if canonical:
+            if canonical in selected:
+                is_active = 1.0
+            else:
+                for alias, target in SKILL_ALIASES.items():
+                    if target == canonical and alias in selected:
+                        is_active = 1.0
+                        break
+        vec.append(is_active)
 
     x = np.array(vec).reshape(1, -1)
     x_scaled = scaler.transform(x)
@@ -691,60 +855,62 @@ def predict():
     lr_pred   = MODEL_STORE["lr"].predict(x_scaled)[0]
     lr_proba  = MODEL_STORE["lr"].predict_proba(x_scaled)[0]
 
-    knn_tier = le.inverse_transform([knn_pred])[0]
-    lr_tier  = le.inverse_transform([lr_pred])[0]
-
-    tier_ranges = {
-        "Entry":  "$40,000 – $75,000",
-        "Mid":    "$75,000 – $120,000",
-        "Senior": "$120,000 – $220,000",
-    }
+    knn_status = le.inverse_transform([knn_pred])[0]
+    lr_status  = le.inverse_transform([lr_pred])[0]
 
     classes = le.classes_.tolist()
     knn_proba_dict = {classes[i]: round(float(knn_proba[i]) * 100, 1) for i in range(len(classes))}
     lr_proba_dict  = {classes[i]: round(float(lr_proba[i])  * 100, 1) for i in range(len(classes))}
 
+    # Choose primary consensus or highest confidence
+    primary_status = lr_status if lr_proba.max() >= knn_proba.max() else knn_status
+    recommendations = generate_curriculum_recommendations(selected, primary_status)
+
     return jsonify({
         "knn": {
-            "tier":        knn_tier,
-            "salary_range": tier_ranges.get(knn_tier, ""),
-            "confidence":  round(float(knn_proba.max()) * 100, 1),
+            "status":        knn_status,
+            "confidence":    round(float(knn_proba.max()) * 100, 1),
             "probabilities": knn_proba_dict,
         },
         "lr": {
-            "tier":        lr_tier,
-            "salary_range": tier_ranges.get(lr_tier, ""),
-            "confidence":  round(float(lr_proba.max()) * 100, 1),
+            "status":        lr_status,
+            "confidence":    round(float(lr_proba.max()) * 100, 1),
             "probabilities": lr_proba_dict,
         },
+        "primary_status": primary_status,
+        "recommendations": recommendations,
     })
 
 
 @app.route("/sample-csv")
 def sample_csv():
-    """Generate and serve a sample CSV for testing."""
+    """Generates and serves a realistic Maharashtra job market dataset."""
     random.seed(42)
     rows = []
-    for _ in range(300):
-        title   = random.choice(JOB_TITLES)
-        pool    = SKILL_POOLS.get(title, CANONICAL_SKILLS[:8])
-        k       = random.randint(3, min(6, len(pool)))
-        skills  = ", ".join(random.sample(pool, k))
-        tier    = random.choices(
-            ["Entry", "Mid", "Senior"], weights=[0.33, 0.40, 0.27]
-        )[0]
-        lo, hi  = SALARY_RANGES[tier]
-        salary  = random.randint(lo, hi)
+    for _ in range(400):
+        role_info = random.choice(ROLE_TEMPLATES)
+        if len(role_info) == 6:
+            role_name, core_skills, status, lo_vol, hi_vol, extra_pool = role_info
+        else:
+            role_name, core_skills, status, lo_vol, hi_vol = role_info
+            extra_pool = CANONICAL_SKILLS
+        
+        extra = random.sample(extra_pool, random.randint(0, min(2, len(extra_pool)))) if extra_pool else []
+        combined_skills = sorted(set(core_skills + extra))
+        skills_str = ", ".join(combined_skills)
+        
+        district = random.choice(MAHARASHTRA_DISTRICTS)
+        volume = random.randint(lo_vol, hi_vol)
+
         rows.append({
-            "job_title":   title,
-            "company":     random.choice(COMPANIES),
-            "location":    random.choice(LOCATIONS),
-            "skills_raw":  skills,
-            "salary":      salary,
-            "salary_tier": tier,
+            "Job Role": role_name,
+            "Required Skills": skills_str,
+            "District/Location": district,
+            "Demand Volume": volume,
+            "Curriculum Status": status,
         })
 
-    df  = pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
     buf = io.StringIO()
     df.to_csv(buf, index=False)
     buf.seek(0)
@@ -753,7 +919,7 @@ def sample_csv():
         io.BytesIO(buf.getvalue().encode()),
         mimetype="text/csv",
         as_attachment=True,
-        download_name="sample_jobs.csv",
+        download_name="msins_maharashtra_job_market_sample.csv",
     )
 
 

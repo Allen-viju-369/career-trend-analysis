@@ -1,24 +1,28 @@
-# 📊 Career Trend Analysis & Salary Intelligence System
-
-An end-to-end Machine Learning and Data Analytics system designed to decode tech industry hiring trends, extract in-demand technical competencies from real job listings, uncover natural talent clusters, compare machine learning models, rank the **Top 5 Hottest Jobs**, and predict salary tiers based on an individual's technical skill profile.
-
-The repository includes **two production-ready implementations**:
-1. 🎈 **Streamlit Dashboard (`app.py`)** — Interactive data science application featuring web scraping, Matplotlib/Seaborn visualization suite, Random Forest vs. Multinomial Naive Bayes comparison, and live feature importance analysis.
-2. ⚡ **Flask Full-Stack Web App (`flask_app/`)** — Production Flask application with a custom dark-mode frontend (Vanilla HTML/CSS/JS), CSV dataset uploader with quick-load capability, K-Means clustering, KNN vs. Logistic Regression model comparison, and interactive probability breakdown.
+# 🏛️ Labour-Market Intelligence & Curriculum-Alignment Platform
+### Developed for MSINS Problem Statement ID26134
+**Government of Maharashtra · Maharashtra State Innovation Society (MSINS)**  
+*Department of Skills, Employment, Entrepreneurship and Innovation*
 
 ---
 
-## 🌟 Key Features Developed
+## 📌 Problem Statement Overview (ID26134)
 
-| Feature | Implementation Details |
+- **Title**: Challenges in aligning skill development programs with industry requirements and emerging job market demands.
+- **Context & Need**: Skill development programs have historically relied on broad, outdated occupational categories that lag behind changing technology cycles, local employer expectations, and regional productivity benchmarks. Course curricula, trainer capacity, and lab equipment often fall out of sync with emerging market signals, leading to lower placement rates and employer-candidate mismatches.
+- **The Solution**: An evidence-based **Labour-Market Intelligence and Curriculum-Alignment Platform** that ingests job postings, uses **Unsupervised Learning (K-Means)** to cluster skill demand into emerging industry sectors, applies **Supervised Learning (KNN & Logistic Regression)** to predict course viability (`High Demand`, `Needs Update`, `Obsolete/Oversupplied`), generates actionable curriculum update plans with faculty and equipment guidance, and produces district-level capacity training plans across Maharashtra.
+
+---
+
+## 🚀 Key Functional Modules
+
+| Module | Purpose & Machine Learning Methodology |
 |---|---|
-| **🌐 Web Scraping & Ingestion** | Live scraping from RemoteOK REST API and TimesJobs via `BeautifulSoup` & `requests`, with an automatic realistic synthetic data generator fallback. |
-| **🧹 Data Preprocessing & NLP** | Regex-based token cleaning, tech alias normalization (e.g., `k8s` → `kubernetes`, `sklearn` → `scikit-learn`), and binary One-Hot Encoding across 41 canonical skills. |
-| **🔥 Top 5 Hottest Jobs Ranking** | Dynamic calculation of the 5 hottest roles in the market based on hiring volume, market share, average salary, and hotness index (0–100 score). |
-| **📈 Exploratory Data Analysis** | Rich visualizations for top demanded skills, salary distributions by tier, donut charts, and grouped multi-tier skill comparisons. |
-| **🔵 Unsupervised Clustering** | K-Means clustering ($k=3$) to partition job listings into distinct market profiles based on high-dimensional skill vectors. |
-| **🤖 Supervised ML Comparisons** | **Random Forest vs. Naive Bayes** (Streamlit) and **KNN vs. Logistic Regression** (Flask), evaluated on Accuracy, Precision, Recall, and Weighted F1-score. |
-| **🔮 Live Salary Tier Predictor** | Interactive skill selection yielding instant salary tier predictions (`Entry`, `Mid`, `Senior`), confidence levels, and compensation ranges. |
+| **1. Universal Dataset Ingestion** | Ingests job postings CSV with columns: `Job Role`, `Required Skills`, `District/Location`, `Demand Volume`. Intelligent fuzzy mapping supports Kaggle, LinkedIn, and custom web scrapers. |
+| **2. Unsupervised Learning (K-Means)** | Clusters technical competency vectors into distinct industry domains (e.g. *Cloud, DevOps & Distributed Systems*, *Data Science & Applied AI*, *Modern Fullstack*, *Enterprise Backend*). |
+| **3. Supervised Learning (KNN & Logistic Regression)** | Evaluates course viability given an input syllabus. Predicts status: **`High Demand`**, **`Needs Update`**, or **`Obsolete/Oversupplied`** with full posterior probabilities and confidence metrics. |
+| **4. Model Evaluation & Comparison** | Generates comparison table with **Accuracy, Precision, Recall, and F1-Score (Weighted)**, per-class metrics breakdowns, and designates the winning model. |
+| **5. Evidence-Based Gap Recommendations** | Maps input curriculum to the nearest industry cluster centroid, flags critical missing skills, estimates placement readiness (%), and provides equipment/trainer upskilling roadmaps. |
+| **6. Maharashtra District Intelligence** | Aggregates hiring demand volume, dominant skills, and high-demand roles across districts (Pune, Mumbai, Nagpur, Nashik, Thane, Chhatrapati Sambhajinagar, Kolhapur, Solapur). |
 
 ---
 
@@ -27,157 +31,113 @@ The repository includes **two production-ready implementations**:
 ```
 career_trend_analysis/
 │
-├── README.md                      ← Comprehensive documentation (this file)
-├── app.py                         ← Complete Streamlit Web Application (Port 8501)
+├── README.md                          ← Platform documentation & MSINS compliance (this file)
+├── requirements.txt                   ← Python dependencies
 │
-└── flask_app/                     ← Complete Flask Web Application (Port 5000)
-    ├── app.py                     ← Flask backend & ML pipeline routes
-    ├── sample_jobs.csv            ← 500-row realistic job market dataset
-    ├── static/
-    │   └── style.css              ← Custom dark-mode CSS (animations, cards, glassmorphism)
-    └── templates/
-        └── index.html             ← Semantic HTML5 frontend with Vanilla JS engine
+├── flask_app/                         ← Production Web Application (Port 5000)
+│   ├── app.py                         ← Flask backend, ML pipelines (K-Means, KNN, LR), analytics APIs
+│   ├── sample_jobs.csv                ← 400-record Maharashtra job market dataset
+│   ├── static/
+│   │   └── style.css                  ← Dark-mode modern UI, MSINS branding, responsive glassmorphism
+│   └── templates/
+│       └── index.html                 ← Semantic HTML5 dashboard with Vanilla JS engine
+│
+└── app.py                             ← Streamlit implementation (Port 8501)
 ```
 
 ---
 
-## ⚙️ How It Works (End-to-End Workflow)
+## ⚙️ How It Works (Step-by-Step Pipeline)
 
-### 1. Data Collection & Fallback Strategy
-- The scraper attempts to query remote tech listings from public endpoints.
-- If network policies, rate limits, or firewalls block external scraping requests, the system falls back to a deterministic synthetic generator that produces realistic job postings with authentic distributions across titles, companies, locations, skill combinations, and salary ranges.
+```mermaid
+graph TD
+    A[Scraped Job Postings CSV] --> B[Data Preprocessing & NLP]
+    B --> C[42-Skill Binary Feature Matrix]
+    C --> D[K-Means Clustering: Industry Skill Domains]
+    C --> E[Supervised Training: KNN & Logistic Regression]
+    E --> F[Model Comparison: Accuracy, Precision, Recall, F1]
+    G[User Enters Curriculum Skills] --> H[Supervised Viability Inference]
+    H --> I[Status: High Demand / Needs Update / Obsolete]
+    D --> J[Centroid Distance & Skill Gap Analyzer]
+    I & J --> K[Actionable Recommendations & District Plans]
+```
 
-### 2. NLP & Regex Technical Skill Extraction
-Every job description or raw skill string is cleaned and scanned using regular expression word boundaries:
-$$\text{Pattern} = \text{re.compile}(r'\b' + \text{skill} + r'\b', \text{re.IGNORECASE})$$
-- Aliases are resolved first (e.g., `postgres` $\to$ `postgresql`, `ml` $\to$ `machine learning`).
-- 41 canonical skills across languages, cloud infrastructure, AI/ML libraries, databases, and DevOps are mapped into a binary one-hot encoded matrix:
-$$X_{ij} = \begin{cases} 1 & \text{if candidate } i \text{ possesses skill } j \\ 0 & \text{otherwise} \end{cases}$$
+### 1. Ingestion & Preprocessing
+- Regex word boundaries extract canonical skills and aliases (`k8s` $\to$ `kubernetes`, `cicd` $\to$ `ci/cd`, `infosec` $\to$ `cybersecurity`).
+- One-hot binary vectors $\mathbf{x} \in \{0, 1\}^{42}$ represent presence or absence of core competencies.
+- Universal header resolution maps diverse CSV column names automatically.
 
-### 3. Top 5 Hottest Jobs Intelligence Engine
-The system groups listings by job title and computes:
-- **Posting Frequency & Market Share**: Percentage of total market listings for that role.
-- **Average Compensation & Range**: Mean, minimum, and maximum salary for the title.
-- **Top Demanded Skills**: The most frequent technical requirements specific to that role.
-- **Hotness Index ($0 - 100$)**:
-$$\text{Hotness} = 60 \times \left(\frac{\text{Count}}{\text{Max Count}}\right) + 40 \times \min\left(1, \max\left(0, \frac{\text{Avg Salary} - \$45,000}{\$135,000}\right)\right)$$
-This blends current hiring velocity with compensation strength to identify which jobs offer the highest career leverage.
+### 2. Unsupervised K-Means Skill Demand Clusters
+- Partitions technical skill vectors into distinct technology archetypes:
+  $$\arg\min_S \sum_{i=1}^{k} \sum_{\mathbf{x} \in S_i} \|\mathbf{x} - \boldsymbol{\mu}_i\|^2$$
+- Discovers emerging domains:
+  - **Cluster 1**: Cloud, DevOps & Distributed Systems (`aws`, `docker`, `kubernetes`, `linux`, `ci/cd`, `git`)
+  - **Cluster 2**: Data Science, Analytics & Applied AI (`python`, `pytorch`, `tensorflow`, `sql`, `deep learning`)
+  - **Cluster 3**: Modern Fullstack & Web Platforms (`javascript`, `react`, `node.js`, `mongodb`, `typescript`)
+  - **Cluster 4**: Enterprise Systems & Backend (`java`, `postgresql`, `redis`, `sql`, `fastapi`)
 
-### 4. Unsupervised K-Means Clustering ($k=3$)
-To detect natural skill clusters in the job market without labeled supervision, the one-hot skill vectors are clustered using Euclidean distance:
-$$\arg\min_S \sum_{i=1}^{k} \sum_{\mathbf{x} \in S_i} \|\mathbf{x} - \boldsymbol{\mu}_i\|^2$$
-This segments listings into natural industry groupings:
-- **Cluster 1**: Data Science, AI & Machine Learning (`python`, `pytorch`, `sql`, `statistics`)
-- **Cluster 2**: Cloud, DevOps & Infrastructure (`docker`, `kubernetes`, `aws`, `linux`)
-- **Cluster 3**: Full Stack & Enterprise Engineering (`javascript`, `react`, `java`, `node.js`)
+### 3. Supervised Course Viability Prediction (KNN vs. Logistic Regression)
+- **Target Variable**: `curriculum_status` $\in \{\text{"High Demand"}, \text{"Needs Update"}, \text{"Obsolete/Oversupplied"}\}$.
+- **K-Nearest Neighbors ($k=5$)**: Classifies course viability based on proximity in standardized feature space to current hiring requirements.
+- **Multinomial Logistic Regression**: Models class probabilities using balanced loss weighting:
+  $$P(y = c \mid \mathbf{x}) = \frac{e^{\mathbf{w}_c^T \mathbf{x} + b_c}}{\sum_{j=1}^{C} e^{\mathbf{w}_j^T \mathbf{x} + b_j}}$$
+- **Evaluation**: Computes Accuracy, Weighted Precision, Weighted Recall, and Weighted F1-score with stratified cross-validation.
 
-### 5. Supervised Machine Learning & Model Comparison
+### 4. Curriculum Gap & Actionable Recommendations
+- Evaluates cosine distance between candidate curriculum vector and K-Means cluster centroids:
+  $$\text{Cosine Similarity} = \frac{\mathbf{x}_{\text{curriculum}} \cdot \boldsymbol{\mu}_{\text{cluster}}}{\|\mathbf{x}_{\text{curriculum}}\| \|\boldsymbol{\mu}_{\text{cluster}}\|}$$
+- Identifies **Matched Skills** (competencies already covered in course).
+- Identifies **Critical Missing Skills** (gaps that need immediate inclusion).
+- Generates **Trainer Capacity Planning** and **Equipment/Lab Guidance**.
+- Recommends **Priority Maharashtra District Corridors** (e.g., Pune Hinjewadi, Mumbai BKC, Nagpur MIHAN).
 
-#### Implementation A (Streamlit): Random Forest vs. Multinomial Naive Bayes
-- **Random Forest Classifier**: Ensemble of 200 decision trees trained with bootstrap aggregation and Gini impurity. Handles non-linear skill interactions and outputs feature importances.
-- **Multinomial Naive Bayes**: Probabilistic classifier applying Bayes' Theorem under feature conditional independence assumptions:
-$$P(y \mid \mathbf{x}) \propto P(y) \prod_{j=1}^{d} P(x_j \mid y)$$
+---
 
-#### Implementation B (Flask): K-Nearest Neighbors (KNN) vs. Logistic Regression
-- **KNN Classifier ($k=5$)**: Measures Euclidean distance in standardized feature space to classify salary tier based on the majority vote of the nearest 5 job profiles.
-- **Multinomial Logistic Regression**: Uses a softmax link function with balanced class weights to compute calibrated posterior probabilities for each salary tier.
+## 🏃 Quick Start Guide
 
-#### Evaluation Metrics Computed:
-$$\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}, \quad \text{Precision} = \frac{TP}{TP + FP}$$
-$$\text{Recall} = \frac{TP}{TP + FN}, \quad F_1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$$
+### 1. Installation
+Clone the repository and install required packages:
+```bash
+git clone https://github.com/Allen-viju-369/career-trend-analysis.git
+cd career_trend_analysis
+pip install -r requirements.txt
+```
 
-### 6. Live Salary Tier Prediction
-When a user selects technical skills:
-1. A 41-dimensional binary vector $\mathbf{x}_{\text{user}}$ is constructed.
-2. The vector is transformed using the fitted `StandardScaler`.
-3. The models compute predictions and class probabilities for `Entry` (\$40k–\$75k), `Mid` (\$75k–\$120k), and `Senior` (\$120k–\$220k).
+### 2. Run Flask Web Application
+```bash
+cd flask_app
+python app.py
+```
+Open **`http://localhost:5000`** in your browser.
+
+### 3. Workflow on the Dashboard
+1. Click **`🚀 Quick Load Maharashtra MSINS Dataset (400 Roles)`** or upload your own CSV.
+2. View **District Training & Capacity Intelligence** for Maharashtra.
+3. Review **Top Emerging Industry Roles** and **K-Means Skill Clusters**.
+4. Compare model benchmarks in the **Supervised Model Comparison** table.
+5. In **Course Curriculum Viability Analyzer**, select syllabus skills (e.g. `docker`, `kubernetes`, `aws`) and click **`⚡ Evaluate Curriculum Viability & Detect Skill Gaps`**.
+6. Review the viability verdict, missing competencies, lab equipment guidance, and district placement corridors.
 
 ---
 
 ## 📊 Dataset Specification (`sample_jobs.csv`)
 
-The system accepts any CSV file with the following standard columns:
+The platform accepts CSV datasets with the following fields:
 
-The system includes an **Intelligent Schema Normalizer** with **Universal Dataset Compatibility**. You can upload **any CSV dataset from Kaggle, LinkedIn, Indeed, Glassdoor, or custom scrapers**, and the system will automatically detect, map, and clean the data.
-
-### Supported Flexible Column Mappings:
-
-| Canonical Field | Recognized Aliases (Case-Insensitive) | Fallback if Missing |
+| Field Name | Accepted Aliases | Description |
 |---|---|---|
-| **Job Title** | `job_title`, `title`, `position`, `role`, `jobrole`, `designation`, `jobpost` | Auto-detected from any text column or `"Software Engineer"` |
-| **Technical Skills** | `skills_raw`, `skills`, `skill`, `required_skills`, `key_skills`, `description`, `job_description`, `snippet`, `summary` | Regex-extracted from `job_title` or description |
-| **Salary Tier / Exp** | `salary_tier`, `tier`, `experience_level`, `level`, `seniority`, `career_level`, `experience` (e.g. `EN`, `MI`, `SE`, `Junior`, `Senior`) | Auto-binned from `salary` or inferred from `job_title` keywords |
-| **Salary Amount** | `salary`, `salary_in_usd`, `annual_salary`, `compensation`, `pay`, `ctc`, `remuneration` (e.g. `120000`, `$140k`, `80k-100k`) | Auto-synthesized based on role and tier |
-| **Company** | `company`, `company_name`, `employer`, `hiring_company`, `organization`, `firm` | `"Tech Enterprise"` |
-| **Location** | `location`, `job_location`, `city`, `work_location`, `country`, `state` | `"Remote"` |
+| `Job Role` | `job_role`, `job_title`, `title`, `role`, `qualification` | Emerging job designation or occupation |
+| `Required Skills` | `required_skills`, `skills_raw`, `skills`, `competencies` | Comma-separated technical tools & skills |
+| `District/Location` | `district`, `location`, `city`, `region` | Maharashtra district (Pune, Mumbai, Nagpur, etc.) |
+| `Demand Volume` | `demand_volume`, `openings`, `vacancies`, `count` | Live hiring demand / number of vacancies |
+| `Curriculum Status` | `curriculum_status`, `status`, `viability` | High Demand, Needs Update, or Obsolete/Oversupplied |
 
 ---
 
-## 🚀 How to Run Locally
+## 📜 Alignment with MSINS ID26134 Outcomes
 
-### Prerequisites
-- Python 3.10, 3.11, or 3.12
-- `pip` package manager
-
-### 1. Install Dependencies
-```bash
-pip install streamlit flask scikit-learn pandas numpy matplotlib seaborn beautifulsoup4 requests
-```
-
----
-
-### 2. Option A: Run the Flask Web Application (Recommended)
-```bash
-# Navigate to flask_app directory
-cd flask_app
-
-# Start the Flask development server
-python app.py
-```
-Open your browser at:
-👉 **[http://127.0.0.1:5000](http://127.0.0.1:5000)**
-
-**How to use the Flask App:**
-1. Click **🚀 Quick Load Sample Data** (loads and trains instantly on `sample_jobs.csv`), or drag-and-drop your custom CSV.
-2. View the **🔥 Top 5 Hottest Jobs in Market** cards with salary ranges, hiring demand, and skill requirements.
-3. Review the **K-Means Clusters** and **Model Comparison Table** (KNN vs. Logistic Regression).
-4. Scroll down to **Step 2 — Predict Your Salary Tier**, tick your skills, and click **Predict My Salary Tier** to see your confidence and compensation estimate!
-
----
-
-### 3. Option B: Run the Streamlit Application
-```bash
-# From workspace root
-streamlit run app.py --server.port 8501
-```
-Open your browser at:
-👉 **[http://localhost:8501](http://localhost:8501)**
-
-**Features in Streamlit:**
-- Top 5 Hottest Jobs cards in demand
-- Interactive skill selection in the sidebar with live instant prediction
-- Feature importances bar chart showing which skills drive salary the most
-- Confusion matrix and full classification report
-
----
-
-## 📡 Flask REST API Reference
-
-| Endpoint | Method | Payload / Params | Response | Description |
-|---|---|---|---|---|
-| `/` | `GET` | None | HTML | Renders the main dashboard. |
-| `/upload` | `POST` | `multipart/form-data` (`csv_file`) | JSON | Preprocesses dataset, trains K-Means, KNN & Logistic Regression, returns metrics & top 5 hottest jobs. |
-| `/load-sample` | `POST` / `GET` | None | JSON | Instantly trains on `sample_jobs.csv` without file browsing. |
-| `/predict` | `POST` | `{"skills": ["python", "aws", ...]}` | JSON | Computes salary tier and probabilities for KNN & LR. |
-| `/sample-csv` | `GET` | None | CSV File | Generates and downloads a fresh 300-row sample dataset. |
-
----
-
-## 🏆 Summary of Technologies Used
-
-- **Backend & Serving**: Python 3.12, Flask, Streamlit
-- **Machine Learning**: Scikit-Learn (`KMeans`, `KNeighborsClassifier`, `LogisticRegression`, `RandomForestClassifier`, `MultinomialNB`, `StandardScaler`, `LabelEncoder`)
-- **Data Manipulation**: Pandas, NumPy
-- **Data Scraping**: BeautifulSoup4, Requests, Regex (`re`)
-- **Visualizations**: Matplotlib, Seaborn
-- **Frontend & Styling**: Semantic HTML5, Vanilla JavaScript (Fetch API), Vanilla CSS (CSS Variables, Grid & Flexbox layouts, Glassmorphism, Responsive Design)
+- ✅ **Continuous Evidence-Based Mechanism**: Ingests real hiring signals rather than relying on static historical surveys.
+- ✅ **Curriculum Revision Guidance**: Pinpoints exact modules to add (e.g., Docker, Kubernetes, CI/CD) to elevate course viability.
+- ✅ **Flagging Obsolete Courses**: Accurately flags legacy stacks (e.g., desktop/HTML-only programs) with low placement potential.
+- ✅ **District-Level Capacity Planning**: Aggregates local demand for Pune, Mumbai, Nagpur, Nashik, and other industrial clusters.
+- ✅ **Trainer & Equipment Roadmaps**: Concrete equipment specs and faculty certifications needed for each domain.
