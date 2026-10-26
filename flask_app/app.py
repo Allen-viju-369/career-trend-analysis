@@ -17,8 +17,6 @@ REST API Specifications:
 
 import os
 import re
-import io
-import json
 import random
 import datetime
 from typing import Dict, List, Any, Optional
@@ -27,7 +25,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 import numpy as np
 import pandas as pd
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
@@ -429,7 +427,6 @@ except Exception as e:
 # ──────────────────────────────────────────────────────────────
 # REST API Endpoints
 # ──────────────────────────────────────────────────────────────
-from flask import Flask, request, jsonify, send_file, render_template
 
 @app.route("/", methods=["GET"])
 def api_root():
@@ -844,4 +841,4 @@ def get_evaluation_history():
 
 # ──────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, use_reloader=False)
