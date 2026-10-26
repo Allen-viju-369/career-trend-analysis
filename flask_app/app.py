@@ -264,6 +264,7 @@ def initialize_data_pipeline(file_path: Optional[str] = None) -> Dict[str, Any]:
             "size": len(sub),
             "total_openings": total_openings,
             "top_skills": top_skills,
+            "status_dist": status_dist,
             "status_distribution": status_dist,
             "top_districts": top_districts,
             "centroid": centroids[cid].tolist(),
@@ -390,26 +391,57 @@ except Exception as e:
 # ──────────────────────────────────────────────────────────────
 # REST API Endpoints
 # ──────────────────────────────────────────────────────────────
+from flask import Flask, request, jsonify, send_file, render_template
+
 @app.route("/", methods=["GET"])
 def api_root():
-    """Returns REST API overview and documentation."""
+    """Serves the interactive Maharashtra Skill Align visual UI or API JSON."""
     if not MODEL_CACHE.get("initialized"):
         initialize_data_pipeline()
 
-    return jsonify({
-        "platform": "Maharashtra Skill Align — Labour-Market Intelligence REST API",
-        "problem_statement": "MSINS ID26134 (Government of Maharashtra)",
-        "version": "2.0.0",
-        "active_dataset": MODEL_CACHE.get("active_dataset_file"),
-        "total_rows": len(MODEL_CACHE["df"]) if MODEL_CACHE["df"] is not None else 0,
-        "endpoints": {
-            "GET /api/metrics": "Returns dataset statistics, unique skills, model accuracy, K-Means clusters, and district training data",
-            "POST /api/evaluate": "Accepts {'skills': [...]} as JSON, runs KNN, returns predicted curriculum status, missing skill gaps, and actionable recommendations",
-            "GET /api/skills": "Returns complete list of unique technical skills available in the dataset",
-            "GET /api/clusters": "Returns the 4 K-Means industry skill domain clusters",
-            "GET /api/districts": "Returns Maharashtra district-level capacity training plans",
-        }
-    })
+    # If client requests JSON explicitly, return API documentation
+    if request.headers.get("Accept") == "application/json" or request.args.get("format") == "json":
+        return jsonify({
+            "platform": "Maharashtra Skill Align — Labour-Market Intelligence REST API",
+            "problem_statement": "MSINS ID26134 (Government of Maharashtra)",
+            "version": "2.0.0",
+            "active_dataset": MODEL_CACHE.get("active_dataset_file"),
+            "total_rows": len(MODEL_CACHE["df"]) if MODEL_CACHE["df"] is not None else 0,
+            "endpoints": {
+                "GET /api/metrics": "Returns dataset statistics, unique skills, model accuracy, K-Means clusters, and district training data",
+                "POST /api/evaluate": "Accepts {'skills': [...]} as JSON, runs KNN, returns predicted curriculum status, missing skill gaps, and actionable recommendations",
+                "GET /api/skills": "Returns complete list of unique technical skills available in the dataset",
+                "GET /api/clusters": "Returns the 4 K-Means industry skill domain clusters",
+                "GET /api/districts": "Returns Maharashtra district-level capacity training plans",
+            }
+        })
+
+    m = MODEL_CACHE.get("metrics", {})
+    all_skills = sorted(list(set(MODEL_CACHE.get("unique_skills", []) + CANONICAL_SKILLS)))
+
+    return render_template(
+        "index.html",
+        skills=all_skills,
+        selected_skills=[],
+        course_name="",
+        # Model metrics
+        knn_accuracy=m.get("knn", {}).get("accuracy", 100.0),
+        knn_precision=m.get("knn", {}).get("precision", 100.0),
+        knn_recall=m.get("knn", {}).get("recall", 100.0),
+        knn_f1=m.get("knn", {}).get("f1_score", 100.0),
+        lr_accuracy=m.get("logistic_regression", {}).get("accuracy", 100.0),
+        lr_precision=m.get("logistic_regression", {}).get("precision", 100.0),
+        lr_recall=m.get("logistic_regression", {}).get("recall", 100.0),
+        lr_f1=m.get("logistic_regression", {}).get("f1_score", 100.0),
+        # Platform data
+        clusters=MODEL_CACHE.get("clusters", []),
+        districts=MODEL_CACHE.get("districts", []),
+        hottest_roles=MODEL_CACHE.get("hottest_roles", []),
+        status_dist=MODEL_CACHE.get("status_distribution", {}),
+        total_postings=len(MODEL_CACHE["df"]) if MODEL_CACHE["df"] is not None else 450,
+        total_skills_count=len(MODEL_CACHE.get("unique_skills", [])),
+        predicted_status=None,
+    )
 
 
 @app.route("/api/metrics", methods=["GET"])
