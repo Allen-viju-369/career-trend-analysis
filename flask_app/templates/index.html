@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MSINS ID26134 — Labour-Market Intelligence &amp; Curriculum-Alignment Platform</title>
-  <meta name="description" content="Government of Maharashtra MSINS Problem Statement ID26134: Labour-market intelligence, K-Means skill clustering, and curriculum viability alignment." />
+  <title>Maharashtra Skill Align — Labour-Market Intelligence Platform (MSINS ID26134)</title>
+  <meta name="description" content="Maharashtra Skill Align: Government of Maharashtra MSINS Problem Statement ID26134 — Evidence-based labour-market intelligence, K-Means clustering, and curriculum viability alignment." />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Design System Stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body class="bg-[#0e1117] text-[#e0e0e0] font-sans antialiased">
 
   <!-- ═══════════════════════════ GOVT / MSINS TOP BAR ═══════════════════════════ -->
   <div class="msins-gov-bar">
@@ -31,778 +34,550 @@
       <div class="logo">
         <span class="logo-icon">📈</span>
         <div>
-          <span class="logo-title">Labour-Market Intelligence Platform</span>
-          <span class="logo-sub">Curriculum Alignment &amp; Capacity Planning System</span>
+          <span class="logo-title font-bold text-lg text-white">Maharashtra Skill Align</span>
+          <span class="logo-sub text-xs text-gray-400">Labour-Market Intelligence &amp; Curriculum Alignment Platform</span>
         </div>
       </div>
       <nav class="header-nav">
-        <a href="#upload-section" class="nav-link">Data Ingestion</a>
         <a href="#district-section" class="nav-link">District Intelligence</a>
         <a href="#roles-section" class="nav-link">Industry Roles</a>
         <a href="#clusters-section" class="nav-link">Skill Clusters</a>
         <a href="#metrics-section" class="nav-link">Model Metrics</a>
-        <a href="#evaluator-section" class="nav-link highlight-link">Curriculum Evaluator</a>
+        <a href="#evaluator-section" class="nav-link highlight-link font-semibold">Curriculum Evaluator</a>
         <a href="/sample-csv" class="btn btn-outline" id="download-sample-btn">⬇ Download Dataset</a>
       </nav>
     </div>
   </header>
 
   <!-- ═══════════════════════════ HERO ═══════════════════════════ -->
-  <section class="hero">
+  <section class="hero py-12 border-b border-[#2d3250]">
     <div class="container">
-      <div class="hero-badge">Evidence-Based Solution for MSINS Problem Statement ID26134</div>
-      <h1 class="hero-title">Continuous Alignment of Skill Programs with Emerging Labour-Market Demand</h1>
-      <p class="hero-sub">
-        Translate scraped job postings into curriculum revisions, flag obsolete/oversupplied courses,
-        discover emerging skill clusters with <strong>K-Means</strong>, evaluate course viability using 
-        <strong>KNN &amp; Logistic Regression</strong>, and formulate district-level capacity plans for Maharashtra.
+      <div class="hero-badge inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-900/40 border border-indigo-500/40 text-indigo-300">
+        Evidence-Based Solution for MSINS Problem Statement ID26134
+      </div>
+      <h1 class="hero-title text-3xl md:text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+        Maharashtra Skill Align
+      </h1>
+      <p class="hero-sub text-gray-300 max-w-3xl text-base md:text-lg mb-8 leading-relaxed">
+        A continuous, evidence-based platform translating scraped labour-market demand into curriculum design, 
+        equipment planning, and trainer development. Discovers emerging technology clusters with <strong>K-Means (k=4)</strong> 
+        and evaluates syllabus viability (<strong>High Demand</strong>, <strong>Needs Update</strong>, or <strong>Obsolete</strong>) 
+        using <strong>KNN</strong> and <strong>Logistic Regression</strong>.
       </p>
-      <div class="hero-steps">
-        <div class="hero-step"><span class="step-num">01</span><span>Job Postings Ingestion</span></div>
-        <div class="hero-arrow">→</div>
-        <div class="hero-step"><span class="step-num">02</span><span>K-Means Skill Clustering</span></div>
-        <div class="hero-arrow">→</div>
-        <div class="hero-step"><span class="step-num">03</span><span>Supervised Viability Models</span></div>
-        <div class="hero-arrow">→</div>
-        <div class="hero-step"><span class="step-num">04</span><span>Curriculum Gap Recommendations</span></div>
+      <div class="hero-steps flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm font-medium">
+        <div class="hero-step flex items-center gap-2 bg-[#1a1f2e] px-3 py-2 rounded-lg border border-[#2d3250]"><span class="step-num text-indigo-400 font-bold">01</span><span>Job Postings Ingestion</span></div>
+        <div class="hero-arrow text-gray-500">→</div>
+        <div class="hero-step flex items-center gap-2 bg-[#1a1f2e] px-3 py-2 rounded-lg border border-[#2d3250]"><span class="step-num text-indigo-400 font-bold">02</span><span>K-Means Skill Clustering</span></div>
+        <div class="hero-arrow text-gray-500">→</div>
+        <div class="hero-step flex items-center gap-2 bg-[#1a1f2e] px-3 py-2 rounded-lg border border-[#2d3250]"><span class="step-num text-indigo-400 font-bold">03</span><span>Supervised KNN &amp; LR Models</span></div>
+        <div class="hero-arrow text-gray-500">→</div>
+        <div class="hero-step flex items-center gap-2 bg-[#1a1f2e] px-3 py-2 rounded-lg border border-[#2d3250]"><span class="step-num text-indigo-400 font-bold">04</span><span>District-Level Capacity Plans</span></div>
       </div>
     </div>
   </section>
 
-  <main class="container main-content">
+  <main class="container main-content py-8 space-y-12">
 
-    <!-- ═══════════════════════ UPLOAD SECTION ═══════════════════════ -->
-    <section id="upload-section" class="card upload-card">
-      <div class="card-header">
-        <span class="card-icon">📂</span>
+    <!-- ═══════════════════════ CURRICULUM EVALUATOR FORM SECTION ═══════════════════════ -->
+    <section id="evaluator-section" class="card predict-card bg-[#1a1f2e] border border-[#2d3250] rounded-2xl p-6 md:p-8 shadow-xl">
+      <div class="card-header flex items-center gap-4 mb-6">
+        <span class="card-icon text-3xl p-3 bg-indigo-950/60 border border-indigo-500/30 rounded-xl">🎯</span>
         <div>
-          <h2 class="card-title">1. Ingest Labour-Market Job Postings Dataset</h2>
-          <p class="card-sub">
-            Accepts CSV with fields: <code>Job Role</code>, <code>Required Skills</code>, <code>District/Location</code>, and <code>Demand Volume</code>.
-            Automatic header mapping handles Kaggle, LinkedIn, or custom scrapers seamlessly.
+          <h2 class="card-title text-xl md:text-2xl font-bold text-white">Course Curriculum Viability Evaluator</h2>
+          <p class="card-sub text-sm text-gray-400">
+            Select the technical competencies taught in your course syllabus. The KNN model will evaluate market viability and detect critical skill gaps.
           </p>
         </div>
       </div>
 
-      <form id="upload-form" enctype="multipart/form-data">
-        <div class="file-drop" id="file-drop-zone">
-          <input type="file" name="csv_file" id="csv-file-input" accept=".csv" class="file-input" />
-          <div class="file-drop-inner">
-            <span class="drop-icon">☁️</span>
-            <p class="drop-label">Drag &amp; drop job postings CSV here, or <span class="browse-link">browse file</span></p>
-            <p class="drop-hint" id="file-name-display">No file chosen</p>
+      {% if error_message %}
+      <div class="p-4 mb-6 bg-amber-950/60 border border-amber-500/50 rounded-xl text-amber-200 text-sm flex items-center gap-3">
+        <span>⚠️</span> {{ error_message }}
+      </div>
+      {% endif %}
+
+      <!-- FORM POSTS TO /evaluate -->
+      <form id="eval-form" action="/evaluate" method="POST">
+        <div class="curriculum-input-bar mb-6">
+          <div class="course-meta-input">
+            <label for="course-title-input" class="input-label block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">
+              Course / Qualification Program Name (Optional):
+            </label>
+            <input type="text" name="course_name" id="course-title-input" 
+                   value="{{ course_name or '' }}" 
+                   class="text-input w-full bg-[#0d1020] border border-[#2d3250] rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500" 
+                   placeholder="e.g. Diploma in Cloud Computing &amp; DevOps / B.Voc Full Stack Web Development" />
           </div>
         </div>
 
-        <div class="upload-actions">
-          <button type="submit" class="btn btn-primary" id="upload-btn">
-            <span class="btn-icon">⚡</span> Run Market Analysis &amp; Train Models
+        <div class="skills-filter-bar flex flex-wrap items-center justify-between gap-3 mb-4">
+          <input type="text" id="skill-search" placeholder="🔍 Search curriculum competencies (e.g., Docker, Python, React)…" 
+                 class="skill-search-input flex-1 min-w-[240px] bg-[#0d1020] border border-[#2d3250] rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500" />
+          <div class="flex items-center gap-2">
+            <button type="button" class="btn btn-ghost btn-sm px-3 py-1.5 text-xs bg-[#12172a] text-gray-300 rounded-lg border border-[#2d3250] hover:bg-[#1f263d]" id="select-all-btn">Select All</button>
+            <button type="button" class="btn btn-ghost btn-sm px-3 py-1.5 text-xs bg-[#12172a] text-gray-300 rounded-lg border border-[#2d3250] hover:bg-[#1f263d]" id="clear-all-btn">Clear All</button>
+          </div>
+        </div>
+
+        <!-- SKILL CHECKBOXES WITH name="skills" -->
+        <div class="skills-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-72 overflow-y-auto p-3 bg-[#0d1020] rounded-xl border border-[#2d3250]" id="skills-grid">
+          {% for skill in skills %}
+          <label class="skill-chip flex items-center gap-2 p-2 bg-[#161c2d] hover:bg-[#1e263d] border border-[#2d3250] rounded-lg cursor-pointer transition text-xs select-none" for="skill-{{ loop.index }}">
+            <input type="checkbox" name="skills" id="skill-{{ loop.index }}"
+                   class="skill-checkbox w-4 h-4 rounded border-[#3a4070] text-indigo-600 focus:ring-0 bg-[#0d1020]" 
+                   value="{{ skill }}" 
+                   {% if selected_skills and skill in selected_skills %}checked{% endif %} />
+            <span class="chip-label text-gray-200 truncate">{{ skill }}</span>
+          </label>
+          {% endfor %}
+        </div>
+
+        <div class="predict-actions mt-6 flex justify-end">
+          <button type="submit" class="btn btn-primary btn-lg px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center gap-2 cursor-pointer transition" id="predict-btn">
+            <span class="btn-icon">⚡</span> Evaluate Curriculum Viability (Run KNN)
           </button>
-          <button type="button" class="btn btn-secondary" id="quick-load-btn" title="Instant load Maharashtra MSINS dataset from server">
-            <span class="btn-icon">🚀</span> Quick Load Maharashtra MSINS Dataset (400 Roles)
-          </button>
-          <a href="/sample-csv" class="btn btn-ghost">⬇ Download Sample Maharashtra CSV</a>
         </div>
       </form>
 
-      <!-- Upload status box -->
-      <div id="upload-status" class="status-box hidden"></div>
+      <!-- ════════════ LIVE EVALUATION RESULTS CARD (Jinja2) ════════════ -->
+      {% if predicted_status %}
+      <div id="predict-result" class="predict-result mt-8 pt-6 border-t border-[#2d3250]">
+        <div class="result-header flex flex-wrap items-center justify-between gap-4 p-5 bg-[#12172a] rounded-xl border border-[#2d3250] mb-6">
+          <div>
+            <span class="eval-tag inline-block px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-indigo-900/50 text-indigo-300 border border-indigo-500/30 mb-2">
+              Maharashtra Skill Align · Evaluation Report
+            </span>
+            <h3 class="result-heading text-xl font-bold text-white">{{ course_name or 'Evaluated Skill Curriculum' }}</h3>
+            <p class="result-sub text-sm text-gray-400 mt-1">{{ status_message }}</p>
+          </div>
+          <div class="status-verdict-box p-4 rounded-xl bg-[#1a1f2e] border-2 {% if predicted_status == 'High Demand' %}border-emerald-500/60{% elif predicted_status == 'Needs Update' %}border-amber-500/60{% else %}border-rose-500/60{% endif %} text-right">
+            <span class="verdict-label block text-xs uppercase tracking-wider text-gray-400 font-semibold mb-1">Predicted Curriculum Status</span>
+            <span class="verdict-badge inline-block px-4 py-1.5 rounded-full font-extrabold text-sm text-white shadow-md {% if predicted_status == 'High Demand' %}bg-emerald-600{% elif predicted_status == 'Needs Update' %}bg-amber-600{% else %}bg-rose-600{% endif %}">
+              {% if predicted_status == 'High Demand' %}🟢 High Demand{% elif predicted_status == 'Needs Update' %}🟡 Needs Update{% else %}🔴 Obsolete / Oversupplied{% endif %}
+            </span>
+            <span class="block text-xs text-gray-400 mt-1">KNN Model Confidence: <strong>{{ knn_confidence }}%</strong></span>
+          </div>
+        </div>
+
+        <!-- Model Comparison Cards -->
+        <div class="result-cards grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
+            <div class="pred-model text-xs font-semibold uppercase text-indigo-400 mb-1">K-Nearest Neighbors (KNN)</div>
+            <div class="pred-tier text-2xl font-bold {% if predicted_status == 'High Demand' %}text-emerald-400{% elif predicted_status == 'Needs Update' %}text-amber-400{% else %}text-rose-400{% endif %} mb-1">
+              {{ predicted_status }}
+            </div>
+            <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>{{ knn_confidence }}%</strong></div>
+          </div>
+          <div class="pred-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250]">
+            <div class="pred-model text-xs font-semibold uppercase text-purple-400 mb-1">Logistic Regression</div>
+            <div class="pred-tier text-2xl font-bold {% if lr_status == 'High Demand' %}text-emerald-400{% elif lr_status == 'Needs Update' %}text-amber-400{% else %}text-rose-400{% endif %} mb-1">
+              {{ lr_status }}
+            </div>
+            <div class="pred-confidence text-sm text-gray-300">Model Confidence: <strong>{{ lr_confidence }}%</strong></div>
+          </div>
+        </div>
+
+        <!-- Gap Analysis Card -->
+        <div class="gap-analysis-card bg-[#12172a] p-6 rounded-2xl border border-[#2d3250]">
+          <h4 class="gap-card-title text-lg font-bold text-white mb-4">🔍 Evidence-Based Skill Gap Analysis</h4>
+          
+          <div class="gap-meta-row flex flex-wrap items-center justify-between gap-4 p-4 bg-[#1a1f2e] rounded-xl border border-[#2d3250] mb-6">
+            <div class="gap-meta-item">
+              <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Nearest Industry Cluster:</span>
+              <span class="gm-val font-semibold text-white ml-2">{{ aligned_cluster }}</span>
+            </div>
+            <div class="gap-meta-item">
+              <span class="gm-label text-xs uppercase tracking-wider text-gray-400">Estimated Candidate Placement Readiness:</span>
+              <span class="gm-val gm-score text-xl font-bold text-emerald-400 ml-2">{{ placement_readiness }}%</span>
+            </div>
+          </div>
+
+          <div class="gap-skills-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div class="gap-skill-col col-matched p-4 bg-[#161c2d] rounded-xl border border-emerald-500/20">
+              <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-emerald-400 mb-3">
+                ✅ Covered Competencies ({{ matched_skills|length }})
+              </div>
+              <div class="chip-row flex flex-wrap gap-2">
+                {% for s in matched_skills %}
+                  <span class="tag tag-matched text-xs px-2.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">{{ s }}</span>
+                {% else %}
+                  <em class="text-xs text-gray-400">None matched with primary industry cluster</em>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="gap-skill-col col-missing p-4 bg-[#161c2d] rounded-xl border border-amber-500/20">
+              <div class="gap-col-header text-xs font-bold uppercase tracking-wider text-amber-400 mb-3">
+                ⚠️ Critical Industry Gaps to Add ({{ missing_skills|length }})
+              </div>
+              <div class="chip-row flex flex-wrap gap-2">
+                {% for s in missing_skills %}
+                  <span class="tag tag-missing text-xs px-2.5 py-1 rounded bg-amber-950/60 border border-amber-500/40 text-amber-300 font-semibold">+ {{ s }}</span>
+                {% else %}
+                  <em class="text-xs text-emerald-400">No critical gaps! Curriculum matches industry cluster core.</em>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Actionable Recommendations Grid -->
+          <div class="recommendations-box border-t border-[#2d3250] pt-6">
+            <h4 class="rec-heading text-base font-bold text-white mb-3">📋 Actionable Curriculum Planning &amp; Modernization (MSINS ID26134)</h4>
+            
+            <div class="action-items-list space-y-2 mb-6">
+              {% for item in action_plan %}
+              <div class="action-item flex items-start gap-3 p-3 bg-[#1a1f2e] border-l-4 border-indigo-500 rounded-r-lg text-sm text-gray-200 leading-relaxed">
+                <span class="action-bullet text-indigo-400 font-bold">📌</span>
+                <span>{{ item }}</span>
+              </div>
+              {% endfor %}
+            </div>
+
+            <div class="planning-guidance-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
+                <div class="guidance-title text-xs font-bold uppercase tracking-wider text-sky-400 mb-2">🛠️ Equipment &amp; Lab Infrastructure Guidance</div>
+                <p class="guidance-text text-xs text-gray-300 leading-relaxed">{{ equipment_guidance }}</p>
+              </div>
+              <div class="guidance-box p-4 bg-[#1a1f2e] border border-[#2d3250] rounded-xl">
+                <div class="guidance-title text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2">👨‍🏫 Trainer Capacity &amp; Faculty Upskilling Plan</div>
+                <p class="guidance-text text-xs text-gray-300 leading-relaxed">{{ trainer_guidance }}</p>
+              </div>
+            </div>
+
+            <div class="placement-hotspots p-4 bg-sky-950/20 border border-sky-500/20 rounded-xl flex flex-wrap items-center gap-3">
+              <span class="ph-label text-xs font-bold uppercase tracking-wider text-sky-400">📍 Priority Maharashtra Placement Corridors:</span>
+              <div class="ph-tags flex flex-wrap gap-2">
+                {% for d in target_districts %}
+                <span class="ph-district-pill text-xs px-3 py-1 rounded-full bg-sky-900/50 border border-sky-500/40 text-sky-200">{{ d }} Tech Corridor</span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      {% endif %}
     </section>
 
-    <!-- ═══════════════════════ DATASET OVERVIEW ═══════════════════════ -->
-    <section id="overview-section" class="hidden">
-      <div class="section-title-wrap">
-        <div>
-          <h2 class="section-title"><span>📊</span> Labour-Market Ingestion Overview</h2>
-          <p class="section-sub">Aggregated job posting signals, skill feature vectors, and curriculum status distribution.</p>
+    <!-- ═══════════════════════ DATASET OVERVIEW & RE-INGESTION ═══════════════════════ -->
+    <section id="upload-section" class="card upload-card bg-[#1a1f2e] border border-[#2d3250] rounded-2xl p-6 shadow-xl">
+      <div class="card-header flex items-center justify-between flex-wrap gap-4 mb-4">
+        <div class="flex items-center gap-3">
+          <span class="card-icon text-2xl p-2.5 bg-indigo-950/60 border border-indigo-500/30 rounded-xl">📂</span>
+          <div>
+            <h2 class="card-title text-lg font-bold text-white">Live Labour-Market Dataset Ingestion</h2>
+            <p class="card-sub text-xs text-gray-400">Ingested {{ total_postings }} postings across Maharashtra with {{ total_skills_count }} unique technical competencies.</p>
+          </div>
         </div>
-        <span class="badge badge-primary">Market Signals</span>
+        <div class="flex items-center gap-2">
+          <a href="/sample-csv" class="btn btn-ghost text-xs px-3 py-1.5 bg-[#12172a] text-gray-300 rounded-lg border border-[#2d3250]">⬇ Download CSV</a>
+          <button type="button" class="btn btn-secondary text-xs px-3 py-1.5 bg-indigo-900/40 text-indigo-300 border border-indigo-500/40 rounded-lg" id="quick-load-btn">🚀 Reload Dataset</button>
+        </div>
       </div>
 
-      <div class="stat-grid" id="stat-grid">
-        <!-- Populated by JS -->
+      <div class="stat-grid grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
+        <div class="stat-card p-4 bg-[#12172a] rounded-xl border border-[#2d3250] text-center">
+          <div class="stat-value text-2xl font-bold text-white">{{ total_postings }}</div>
+          <div class="stat-label text-xs uppercase tracking-wider text-gray-400 mt-1">Total Postings</div>
+        </div>
+        <div class="stat-card p-4 bg-[#12172a] rounded-xl border border-[#2d3250] text-center">
+          <div class="stat-value text-2xl font-bold text-indigo-400">{{ total_skills_count }}</div>
+          <div class="stat-label text-xs uppercase tracking-wider text-gray-400 mt-1">Skill Competencies</div>
+        </div>
+        <div class="stat-card p-4 bg-[#12172a] rounded-xl border border-[#2d3250] text-center">
+          <div class="stat-value text-2xl font-bold text-purple-400">{{ clusters|length }}</div>
+          <div class="stat-label text-xs uppercase tracking-wider text-gray-400 mt-1">K-Means Domains</div>
+        </div>
+        <div class="stat-card p-4 bg-[#12172a] rounded-xl border border-[#2d3250] text-center">
+          <div class="stat-value text-2xl font-bold text-emerald-400">3</div>
+          <div class="stat-label text-xs uppercase tracking-wider text-gray-400 mt-1">Viability Classes</div>
+        </div>
       </div>
-      <div class="tier-bars" id="status-bars">
-        <!-- Populated by JS -->
+    </section>
+
+    <!-- ═══════════════════════ MODEL COMPARISON SECTION (KNN vs LR) ═══════════════════════ -->
+    <section id="metrics-section" class="card bg-[#1a1f2e] border border-[#2d3250] rounded-2xl p-6 md:p-8 shadow-xl">
+      <div class="section-title-wrap mb-6 flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 class="section-title text-xl font-bold text-white flex items-center gap-2"><span>🤖</span> Supervised Model Comparison for Course Viability</h2>
+          <p class="section-sub text-xs md:text-sm text-gray-400 mt-1">
+            Evaluating <strong>K-Nearest Neighbors (KNN)</strong> and <strong>Logistic Regression</strong> trained to predict curriculum viability:
+            <span class="pill-inline pill-high text-xs px-2 py-0.5 rounded bg-emerald-950 border border-emerald-500/40 text-emerald-300">High Demand</span>, 
+            <span class="pill-inline pill-update text-xs px-2 py-0.5 rounded bg-amber-950 border border-amber-500/40 text-amber-300">Needs Update</span>, or 
+            <span class="pill-inline pill-obsolete text-xs px-2 py-0.5 rounded bg-rose-950 border border-rose-500/40 text-rose-300">Obsolete/Oversupplied</span>.
+          </p>
+        </div>
+        <span class="badge text-xs px-3 py-1 rounded-full bg-purple-950 border border-purple-500/40 text-purple-300 font-semibold">Model Benchmarks</span>
+      </div>
+
+      <!-- METRICS TABLE WITH JINJA2 VARIABLES -->
+      <div class="metrics-table-wrap overflow-x-auto">
+        <table class="metrics-table w-full text-left border-collapse" id="metrics-table">
+          <thead>
+            <tr class="border-b border-[#2d3250] text-xs font-bold uppercase tracking-wider text-gray-400">
+              <th class="py-3 px-4">Model Architecture</th>
+              <th class="py-3 px-4">Accuracy</th>
+              <th class="py-3 px-4">Precision (Weighted)</th>
+              <th class="py-3 px-4">Recall (Weighted)</th>
+              <th class="py-3 px-4">F1-Score (Weighted)</th>
+              <th class="py-3 px-4">Evaluation Verdict</th>
+            </tr>
+          </thead>
+          <tbody id="metrics-tbody" class="divide-y divide-[#2d3250] text-sm">
+            <tr class="winner-row bg-indigo-950/20">
+              <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
+                <span class="model-badge model-knn px-2.5 py-0.5 rounded text-xs bg-indigo-900/60 border border-indigo-500/40 text-indigo-300">K-Nearest Neighbors (KNN)</span>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-emerald-400">{{ knn_accuracy }}%</td>
+              <td class="py-3.5 px-4">{{ knn_precision }}%</td>
+              <td class="py-3.5 px-4">{{ knn_recall }}%</td>
+              <td class="py-3.5 px-4 font-semibold text-indigo-300">{{ knn_f1 }}%</td>
+              <td class="py-3.5 px-4"><span class="winner-badge px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-950/80 border border-amber-500/50 text-amber-300">🏆 Primary Viability Engine</span></td>
+            </tr>
+            <tr>
+              <td class="py-3.5 px-4 font-semibold text-white flex items-center gap-2">
+                <span class="model-badge model-lr px-2.5 py-0.5 rounded text-xs bg-purple-900/60 border border-purple-500/40 text-purple-300">Logistic Regression</span>
+              </td>
+              <td class="py-3.5 px-4 font-bold text-emerald-400">{{ lr_accuracy }}%</td>
+              <td class="py-3.5 px-4">{{ lr_precision }}%</td>
+              <td class="py-3.5 px-4">{{ lr_recall }}%</td>
+              <td class="py-3.5 px-4 font-semibold text-purple-300">{{ lr_f1 }}%</td>
+              <td class="py-3.5 px-4 text-xs text-gray-400">Class Probabilities Validator</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
     <!-- ═══════════════════════ DISTRICT INTELLIGENCE SECTION ═══════════════════════ -->
-    <section id="district-section" class="hidden">
-      <div class="section-title-wrap">
+    <section id="district-section" class="card bg-[#1a1f2e] border border-[#2d3250] rounded-2xl p-6 md:p-8 shadow-xl">
+      <div class="section-title-wrap mb-6 flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 class="section-title"><span>🗺️</span> Maharashtra District Training &amp; Capacity Intelligence</h2>
-          <p class="section-sub">
-            District-level training plans: Identifying hiring demand volume, dominant skill requirements, and high-demand job roles across Pune, Mumbai, Nagpur, Nashik, and other industrial clusters.
+          <h2 class="section-title text-xl font-bold text-white flex items-center gap-2"><span>🗺️</span> Maharashtra District Training &amp; Capacity Intelligence</h2>
+          <p class="section-sub text-xs md:text-sm text-gray-400 mt-1">
+            District-level capacity plans: Hiring demand openings, high-demand job shares, and required competencies across Maharashtra industrial clusters.
           </p>
         </div>
-        <span class="badge badge-accent">District Plans</span>
+        <span class="badge text-xs px-3 py-1 rounded-full bg-sky-950 border border-sky-500/40 text-sky-300 font-semibold">District Plans</span>
       </div>
 
-      <div class="district-grid" id="district-grid">
-        <!-- Populated by JS -->
+      <div class="district-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="district-grid">
+        {% for d in districts %}
+        <div class="district-card p-4 bg-[#12172a] rounded-xl border border-[#2d3250] hover:border-indigo-500/40 transition">
+          <div class="district-header flex items-center justify-between pb-3 border-b border-[#2d3250] mb-3">
+            <div class="district-title-wrap flex items-center gap-2">
+              <span class="district-icon text-base">📍</span>
+              <h3 class="district-name font-bold text-white text-sm">{{ d.district }}</h3>
+            </div>
+            <span class="district-openings-badge text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-950 border border-sky-500/40 text-sky-300">{{ d.total_openings }} Openings</span>
+          </div>
+
+          <div class="district-metric-row grid grid-cols-2 gap-2 mb-3">
+            <div class="dm-item p-2 bg-[#1a1f2e] rounded-lg">
+              <span class="dm-label block text-[10px] uppercase text-gray-400">Postings</span>
+              <span class="dm-val font-bold text-xs text-white">{{ d.postings_count }} roles</span>
+            </div>
+            <div class="dm-item p-2 bg-[#1a1f2e] rounded-lg">
+              <span class="dm-label block text-[10px] uppercase text-gray-400">High Demand</span>
+              <span class="dm-val dm-high font-bold text-xs text-emerald-400">{{ d.high_demand_share }}%</span>
+            </div>
+          </div>
+
+          <div class="district-sub-section mb-2">
+            <div class="district-sub-title text-[10px] uppercase text-gray-400 mb-1">Key In-Demand Roles</div>
+            <div class="district-role-tags flex flex-wrap gap-1">
+              {% for r in d.top_roles %}
+                <span class="d-role-tag text-[11px] px-2 py-0.5 rounded bg-indigo-950/60 border border-indigo-500/30 text-indigo-200">{{ r }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="district-sub-section">
+            <div class="district-sub-title text-[10px] uppercase text-gray-400 mb-1">Dominant Competencies</div>
+            <div class="district-skill-tags flex flex-wrap gap-1">
+              {% for s in d.top_skills %}
+                <span class="d-skill-tag text-[10px] px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-500/30 text-emerald-200">{{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </section>
 
-    <!-- ═══════════════════════ HOTTEST INDUSTRY ROLES ═══════════════════════ -->
-    <section id="roles-section" class="hidden">
-      <div class="section-title-wrap">
+    <!-- ═══════════════════════ TOP EMERGING INDUSTRY ROLES ═══════════════════════ -->
+    <section id="roles-section" class="card bg-[#1a1f2e] border border-[#2d3250] rounded-2xl p-6 md:p-8 shadow-xl">
+      <div class="section-title-wrap mb-6 flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 class="section-title"><span>🔥</span> Top Emerging Industry Roles in Maharashtra</h2>
-          <p class="section-sub">
-            Ranked by live industry hiring volume (openings), required technical depth, and primary Maharashtra district corridors.
+          <h2 class="section-title text-xl font-bold text-white flex items-center gap-2"><span>🔥</span> Top Emerging Industry Roles in Maharashtra</h2>
+          <p class="section-sub text-xs md:text-sm text-gray-400 mt-1">
+            Ranked by live industry hiring openings, required technical depth, and primary Maharashtra district corridors.
           </p>
         </div>
-        <span class="badge badge-hot">High Growth Roles</span>
+        <span class="badge text-xs px-3 py-1 rounded-full bg-amber-950 border border-amber-500/40 text-amber-300 font-semibold">High Growth Occupations</span>
       </div>
-      <div class="hottest-grid" id="roles-grid">
-        <!-- Populated by JS -->
+
+      <div class="hottest-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="roles-grid">
+        {% for job in hottest_roles %}
+        <div class="hottest-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250] hover:border-indigo-500/40 transition">
+          <div class="hottest-card-header flex items-center justify-between mb-3 pb-3 border-b border-[#2d3250]">
+            <div class="flex items-center gap-3">
+              <span class="hottest-rank-num font-extrabold text-sm text-amber-400">#{{ job.rank }}</span>
+              <div>
+                <h3 class="hottest-title font-bold text-white text-sm">{{ job.role }}</h3>
+                <span class="status-pill text-[10px] px-2 py-0.5 rounded-full font-bold uppercase {% if job.status == 'High Demand' %}bg-emerald-950 text-emerald-300 border border-emerald-500/40{% elif job.status == 'Needs Update' %}bg-amber-950 text-amber-300 border border-amber-500/40{% else %}bg-rose-950 text-rose-300 border border-rose-500/40{% endif %}">{{ job.status }}</span>
+              </div>
+            </div>
+            <div class="hottest-flame-score text-xs px-2.5 py-1 rounded-lg bg-amber-950/60 border border-amber-500/30 text-amber-300 font-bold">
+              📈 {{ job.viability_index }}/100
+            </div>
+          </div>
+
+          <div class="hottest-metrics-row grid grid-cols-2 gap-2 mb-3">
+            <div class="hottest-m-box p-2 bg-[#1a1f2e] rounded-lg">
+              <span class="hm-label block text-[10px] uppercase text-gray-400">Demand Openings</span>
+              <span class="hm-val font-bold text-xs text-white">{{ job.openings }} Openings</span>
+            </div>
+            <div class="hottest-m-box p-2 bg-[#1a1f2e] rounded-lg">
+              <span class="hm-label block text-[10px] uppercase text-gray-400">Primary Hub</span>
+              <span class="hm-val font-bold text-xs text-sky-400">{{ job.primary_district }}</span>
+            </div>
+          </div>
+
+          <div class="hottest-skills-section">
+            <div class="hottest-skills-heading text-[10px] uppercase text-gray-400 mb-1.5">Required Competencies</div>
+            <div class="hottest-skill-tags flex flex-wrap gap-1">
+              {% for s in job.top_skills %}
+                <span class="h-skill-tag text-[11px] px-2 py-0.5 rounded bg-indigo-950/60 border border-indigo-500/30 text-indigo-300">{{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
       </div>
     </section>
 
     <!-- ═══════════════════════ SKILL DEMAND CLUSTERS (K-MEANS) ═══════════════════════ -->
-    <section id="clusters-section" class="hidden">
-      <div class="section-title-wrap">
+    <section id="clusters-section" class="card bg-[#1a1f2e] border border-[#2d3250] rounded-2xl p-6 md:p-8 shadow-xl">
+      <div class="section-title-wrap mb-6 flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h2 class="section-title"><span>🔵</span> Unsupervised Skill Demand Clusters (K-Means)</h2>
-          <p class="section-sub">
+          <h2 class="section-title text-xl font-bold text-white flex items-center gap-2"><span>🔵</span> Unsupervised Skill Demand Clusters (K-Means, k=4)</h2>
+          <p class="section-sub text-xs md:text-sm text-gray-400 mt-1">
             K-Means algorithm automatically partitions technical competencies into distinct industry domain clusters, revealing emerging technology requirements and legacy skill groups.
           </p>
         </div>
-        <span class="badge">Unsupervised ML</span>
+        <span class="badge text-xs px-3 py-1 rounded-full bg-indigo-950 border border-indigo-500/40 text-indigo-300 font-semibold">Unsupervised ML</span>
       </div>
-      <div class="cluster-grid" id="cluster-grid">
-        <!-- Populated by JS -->
-      </div>
-    </section>
 
-    <!-- ═══════════════════════ MODEL COMPARISON (KNN vs LR) ═══════════════════════ -->
-    <section id="metrics-section" class="hidden">
-      <div class="section-title-wrap">
-        <div>
-          <h2 class="section-title"><span>🤖</span> Supervised Model Comparison for Course Viability</h2>
-          <p class="section-sub">
-            Evaluating <strong>K-Nearest Neighbors (KNN)</strong> and <strong>Logistic Regression</strong> trained to predict course viability: 
-            <span class="pill-inline pill-high">High Demand</span>, 
-            <span class="pill-inline pill-update">Needs Update</span>, or 
-            <span class="pill-inline pill-obsolete">Obsolete/Oversupplied</span>.
-          </p>
+      <div class="cluster-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="cluster-grid">
+        {% for c in clusters %}
+        <div class="cluster-card p-5 bg-[#12172a] rounded-xl border border-[#2d3250] hover:border-indigo-500/40 transition">
+          <div class="cluster-badge inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-indigo-900/60 text-indigo-300 border border-indigo-500/40 mb-2">
+            Cluster {{ c.cluster_id + 1 }}
+          </div>
+          <h3 class="cluster-domain-title font-bold text-white text-sm mb-1 leading-snug">{{ c.domain_label }}</h3>
+          <div class="cluster-size text-xs text-gray-400 mb-3">
+            <strong>{{ c.size }}</strong> postings · <strong>{{ c.total_openings }}</strong> openings
+          </div>
+
+          <div class="cluster-skills mb-3">
+            <div class="cluster-label text-[10px] uppercase text-gray-400 mb-1">Core Competencies</div>
+            <div class="chip-row flex flex-wrap gap-1">
+              {% for s in c.top_skills %}
+                <span class="tag text-[11px] px-2 py-0.5 rounded bg-indigo-950/60 border border-indigo-500/30 text-indigo-300">{{ s }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="cluster-tiers mb-3">
+            <div class="cluster-label text-[10px] uppercase text-gray-400 mb-1">Viability Distribution</div>
+            <div class="space-y-1">
+              {% for st, n in c.status_dist.items() %}
+              <div class="mini-tier flex items-center justify-between text-[11px] text-gray-300">
+                <span>{{ st }}</span><span class="mini-count font-bold text-white">{{ n }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="cluster-districts">
+            <div class="cluster-label text-[10px] uppercase text-gray-400 mb-1">District Corridors</div>
+            <div class="chip-row flex flex-wrap gap-1">
+              {% for d, count in c.top_districts.items() %}
+                <span class="district-tag text-[10px] px-2 py-0.5 rounded bg-sky-950/60 border border-sky-500/30 text-sky-300">{{ d }} ({{ count }})</span>
+              {% endfor %}
+            </div>
+          </div>
         </div>
-        <span class="badge">Model Validation</span>
-      </div>
-
-      <div class="metrics-table-wrap">
-        <table class="metrics-table" id="metrics-table">
-          <thead>
-            <tr>
-              <th>Model Architecture</th>
-              <th>Accuracy</th>
-              <th>Precision (Weighted)</th>
-              <th>Recall (Weighted)</th>
-              <th>F1-Score (Weighted)</th>
-              <th>Evaluation Winner</th>
-            </tr>
-          </thead>
-          <tbody id="metrics-tbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Per-class breakdown -->
-      <div class="report-grid" id="report-grid">
-        <!-- Populated by JS -->
-      </div>
-    </section>
-
-    <!-- ═══════════════════════ CURRICULUM EVALUATOR & GAP ANALYZER ═══════════════════════ -->
-    <section id="evaluator-section" class="card predict-card hidden">
-      <div class="card-header">
-        <span class="card-icon">🎯</span>
-        <div>
-          <h2 class="card-title">2. Course Curriculum Viability &amp; Gap Recommendation Analyzer</h2>
-          <p class="card-sub">
-            Select the technical competencies currently taught in your course syllabus. The AI will evaluate market viability, benchmark against industry clusters, and produce evidence-based recommendations.
-          </p>
-        </div>
-      </div>
-
-      <div class="curriculum-input-bar">
-        <div class="course-meta-input">
-          <label for="course-title-input" class="input-label">Course / Qualification Name (Optional):</label>
-          <input type="text" id="course-title-input" class="text-input" placeholder="e.g. Diploma in Cloud Computing &amp; DevOps / B.Voc Web Development" />
-        </div>
-      </div>
-
-      <div class="skills-filter-bar">
-        <input type="text" id="skill-search" placeholder="🔍 Search curriculum competencies (e.g., Docker, Python, React)…" class="skill-search-input" />
-        <button class="btn btn-ghost btn-sm" id="select-all-btn">Select All</button>
-        <button class="btn btn-ghost btn-sm" id="clear-all-btn">Clear All</button>
-      </div>
-
-      <div class="skills-grid" id="skills-grid">
-        {% for skill in skills %}
-        <label class="skill-chip" for="skill-{{ loop.index }}">
-          <input type="checkbox" id="skill-{{ loop.index }}"
-                 class="skill-checkbox" value="{{ skill }}" />
-          <span class="chip-label">{{ skill }}</span>
-        </label>
         {% endfor %}
-      </div>
-
-      <div class="predict-actions">
-        <button class="btn btn-primary btn-lg" id="predict-btn">
-          <span class="btn-icon">⚡</span> Evaluate Curriculum Viability &amp; Detect Skill Gaps
-        </button>
-      </div>
-
-      <!-- Result and Actionable Plan Box -->
-      <div id="predict-result" class="predict-result hidden">
-        <!-- Populated dynamically by JS -->
       </div>
     </section>
 
   </main>
 
   <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
+  <footer class="site-footer bg-[#090c14] border-t border-[#2d3250] py-6 mt-16 text-center text-xs text-gray-400">
+    <div class="container footer-inner max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-4 px-4">
       <div>
-        <strong>Labour-Market Intelligence and Curriculum-Alignment Platform</strong>
-        <p class="footer-sub">Designed for MSINS Problem Statement ID26134 · Government of Maharashtra</p>
+        <strong class="text-white text-sm">Maharashtra Skill Align</strong>
+        <p class="footer-sub text-gray-400">Designed for MSINS Problem Statement ID26134 · Government of Maharashtra</p>
       </div>
-      <span class="footer-sep">·</span>
-      <span>Algorithms: K-Means Clustering · KNN · Logistic Regression</span>
-      <span class="footer-sep">·</span>
-      <span>Maharashtra District Training Plans</span>
+      <div class="flex items-center gap-3">
+        <span>Algorithms: K-Means (k=4) · KNN · Logistic Regression</span>
+        <span class="text-gray-600">·</span>
+        <span>Maharashtra District Capacity Plans</span>
+      </div>
     </div>
   </footer>
 
-  <!-- ═══════════════════════ JAVASCRIPT LOGIC ═══════════════════════ -->
+  <!-- ═══════════════════════ JAVASCRIPT HELPERS ═══════════════════════ -->
   <script>
-    /* ─────────────── Utilities ─────────────── */
     const $ = id => document.getElementById(id);
-    const show = el => el.classList.remove("hidden");
-    const hide = el => el.classList.add("hidden");
-    const fmt  = v  => (v * 100).toFixed(1) + "%";
 
-    /* ─────────────── File Drop Zone ─────────────── */
-    const dropZone  = $("file-drop-zone");
-    const fileInput = $("csv-file-input");
-    const fileLabel = $("file-name-display");
-
-    dropZone.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", () => {
-      fileLabel.textContent = fileInput.files[0]?.name || "No file chosen";
-      dropZone.classList.toggle("has-file", !!fileInput.files[0]);
-    });
-    dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("drag-over"); });
-    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
-    dropZone.addEventListener("drop", e => {
-      e.preventDefault();
-      dropZone.classList.remove("drag-over");
-      const dt = e.dataTransfer;
-      if (dt.files.length) {
-        fileInput.files = dt.files;
-        fileLabel.textContent = dt.files[0].name;
-        dropZone.classList.add("has-file");
-      }
-    });
-
-    /* ─────────────── Master Data Loaded Handler ─────────────── */
-    function handleDataLoaded(data) {
-      showStatus(`✅ Successfully analyzed ${data.n_rows} job postings with ${data.n_features} technical skill competencies across Maharashtra districts.`, "success");
-      renderOverview(data);
-      if (data.district_summary && data.district_summary.length) {
-        renderDistricts(data.district_summary);
-      }
-      if (data.hottest_roles && data.hottest_roles.length) {
-        renderRoles(data.hottest_roles);
-      }
-      renderClusters(data.clusters);
-      renderMetrics(data.metrics, data.knn_report, data.lr_report);
-      show($("evaluator-section"));
+    // Skill filter search
+    const searchInput = $("skill-search");
+    if (searchInput) {
+      searchInput.addEventListener("input", function() {
+        const q = this.value.toLowerCase().trim();
+        document.querySelectorAll(".skill-chip").forEach(chip => {
+          const label = chip.querySelector(".chip-label").textContent.toLowerCase();
+          chip.style.display = label.includes(q) ? "" : "none";
+        });
+      });
     }
 
-    /* ─────────────── Upload & Train Form ─────────────── */
-    $("upload-form").addEventListener("submit", async e => {
-      e.preventDefault();
-      const uploadBtn = $("upload-btn");
+    // Select all / Clear all buttons
+    const selectAllBtn = $("select-all-btn");
+    const clearAllBtn = $("clear-all-btn");
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener("click", () => {
+        document.querySelectorAll(".skill-checkbox").forEach(cb => cb.checked = true);
+      });
+    }
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener("click", () => {
+        document.querySelectorAll(".skill-checkbox").forEach(cb => cb.checked = false);
+      });
+    }
 
-      if (!fileInput.files[0]) {
-        showStatus("⚠️ Please select a CSV file first, or click 'Quick Load Maharashtra MSINS Dataset'.", "warning");
-        return;
-      }
-
-      uploadBtn.disabled = true;
-      uploadBtn.innerHTML = '<span class="spinner"></span> Processing Market Signals…';
-      showStatus("⏳ Parsing dataset, running K-Means clustering & fitting supervised models…", "info");
-
-      const fd = new FormData();
-      fd.append("csv_file", fileInput.files[0]);
-
-      try {
-        const resp = await fetch("/upload", { method: "POST", body: fd });
-        const data = await resp.json();
-
-        if (!resp.ok || data.error) {
-          showStatus("❌ " + (data.error || "Upload failed."), "error");
-          return;
-        }
-
-        handleDataLoaded(data);
-
-      } catch (err) {
-        showStatus("❌ Network error: " + err.message, "error");
-      } finally {
-        uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<span class="btn-icon">⚡</span> Run Market Analysis &amp; Train Models';
-      }
-    });
-
-    /* ─────────────── Quick Load Button ─────────────── */
+    // Quick reload dataset button
     const quickLoadBtn = $("quick-load-btn");
     if (quickLoadBtn) {
       quickLoadBtn.addEventListener("click", async () => {
         quickLoadBtn.disabled = true;
-        quickLoadBtn.innerHTML = '<span class="spinner"></span> Ingesting MSINS Data…';
-        showStatus("⏳ Loading pre-compiled Maharashtra MSINS labour dataset & fitting models…", "info");
-
+        quickLoadBtn.textContent = "⏳ Reloading...";
         try {
           const resp = await fetch("/load-sample", { method: "POST" });
-          const data = await resp.json();
-
-          if (!resp.ok || data.error) {
-            showStatus("❌ " + (data.error || "Could not load sample dataset."), "error");
-            return;
+          if (resp.ok) {
+            window.location.reload();
           }
-
-          handleDataLoaded(data);
-
-        } catch (err) {
-          showStatus("❌ " + err.message, "error");
+        } catch (e) {
+          console.error(e);
         } finally {
           quickLoadBtn.disabled = false;
-          quickLoadBtn.innerHTML = '<span class="btn-icon">🚀</span> Quick Load Maharashtra MSINS Dataset (400 Roles)';
+          quickLoadBtn.textContent = "🚀 Reload Dataset";
         }
       });
-    }
-
-    function showStatus(msg, type) {
-      const box = $("upload-status");
-      box.textContent = msg;
-      box.className = "status-box status-" + type;
-      show(box);
-    }
-
-    /* ─────────────── Overview Rendering ─────────────── */
-    function renderOverview(data) {
-      const statusColors = {
-        "High Demand": "#10b981",
-        "Needs Update": "#f59e0b",
-        "Obsolete/Oversupplied": "#ef4444"
-      };
-      const total = Object.values(data.status_dist).reduce((a, b) => a + b, 0);
-
-      $("stat-grid").innerHTML = `
-        <div class="stat-card">
-          <div class="stat-value">${data.n_rows.toLocaleString()}</div>
-          <div class="stat-label">Total Job Postings</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${data.n_features}</div>
-          <div class="stat-label">Skill Competencies</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">${data.clusters.length}</div>
-          <div class="stat-label">K-Means Domains</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value">3</div>
-          <div class="stat-label">Viability Classes</div>
-        </div>
-      `;
-
-      $("status-bars").innerHTML = `
-        <h3 class="tier-bars-title">Course Viability Distribution in Ingested Job Postings</h3>
-        ${Object.entries(data.status_dist).map(([st, count]) => `
-          <div class="tier-row">
-            <span class="tier-label" style="color:${statusColors[st]||'#aaa'}">${st}</span>
-            <div class="tier-bar-track">
-              <div class="tier-bar-fill" style="width:${(count/total*100).toFixed(1)}%;background:${statusColors[st]||'#aaa'}"></div>
-            </div>
-            <span class="tier-count">${count} <span class="tier-pct">(${(count/total*100).toFixed(1)}%)</span></span>
-          </div>
-        `).join("")}
-      `;
-      show($("overview-section"));
-    }
-
-    /* ─────────────── Maharashtra District Intelligence ─────────────── */
-    function renderDistricts(districts) {
-      const grid = $("district-grid");
-      grid.innerHTML = districts.map(d => `
-        <div class="district-card">
-          <div class="district-header">
-            <div class="district-title-wrap">
-              <span class="district-icon">📍</span>
-              <h3 class="district-name">${d.district}</h3>
-            </div>
-            <span class="district-openings-badge">${d.total_openings.toLocaleString()} Openings</span>
-          </div>
-
-          <div class="district-metric-row">
-            <div class="dm-item">
-              <span class="dm-label">Postings Sample</span>
-              <span class="dm-val">${d.postings_count} roles</span>
-            </div>
-            <div class="dm-item">
-              <span class="dm-label">High-Demand Share</span>
-              <span class="dm-val dm-high">${d.high_demand_share}%</span>
-            </div>
-          </div>
-
-          <div class="district-sub-section">
-            <div class="district-sub-title">Key In-Demand Roles</div>
-            <div class="district-role-tags">
-              ${d.top_roles.map(r => `<span class="d-role-tag">${r}</span>`).join("")}
-            </div>
-          </div>
-
-          <div class="district-sub-section">
-            <div class="district-sub-title">Dominant Competencies</div>
-            <div class="district-skill-tags">
-              ${d.top_skills.map(s => `<span class="d-skill-tag">${s}</span>`).join("")}
-            </div>
-          </div>
-        </div>
-      `).join("");
-
-      show($("district-section"));
-    }
-
-    /* ─────────────── Top Emerging Roles ─────────────── */
-    function renderRoles(roles) {
-      const grid = $("roles-grid");
-      const medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
-
-      grid.innerHTML = roles.map((job, idx) => {
-        const statusClass = job.status.toLowerCase().replace(/[^a-z]/g, "-");
-        return `
-          <div class="hottest-card rank-${job.rank}">
-            <div class="hottest-card-header">
-              <div class="hottest-rank-wrap">
-                <span class="hottest-medal">${medals[idx] || '#' + job.rank}</span>
-                <span class="hottest-rank-num">#${job.rank}</span>
-              </div>
-              <div class="hottest-title-wrap">
-                <h3 class="hottest-title">${job.role}</h3>
-                <span class="status-pill status-${statusClass}">${job.status}</span>
-              </div>
-              <div class="hottest-flame-score" title="Viability Index combining Hiring Openings and Market Modernity">
-                📈 ${job.viability_index}<span class="score-max">/100</span>
-              </div>
-            </div>
-
-            <div class="hottest-metrics-row">
-              <div class="hottest-m-box">
-                <span class="hm-label">Hiring Demand</span>
-                <span class="hm-val">${job.openings.toLocaleString()} Openings</span>
-                <span class="hm-sub">${job.postings} job posts</span>
-              </div>
-              <div class="hottest-m-box">
-                <span class="hm-label">Primary Corridor</span>
-                <span class="hm-val">${job.primary_district}</span>
-                <span class="hm-sub">Maharashtra Hub</span>
-              </div>
-            </div>
-
-            <div class="hottest-skills-section">
-              <div class="hottest-skills-heading">Required Technical Skills</div>
-              <div class="hottest-skill-tags">
-                ${job.top_skills.map(s => `<span class="h-skill-tag">${s}</span>`).join("")}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-      show($("roles-section"));
-    }
-
-    /* ─────────────── K-Means Clusters ─────────────── */
-    function renderClusters(clusters) {
-      const clusterColors = ["#6366f1", "#10b981", "#ec4899", "#f59e0b"];
-      $("cluster-grid").innerHTML = clusters.map((c, i) => `
-        <div class="cluster-card">
-          <div class="cluster-badge" style="background:${clusterColors[i % clusterColors.length]}">
-            Cluster ${c.cluster_id + 1}
-          </div>
-          <h3 class="cluster-domain-title">${c.domain_label}</h3>
-          <div class="cluster-size">
-            <strong>${c.size}</strong> postings · <strong>${c.total_openings.toLocaleString()}</strong> openings
-          </div>
-
-          <div class="cluster-skills">
-            <div class="cluster-label">Core Technical Competencies</div>
-            <div class="chip-row">
-              ${c.top_skills.map(s => `<span class="tag">${s}</span>`).join("")}
-            </div>
-          </div>
-
-          <div class="cluster-tiers">
-            <div class="cluster-label">Viability Breakdown</div>
-            ${Object.entries(c.status_dist).map(([st, n]) => `
-              <div class="mini-tier">
-                <span>${st}</span><span class="mini-count">${n}</span>
-              </div>`).join("")}
-          </div>
-
-          <div class="cluster-districts">
-            <div class="cluster-label">Key District Corridors</div>
-            <div class="chip-row">
-              ${Object.entries(c.top_districts).map(([d, count]) => `
-                <span class="district-tag">${d} (${count})</span>
-              `).join("")}
-            </div>
-          </div>
-        </div>
-      `).join("");
-      show($("clusters-section"));
-    }
-
-    /* ─────────────── Model Metrics ─────────────── */
-    function renderMetrics(metrics, knnReport, lrReport) {
-      const knn = metrics.knn;
-      const lr  = metrics.lr;
-      const knnWin = knn.f1 >= lr.f1;
-
-      $("metrics-tbody").innerHTML = `
-        <tr class="${knnWin ? 'winner-row' : ''}">
-          <td><span class="model-badge model-knn">K-Nearest Neighbors (KNN)</span></td>
-          <td>${fmt(knn.accuracy)}</td>
-          <td>${fmt(knn.precision)}</td>
-          <td>${fmt(knn.recall)}</td>
-          <td>${fmt(knn.f1)}</td>
-          <td>${knnWin ? '<span class="winner-badge">🏆 Winner</span>' : '—'}</td>
-        </tr>
-        <tr class="${!knnWin ? 'winner-row' : ''}">
-          <td><span class="model-badge model-lr">Logistic Regression</span></td>
-          <td>${fmt(lr.accuracy)}</td>
-          <td>${fmt(lr.precision)}</td>
-          <td>${fmt(lr.recall)}</td>
-          <td>${fmt(lr.f1)}</td>
-          <td>${!knnWin ? '<span class="winner-badge">🏆 Winner</span>' : '—'}</td>
-        </tr>
-      `;
-
-      const classes = ["High Demand", "Needs Update", "Obsolete/Oversupplied"];
-      $("report-grid").innerHTML = `
-        <div class="report-card">
-          <h4 class="report-title model-knn-text">KNN — Per-Class Viability Metrics</h4>
-          ${renderClassTable(knnReport, classes)}
-        </div>
-        <div class="report-card">
-          <h4 class="report-title model-lr-text">Logistic Regression — Per-Class Viability Metrics</h4>
-          ${renderClassTable(lrReport, classes)}
-        </div>
-      `;
-      show($("metrics-section"));
-    }
-
-    function renderClassTable(report, classes) {
-      return `
-        <table class="class-table">
-          <thead><tr><th>Status Class</th><th>Precision</th><th>Recall</th><th>F1-Score</th><th>Support</th></tr></thead>
-          <tbody>
-            ${classes.filter(t => report[t]).map(t => `
-              <tr>
-                <td><strong>${t}</strong></td>
-                <td>${(report[t].precision * 100).toFixed(1)}%</td>
-                <td>${(report[t].recall    * 100).toFixed(1)}%</td>
-                <td>${(report[t]["f1-score"] * 100).toFixed(1)}%</td>
-                <td>${report[t].support}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      `;
-    }
-
-    /* ─────────────── Skill Search & Checkboxes ─────────────── */
-    $("skill-search").addEventListener("input", function() {
-      const q = this.value.toLowerCase();
-      document.querySelectorAll(".skill-chip").forEach(chip => {
-        chip.style.display = chip.querySelector(".chip-label").textContent.toLowerCase().includes(q) ? "" : "none";
-      });
-    });
-    $("select-all-btn").addEventListener("click", () => {
-      document.querySelectorAll(".skill-checkbox").forEach(cb => cb.checked = true);
-    });
-    $("clear-all-btn").addEventListener("click", () => {
-      document.querySelectorAll(".skill-checkbox").forEach(cb => cb.checked = false);
-    });
-
-    /* ─────────────── Predict & Gap Recommendation Engine ─────────────── */
-    $("predict-btn").addEventListener("click", async () => {
-      const selected = [...document.querySelectorAll(".skill-checkbox:checked")].map(cb => cb.value);
-      const resultBox = $("predict-result");
-      const predictBtn = $("predict-btn");
-      const courseTitle = $("course-title-input").value.trim() || "Evaluated Skill Curriculum";
-
-      if (!selected.length) {
-        resultBox.innerHTML = `<div class="result-warn">⚠️ Please select at least one curriculum skill to evaluate course viability.</div>`;
-        show(resultBox);
-        return;
-      }
-
-      predictBtn.disabled = true;
-      predictBtn.innerHTML = '<span class="spinner"></span> Analyzing Curriculum Gaps…';
-
-      try {
-        const resp = await fetch("/predict", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ skills: selected }),
-        });
-        const data = await resp.json();
-
-        if (data.error) {
-          resultBox.innerHTML = `<div class="result-warn">❌ ${data.error}</div>`;
-          show(resultBox);
-          return;
-        }
-
-        const rec = data.recommendations;
-        const statusPills = {
-          "High Demand": "🟢 High Demand",
-          "Needs Update": "🟡 Needs Update",
-          "Obsolete/Oversupplied": "🔴 Obsolete / Oversupplied"
-        };
-        const statusColors = {
-          "High Demand": "#10b981",
-          "Needs Update": "#f59e0b",
-          "Obsolete/Oversupplied": "#ef4444"
-        };
-
-        resultBox.innerHTML = `
-          <div class="result-header">
-            <div>
-              <span class="eval-tag">Curriculum Alignment Report</span>
-              <h3 class="result-heading">${courseTitle}</h3>
-              <p class="result-sub">${rec.status_message}</p>
-            </div>
-            <div class="status-verdict-box" style="border-color:${statusColors[data.primary_status]}">
-              <span class="verdict-label">Predicted Market Status</span>
-              <span class="verdict-badge" style="background:${statusColors[data.primary_status]}">${statusPills[data.primary_status]}</span>
-            </div>
-          </div>
-
-          <!-- Model Comparison Cards -->
-          <div class="result-cards">
-            ${renderPredCard("K-Nearest Neighbors (KNN)", data.knn, statusColors)}
-            ${renderPredCard("Logistic Regression", data.lr, statusColors)}
-          </div>
-
-          <!-- Curriculum Gap Analysis Card -->
-          <div class="gap-analysis-card">
-            <h4 class="gap-card-title">🔍 Evidence-Based Skill Gap Analysis</h4>
-            <div class="gap-meta-row">
-              <div class="gap-meta-item">
-                <span class="gm-label">Nearest Industry Cluster:</span>
-                <span class="gm-val">${rec.aligned_cluster}</span>
-              </div>
-              <div class="gap-meta-item">
-                <span class="gm-label">Estimated Candidate Placement Readiness:</span>
-                <span class="gm-val gm-score">${rec.placement_readiness}%</span>
-              </div>
-            </div>
-
-            <div class="gap-skills-grid">
-              <div class="gap-skill-col col-matched">
-                <div class="gap-col-header">✅ Covered Competencies (${rec.matched_skills.length})</div>
-                <div class="chip-row">
-                  ${rec.matched_skills.length ? rec.matched_skills.map(s => `<span class="tag tag-matched">${s}</span>`).join("") : '<em>None matched with primary industry cluster</em>'}
-                </div>
-              </div>
-              <div class="gap-skill-col col-missing">
-                <div class="gap-col-header">⚠️ Critical Industry Gaps to Add (${rec.missing_skills.length})</div>
-                <div class="chip-row">
-                  ${rec.missing_skills.length ? rec.missing_skills.map(s => `<span class="tag tag-missing">+ ${s}</span>`).join("") : '<em>No critical gaps! Curriculum matches industry cluster core.</em>'}
-                </div>
-              </div>
-            </div>
-
-            <!-- Actionable Recommendations Grid -->
-            <div class="recommendations-box">
-              <h4 class="rec-heading">📋 Actionable Revision &amp; Planning Recommendations (MSINS ID26134)</h4>
-              <div class="action-items-list">
-                ${rec.action_plan.map(item => `
-                  <div class="action-item">
-                    <span class="action-bullet">📌</span>
-                    <span>${item}</span>
-                  </div>
-                `).join("")}
-              </div>
-
-              <div class="planning-guidance-grid">
-                <div class="guidance-box">
-                  <div class="guidance-title">🛠️ Equipment &amp; Lab Infrastructure Guidance</div>
-                  <p class="guidance-text">${rec.equipment_guidance}</p>
-                </div>
-                <div class="guidance-box">
-                  <div class="guidance-title">👨‍🏫 Trainer Capacity &amp; Faculty Upskilling Plan</div>
-                  <p class="guidance-text">${rec.trainer_guidance}</p>
-                </div>
-              </div>
-
-              <div class="placement-hotspots">
-                <span class="ph-label">📍 Priority Maharashtra Placement Corridors:</span>
-                <div class="ph-tags">
-                  ${rec.target_districts.map(d => `<span class="ph-district-pill">${d} Tech Corridor</span>`).join("")}
-                </div>
-              </div>
-            </div>
-
-          </div>
-        `;
-
-        show(resultBox);
-        resultBox.scrollIntoView({ behavior: "smooth", block: "start" });
-
-      } catch (err) {
-        resultBox.innerHTML = `<div class="result-warn">❌ Network error: ${err.message}</div>`;
-        show(resultBox);
-      } finally {
-        predictBtn.disabled = false;
-        predictBtn.innerHTML = '<span class="btn-icon">⚡</span> Evaluate Curriculum Viability &amp; Detect Skill Gaps';
-      }
-    });
-
-    function renderPredCard(model, res, colors) {
-      const c = colors[res.status] || "#aaa";
-      return `
-        <div class="pred-card">
-          <div class="pred-model">${model}</div>
-          <div class="pred-tier" style="color:${c}">
-            ${res.status}
-          </div>
-          <div class="pred-confidence">
-            Confidence: <strong>${res.confidence}%</strong>
-          </div>
-          <div class="prob-bars">
-            ${Object.entries(res.probabilities).map(([t, p]) => `
-              <div class="prob-row">
-                <span class="prob-label">${t}</span>
-                <div class="prob-track">
-                  <div class="prob-fill" style="width:${p}%;background:${colors[t]||'#aaa'}"></div>
-                </div>
-                <span class="prob-pct">${p}%</span>
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      `;
     }
   </script>
 </body>
