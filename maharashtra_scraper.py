@@ -18,6 +18,7 @@ def scrape_maharashtra_jobs():
         
         # Format the data to match your MSINS columns
         scraped_data.append({
+            "Job Title": title,
             "Job Role": title,
             "Required Skills": skills,
             "District/Location": location,

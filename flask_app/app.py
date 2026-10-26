@@ -1,50 +1,45 @@
 """
-Maharashtra Skill Align — Labour-Market Intelligence & Curriculum-Alignment Platform
+Maharashtra Skill Align — REST API Backend
 Based on MSINS Problem Statement ID26134
 Government of Maharashtra — Dept. of Skills, Employment, Entrepreneurship & Innovation
 ========================================================================================
-Key Capabilities:
-1. Load 'sample_jobs.csv' (or live 'scraped_maharashtra_jobs.csv') using Pandas.
-2. Preprocess 'Required Skills' with MultiLabelBinarizer.
-3. K-Means Clustering (k=4) to cluster skills into industry domain clusters.
-4. Train KNN and Logistic Regression to predict 'Curriculum Status'
-   (High Demand, Needs Update, Obsolete/Oversupplied) and calculate Accuracy, Precision, Recall, F1.
-5. '/' route to render index.html with live dashboard metrics.
-6. '/evaluate' POST route that accepts selected skills from the form, runs KNN prediction,
-   and returns curriculum status, missing skill gaps, and recommendations.
+REST API Specifications:
+1. Data Integration: Loads 'scraped_maharashtra_jobs.csv' from 'flask_app/' (fallback to sample_jobs.csv).
+2. Explicit Column Handling: Maps and processes 'Job Title' and 'Required Skills' columns using MultiLabelBinarizer.
+3. Unsupervised K-Means (k=4) clustering to discover industry skill domains.
+4. Supervised KNN and Logistic Regression trained on 'Curriculum Status'.
+5. REST Endpoints:
+   - GET  /api/metrics   → Returns dataset statistics (total rows, unique skills, model accuracy, clusters)
+   - POST /api/evaluate  → Accepts selected skills as JSON, runs KNN, returns curriculum status & recommendations
+   - GET  /api/skills    → Returns list of all unique skills in the dataset
+   - GET  /              → API status and sitemap
 """
 
-import io
 import os
 import re
+import io
 import json
 import random
 from typing import Dict, List, Any, Optional
 
 import numpy as np
 import pandas as pd
-from flask import (
-    Flask, render_template, request, jsonify, session,
-    send_file, redirect, url_for,
-)
+from flask import Flask, request, jsonify, send_file
 from sklearn.cluster import KMeans
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MultiLabelBinarizer, LabelEncoder, StandardScaler
-from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score, f1_score,
-    classification_report,
-)
+from sklearn.preprocessing import MultiLabelBinarizer
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 # ──────────────────────────────────────────────────────────────
-# App setup
+# Flask App Setup
 # ──────────────────────────────────────────────────────────────
 app = Flask(__name__)
-app.secret_key = "maharashtra-skill-align-msins-id26134-key"
+app.secret_key = "maharashtra-skill-align-api-secret-key"
 
 # ──────────────────────────────────────────────────────────────
-# Constants & Maharashtra Geographies
+# Domain Constants
 # ──────────────────────────────────────────────────────────────
 MAHARASHTRA_DISTRICTS = [
     "Pune", "Mumbai", "Nagpur", "Nashik", "Thane",
@@ -60,7 +55,7 @@ CLUSTER_NAMES = [
     "Enterprise Systems, Databases & Backend"
 ]
 
-# Canonical fallback skills list
+# Standard canonical technical skills reference
 CANONICAL_SKILLS = [
     "python", "sql", "r", "java", "javascript", "typescript",
     "c++", "scala", "spark", "kafka", "airflow", "dbt",
@@ -73,33 +68,32 @@ CANONICAL_SKILLS = [
 ]
 
 # ──────────────────────────────────────────────────────────────
-# Global In-Memory Model & Analytics Cache
+# Global In-Memory Model Cache
 # ──────────────────────────────────────────────────────────────
-PIPELINE: Dict[str, Any] = {
+MODEL_CACHE: Dict[str, Any] = {
     "df": None,
+    "active_dataset_file": None,
     "mlb": None,
     "kmeans": None,
     "knn": None,
     "lr": None,
-    "le": None,
-    "scaler": None,
-    "feature_names": [],
+    "unique_skills": [],
     "metrics": {},
     "clusters": [],
     "districts": [],
     "hottest_roles": [],
-    "status_dist": {},
+    "status_distribution": {},
     "initialized": False,
 }
 
 # ──────────────────────────────────────────────────────────────
-# Data Preprocessing & Model Training Engine
+# Preprocessing Helpers
 # ──────────────────────────────────────────────────────────────
 def clean_skill_token(token: str) -> str:
     s = str(token).lower().strip()
     s = re.sub(r"[^a-z0-9\+\#\/\.\-]", " ", s)
     s = re.sub(r"\s+", " ", s).strip()
-    # Canonical mappings
+    # Normalize common abbreviations
     if s in {"k8s"}: return "kubernetes"
     if s in {"postgres"}: return "postgresql"
     if s in {"power bi"}: return "powerbi"
@@ -112,11 +106,10 @@ def clean_skill_token(token: str) -> str:
 
 
 def parse_skills_string(skills_raw: Any) -> List[str]:
-    """Extract clean list of skills from comma/slash/pipe separated text."""
+    """Tokenize and clean the 'Required Skills' column."""
     if pd.isnull(skills_raw):
         return []
     raw = str(skills_raw).lower()
-    # Split by comma, semicolon, or newline
     tokens = re.split(r"[,;\n|]+", raw)
     cleaned = []
     for t in tokens:
@@ -126,26 +119,32 @@ def parse_skills_string(skills_raw: Any) -> List[str]:
     return sorted(list(set(cleaned)))
 
 
-def resolve_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Normalize headers to standard names."""
-    col_map = {}
-    for c in df.columns:
-        norm = re.sub(r"[^a-z0-9]", "", str(c).lower())
-        if norm in {"jobrole", "jobtitle", "role", "title", "position", "coursename"}:
-            col_map[c] = "Job Role"
-        elif norm in {"requiredskills", "skillsraw", "skills", "skill", "keyskills", "technicalskills", "competencies"}:
-            col_map[c] = "Required Skills"
-        elif norm in {"districtlocation", "district", "location", "city", "region", "worklocation", "place"}:
-            col_map[c] = "District/Location"
+def explicit_column_mapping(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Explicitly detects, maps, and normalizes 'Job Title' and 'Required Skills'
+    along with 'District/Location', 'Demand Volume', and 'Curriculum Status'.
+    """
+    rename_dict = {}
+    for col in df.columns:
+        norm = re.sub(r"[^a-z0-9]", "", str(col).lower())
+        # Explicit mapping for Job Title
+        if norm in {"jobtitle", "title", "jobrole", "role", "position", "designation"}:
+            rename_dict[col] = "Job Title"
+        # Explicit mapping for Required Skills
+        elif norm in {"requiredskills", "skills", "skillsraw", "skill", "keyskills", "technicalskills", "competencies"}:
+            rename_dict[col] = "Required Skills"
+        elif norm in {"districtlocation", "district", "location", "city", "region", "worklocation"}:
+            rename_dict[col] = "District/Location"
         elif norm in {"demandvolume", "openings", "vacancies", "demand", "volume", "postings", "count"}:
-            col_map[c] = "Demand Volume"
+            rename_dict[col] = "Demand Volume"
         elif norm in {"curriculumstatus", "status", "demandstatus", "viability", "tier"}:
-            col_map[c] = "Curriculum Status"
-    df = df.rename(columns=col_map)
+            rename_dict[col] = "Curriculum Status"
 
-    # Ensure required columns exist
-    if "Job Role" not in df.columns:
-        df["Job Role"] = "Software Developer"
+    df = df.rename(columns=rename_dict)
+
+    # Ensure required columns are present with sensible defaults
+    if "Job Title" not in df.columns:
+        df["Job Title"] = "Software Engineer"
     if "Required Skills" not in df.columns:
         df["Required Skills"] = "python, sql, git"
     if "District/Location" not in df.columns:
@@ -153,71 +152,79 @@ def resolve_columns(df: pd.DataFrame) -> pd.DataFrame:
         df["District/Location"] = [random.choice(MAHARASHTRA_DISTRICTS) for _ in range(len(df))]
     if "Demand Volume" not in df.columns:
         random.seed(42)
-        df["Demand Volume"] = [random.randint(40, 280) for _ in range(len(df))]
+        df["Demand Volume"] = [random.randint(50, 300) for _ in range(len(df))]
     if "Curriculum Status" not in df.columns:
         df["Curriculum Status"] = "Needs Update"
 
     return df
 
 
-def load_and_train_models(csv_path: Optional[str] = None) -> Dict[str, Any]:
+def normalize_status_label(val: Any) -> str:
+    s = str(val).strip().lower()
+    if "high" in s or "advanced" in s or "emerging" in s:
+        return "High Demand"
+    if "update" in s or "mid" in s or "moderate" in s:
+        return "Needs Update"
+    if "obsolete" in s or "oversupplied" in s or "legacy" in s:
+        return "Obsolete/Oversupplied"
+    return "Needs Update"
+
+
+# ──────────────────────────────────────────────────────────────
+# Data Loading & ML Training Pipeline
+# ──────────────────────────────────────────────────────────────
+def initialize_data_pipeline(file_path: Optional[str] = None) -> Dict[str, Any]:
     """
-    1. Loads dataset using Pandas.
-    2. Preprocesses 'Required Skills' with MultiLabelBinarizer.
-    3. Runs K-Means (k=4) clustering on skill feature vectors.
-    4. Trains KNN and Logistic Regression to predict 'Curriculum Status'.
-    5. Computes Accuracy, Precision, Recall, and F1-Score for both models.
+    1. Loads 'flask_app/scraped_maharashtra_jobs.csv' (or provided path, fallback to sample_jobs.csv).
+    2. Explicitly maps 'Job Title' and 'Required Skills'.
+    3. Fits MultiLabelBinarizer on 'Required Skills'.
+    4. Runs K-Means (k=4) clustering.
+    5. Trains KNN and Logistic Regression on 'Curriculum Status' and computes evaluation metrics.
     """
-    # Check possible dataset paths
     candidate_paths = [
-        csv_path,
+        file_path,
         "scraped_maharashtra_jobs.csv",
-        "sample_jobs.csv",
+        "flask_app/scraped_maharashtra_jobs.csv",
         os.path.join(os.path.dirname(__file__), "scraped_maharashtra_jobs.csv"),
+        "sample_jobs.csv",
+        "flask_app/sample_jobs.csv",
         os.path.join(os.path.dirname(__file__), "sample_jobs.csv"),
     ]
-    target_path = None
+
+    chosen_path = None
     for p in candidate_paths:
         if p and os.path.exists(p) and os.path.getsize(p) > 50:
-            target_path = p
+            chosen_path = p
             break
 
-    if not target_path:
-        raise FileNotFoundError("Neither sample_jobs.csv nor scraped_maharashtra_jobs.csv could be found.")
+    if not chosen_path:
+        raise FileNotFoundError("Could not find scraped_maharashtra_jobs.csv or sample_jobs.csv.")
 
-    df = pd.read_csv(target_path)
-    df = resolve_columns(df)
+    df = pd.read_csv(chosen_path)
+    df = explicit_column_mapping(df)
 
-    # Preprocess skills column using MultiLabelBinarizer
+    # Preprocess Required Skills using MultiLabelBinarizer
     df["skills_list"] = df["Required Skills"].apply(parse_skills_string)
 
-    # Fallback for any rows with empty skills
+    # Fallback for any rows without detected skills
     for i, row in df.iterrows():
         if not row["skills_list"]:
             df.at[i, "skills_list"] = ["python", "sql", "git"]
 
     mlb = MultiLabelBinarizer()
     X = mlb.fit_transform(df["skills_list"])
-    feature_names = list(mlb.classes_)
+    unique_skills = sorted(list(mlb.classes_))
 
-    # Normalize Curriculum Status to standard 3 classes
-    def normalize_status(val):
-        s = str(val).strip().lower()
-        if "high" in s: return "High Demand"
-        if "update" in s or "mid" in s or "moderate" in s: return "Needs Update"
-        if "obsolete" in s or "oversupplied" in s or "legacy" in s or "entry" in s: return "Obsolete/Oversupplied"
-        return "Needs Update"
+    # Preprocess Curriculum Status
+    df["Curriculum Status"] = df["Curriculum Status"].apply(normalize_status_label)
 
-    df["Curriculum Status"] = df["Curriculum Status"].apply(normalize_status)
-
-    # Ensure all 3 classes exist so supervised models train reliably
-    counts = df["Curriculum Status"].value_counts()
+    # Ensure class balance so all 3 classes exist for supervised learning
+    status_counts = df["Curriculum Status"].value_counts()
     for cls in STATUS_CLASSES:
-        if cls not in counts or counts[cls] < 2:
-            # Overwrite cyclically
-            sample_idxs = df.index.tolist()
-            if sample_idxs:
-                idx = sample_idxs[STATUS_CLASSES.index(cls) % len(sample_idxs)]
+        if cls not in status_counts or status_counts[cls] < 2:
+            sample_indices = df.index.tolist()
+            if sample_indices:
+                idx = sample_indices[STATUS_CLASSES.index(cls) % len(sample_indices)]
                 df.at[idx, "Curriculum Status"] = cls
 
     y = df["Curriculum Status"]
@@ -234,14 +241,13 @@ def load_and_train_models(csv_path: Optional[str] = None) -> Dict[str, Any]:
 
     for cid in range(k_clusters):
         sub = df[df["cluster"] == cid]
-        domain_title = CLUSTER_NAMES[cid % len(CLUSTER_NAMES)]
+        domain_label = CLUSTER_NAMES[cid % len(CLUSTER_NAMES)]
 
-        # Find top skills in this cluster
         if len(sub) > 0:
             cluster_X = mlb.transform(sub["skills_list"])
             skill_sums = cluster_X.sum(axis=0)
-            top_skill_indices = np.argsort(skill_sums)[::-1][:5]
-            top_skills = [feature_names[i] for i in top_skill_indices if skill_sums[i] > 0]
+            top_skill_indices = np.argsort(skill_sums)[::-1][:6]
+            top_skills = [unique_skills[i] for i in top_skill_indices if skill_sums[i] > 0]
             status_dist = sub["Curriculum Status"].value_counts().to_dict()
             total_openings = int(pd.to_numeric(sub["Demand Volume"], errors="coerce").fillna(50).sum())
             top_districts = sub["District/Location"].value_counts().head(3).to_dict()
@@ -252,18 +258,18 @@ def load_and_train_models(csv_path: Optional[str] = None) -> Dict[str, Any]:
             top_districts = {}
 
         cluster_summaries.append({
-            "cluster_id": cid,
-            "cluster_name": f"Cluster {cid + 1}: {domain_title}",
-            "domain_label": domain_title,
+            "cluster_id": cid + 1,
+            "domain_label": domain_label,
+            "cluster_name": f"Cluster {cid + 1}: {domain_label}",
             "size": len(sub),
             "total_openings": total_openings,
             "top_skills": top_skills,
-            "status_dist": status_dist,
+            "status_distribution": status_dist,
             "top_districts": top_districts,
             "centroid": centroids[cid].tolist(),
         })
 
-    # ── Supervised Learning: KNN & Logistic Regression ──────────
+    # ── Supervised Models: KNN & Logistic Regression ───────────
     class_counts = y.value_counts()
     n_classes = len(class_counts)
     test_count = max(1, int(np.ceil(len(df) * 0.25)))
@@ -280,39 +286,45 @@ def load_and_train_models(csv_path: Optional[str] = None) -> Dict[str, Any]:
         stratify=y if can_stratify else None
     )
 
-    # Train KNN
+    # K-Nearest Neighbors Classifier
     k_neighbors = min(5, max(1, len(X_train) - 1))
     knn = KNeighborsClassifier(n_neighbors=k_neighbors, metric="euclidean")
     knn.fit(X_train, y_train)
     knn_pred = knn.predict(X_test)
 
-    # Train Logistic Regression
+    # Logistic Regression Classifier
     lr = LogisticRegression(max_iter=1000, class_weight="balanced", random_state=42)
     lr.fit(X_train, y_train)
     lr_pred = lr.predict(X_test)
 
-    # Metrics
+    # Compute Evaluation Metrics
     metrics = {
-        "knn_accuracy":  round(accuracy_score(y_test, knn_pred) * 100, 1),
-        "knn_precision": round(precision_score(y_test, knn_pred, average="weighted", zero_division=0) * 100, 1),
-        "knn_recall":    round(recall_score(y_test, knn_pred, average="weighted", zero_division=0) * 100, 1),
-        "knn_f1":        round(f1_score(y_test, knn_pred, average="weighted", zero_division=0) * 100, 1),
-
-        "lr_accuracy":   round(accuracy_score(y_test, lr_pred) * 100, 1),
-        "lr_precision":  round(precision_score(y_test, lr_pred, average="weighted", zero_division=0) * 100, 1),
-        "lr_recall":     round(recall_score(y_test, lr_pred, average="weighted", zero_division=0) * 100, 1),
-        "lr_f1":         round(f1_score(y_test, lr_pred, average="weighted", zero_division=0) * 100, 1),
+        "knn": {
+            "model": "K-Nearest Neighbors",
+            "k_neighbors": k_neighbors,
+            "accuracy": round(float(accuracy_score(y_test, knn_pred)) * 100, 1),
+            "precision": round(float(precision_score(y_test, knn_pred, average="weighted", zero_division=0)) * 100, 1),
+            "recall": round(float(recall_score(y_test, knn_pred, average="weighted", zero_division=0)) * 100, 1),
+            "f1_score": round(float(f1_score(y_test, knn_pred, average="weighted", zero_division=0)) * 100, 1),
+        },
+        "logistic_regression": {
+            "model": "Logistic Regression",
+            "accuracy": round(float(accuracy_score(y_test, lr_pred)) * 100, 1),
+            "precision": round(float(precision_score(y_test, lr_pred, average="weighted", zero_division=0)) * 100, 1),
+            "recall": round(float(recall_score(y_test, lr_pred, average="weighted", zero_division=0)) * 100, 1),
+            "f1_score": round(float(f1_score(y_test, lr_pred, average="weighted", zero_division=0)) * 100, 1),
+        }
     }
 
-    # District Summary for Maharashtra
+    # District Level Aggregations
     district_list = []
     for dist, grp in df.groupby("District/Location"):
         total_openings = int(pd.to_numeric(grp["Demand Volume"], errors="coerce").fillna(50).sum())
-        role_counts = grp["Job Role"].value_counts()
+        role_counts = grp["Job Title"].value_counts()
         top_roles = role_counts.head(2).index.tolist()
         grp_skills = mlb.transform(grp["skills_list"]).sum(axis=0)
-        top_skill_idx = np.argsort(grp_skills)[::-1][:3]
-        top_dist_skills = [feature_names[i] for i in top_skill_idx if grp_skills[i] > 0]
+        top_skill_idx = np.argsort(grp_skills)[::-1][:4]
+        top_dist_skills = [unique_skills[i] for i in top_skill_idx if grp_skills[i] > 0]
         high_share = round((grp["Curriculum Status"].value_counts().get("High Demand", 0) / len(grp)) * 100, 1)
         district_list.append({
             "district": dist,
@@ -324,18 +336,18 @@ def load_and_train_models(csv_path: Optional[str] = None) -> Dict[str, Any]:
         })
     district_list.sort(key=lambda x: x["total_openings"], reverse=True)
 
-    # Top Emerging Roles
+    # Top Emerging Industry Roles
     hottest_roles = []
-    grouped_roles = df.groupby("Job Role")
+    grouped_roles = df.groupby("Job Title")
     ranked_roles = grouped_roles["Demand Volume"].count().sort_values(ascending=False).head(5)
     for rank, (r_name, p_count) in enumerate(ranked_roles.items(), 1):
-        sub_r = df[df["Job Role"] == r_name]
+        sub_r = df[df["Job Title"] == r_name]
         openings = int(pd.to_numeric(sub_r["Demand Volume"], errors="coerce").fillna(50).sum())
         top_dist = sub_r["District/Location"].mode().iloc[0] if not sub_r["District/Location"].empty else "Pune"
         st = sub_r["Curriculum Status"].mode().iloc[0] if not sub_r["Curriculum Status"].empty else "High Demand"
         sub_skills = mlb.transform(sub_r["skills_list"]).sum(axis=0)
         top_s_idx = np.argsort(sub_skills)[::-1][:4]
-        r_skills = [feature_names[i] for i in top_s_idx if sub_skills[i] > 0]
+        r_skills = [unique_skills[i] for i in top_s_idx if sub_skills[i] > 0]
         hottest_roles.append({
             "rank": rank,
             "role": str(r_name).title(),
@@ -347,44 +359,175 @@ def load_and_train_models(csv_path: Optional[str] = None) -> Dict[str, Any]:
             "viability_index": round(min(100.0, (openings / 300) * 70.0 + (30.0 if st == "High Demand" else 15.0)), 1),
         })
 
-    # Update Global Pipeline Cache
-    PIPELINE.update({
+    # Update Global Model Cache
+    MODEL_CACHE.update({
         "df": df,
+        "active_dataset_file": os.path.basename(chosen_path),
         "mlb": mlb,
         "kmeans": kmeans,
         "knn": knn,
         "lr": lr,
-        "feature_names": feature_names,
+        "unique_skills": unique_skills,
         "metrics": metrics,
         "clusters": cluster_summaries,
         "districts": district_list,
         "hottest_roles": hottest_roles,
-        "status_dist": df["Curriculum Status"].value_counts().to_dict(),
+        "status_distribution": df["Curriculum Status"].value_counts().to_dict(),
         "initialized": True,
     })
 
-    return PIPELINE
+    return MODEL_CACHE
+
+
+# Run initial training on startup
+try:
+    initialize_data_pipeline()
+    print(f"Data pipeline ready. Loaded dataset: {MODEL_CACHE['active_dataset_file']}")
+except Exception as e:
+    print(f"Startup pipeline notice: {e}")
 
 
 # ──────────────────────────────────────────────────────────────
-# Recommendations & Gap Detection Logic
+# REST API Endpoints
 # ──────────────────────────────────────────────────────────────
-def compute_curriculum_gap(selected_skills: List[str], predicted_status: str) -> Dict[str, Any]:
-    """Finds nearest K-Means cluster and determines missing competencies & action plans."""
-    mlb = PIPELINE["mlb"]
-    clusters = PIPELINE["clusters"]
-    feature_names = PIPELINE["feature_names"]
+@app.route("/", methods=["GET"])
+def api_root():
+    """Returns REST API overview and documentation."""
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
 
-    selected_set = set([s.lower().strip() for s in selected_skills])
-    user_vec = mlb.transform([selected_skills])[0]
+    return jsonify({
+        "platform": "Maharashtra Skill Align — Labour-Market Intelligence REST API",
+        "problem_statement": "MSINS ID26134 (Government of Maharashtra)",
+        "version": "2.0.0",
+        "active_dataset": MODEL_CACHE.get("active_dataset_file"),
+        "total_rows": len(MODEL_CACHE["df"]) if MODEL_CACHE["df"] is not None else 0,
+        "endpoints": {
+            "GET /api/metrics": "Returns dataset statistics, unique skills, model accuracy, K-Means clusters, and district training data",
+            "POST /api/evaluate": "Accepts {'skills': [...]} as JSON, runs KNN, returns predicted curriculum status, missing skill gaps, and actionable recommendations",
+            "GET /api/skills": "Returns complete list of unique technical skills available in the dataset",
+            "GET /api/clusters": "Returns the 4 K-Means industry skill domain clusters",
+            "GET /api/districts": "Returns Maharashtra district-level capacity training plans",
+        }
+    })
 
-    # Find closest cluster via cosine similarity
+
+@app.route("/api/metrics", methods=["GET"])
+def get_metrics():
+    """
+    GET /api/metrics
+    Returns dataset statistics (total rows, unique skills, status distribution)
+    and supervised model evaluation metrics (Accuracy, Precision, Recall, F1-Score).
+    """
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+
+    df = MODEL_CACHE["df"]
+    unique_skills = MODEL_CACHE["unique_skills"]
+    metrics = MODEL_CACHE["metrics"]
+
+    return jsonify({
+        "status": "success",
+        "dataset": {
+            "filename": MODEL_CACHE["active_dataset_file"],
+            "total_rows": len(df),
+            "total_unique_skills": len(unique_skills),
+            "unique_skills": unique_skills,
+            "status_distribution": MODEL_CACHE["status_distribution"],
+        },
+        "model_metrics": metrics,
+        "clusters": MODEL_CACHE["clusters"],
+        "districts": MODEL_CACHE["districts"],
+        "hottest_roles": MODEL_CACHE["hottest_roles"],
+    })
+
+
+@app.route("/api/skills", methods=["GET"])
+def get_skills():
+    """GET /api/skills: Returns full list of unique skills in the dataset."""
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+
+    return jsonify({
+        "status": "success",
+        "total_skills": len(MODEL_CACHE["unique_skills"]),
+        "skills": MODEL_CACHE["unique_skills"],
+    })
+
+
+@app.route("/api/evaluate", methods=["POST"])
+def api_evaluate():
+    """
+    POST /api/evaluate
+    Accepts frontend skills as JSON payload:
+      {
+        "skills": ["docker", "kubernetes", "aws", "linux"],
+        "course_name": "Diploma in Cloud Computing" (optional)
+      }
+    Runs KNN to predict 'Curriculum Status' (High Demand, Needs Update, Obsolete/Oversupplied),
+    finds closest K-Means cluster, identifies missing skill gaps, and returns actionable recommendations.
+    """
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+
+    # Extract input skills from JSON body (or form data fallback)
+    if request.is_json:
+        data = request.get_json(silent=True) or {}
+        input_skills = data.get("skills", [])
+        course_name = data.get("course_name", "Evaluated Skill Curriculum")
+    else:
+        input_skills = request.form.getlist("skills")
+        course_name = request.form.get("course_name", "Evaluated Skill Curriculum")
+
+    # Clean and filter input skills
+    selected_skills = [clean_skill_token(s) for s in input_skills if s and len(clean_skill_token(s)) >= 2]
+
+    if not selected_skills:
+        return jsonify({
+            "status": "error",
+            "message": "Please provide a non-empty 'skills' array in the request body (e.g., {'skills': ['docker', 'kubernetes', 'aws']})."
+        }), 400
+
+    mlb = MODEL_CACHE["mlb"]
+    knn = MODEL_CACHE["knn"]
+    lr = MODEL_CACHE["lr"]
+    clusters = MODEL_CACHE["clusters"]
+    unique_skills = MODEL_CACHE["unique_skills"]
+
+    # Transform selected skills using MultiLabelBinarizer
+    user_vec = mlb.transform([selected_skills])
+
+    # 1. Run KNN Prediction
+    knn_pred = knn.predict(user_vec)[0]
+    knn_proba = knn.predict_proba(user_vec)[0]
+    knn_classes = knn.classes_.tolist()
+    knn_proba_dict = {
+        knn_classes[i]: round(float(knn_proba[i]) * 100, 1)
+        for i in range(len(knn_classes))
+    }
+
+    # 2. Run Logistic Regression Prediction
+    lr_pred = lr.predict(user_vec)[0]
+    lr_proba = lr.predict_proba(user_vec)[0]
+    lr_classes = lr.classes_.tolist()
+    lr_proba_dict = {
+        lr_classes[i]: round(float(lr_proba[i]) * 100, 1)
+        for i in range(len(lr_classes))
+    }
+
+    predicted_status = str(knn_pred)
+    confidence = round(float(np.max(knn_proba)) * 100, 1)
+
+    # 3. Benchmark against K-Means Centroids for Gap Analysis
+    selected_set = set(selected_skills)
+    vec_flat = user_vec[0]
+
     best_cluster = None
     best_sim = -1.0
     for c in clusters:
         centroid = np.array(c.get("centroid", []))
-        if len(centroid) == len(user_vec) and np.linalg.norm(user_vec) > 0 and np.linalg.norm(centroid) > 0:
-            sim = float(np.dot(user_vec, centroid) / (np.linalg.norm(user_vec) * np.linalg.norm(centroid)))
+        if len(centroid) == len(vec_flat) and np.linalg.norm(vec_flat) > 0 and np.linalg.norm(centroid) > 0:
+            sim = float(np.dot(vec_flat, centroid) / (np.linalg.norm(vec_flat) * np.linalg.norm(centroid)))
         else:
             sim = float(len(selected_set & set(c.get("top_skills", []))))
         if sim > best_sim:
@@ -395,11 +538,11 @@ def compute_curriculum_gap(selected_skills: List[str], predicted_status: str) ->
         best_cluster = clusters[0]
 
     cluster_top_skills = best_cluster["top_skills"] if best_cluster else []
-    matched_skills = [s for s in selected_skills if s in cluster_top_skills or s in feature_names]
+    matched_skills = [s for s in selected_skills if s in cluster_top_skills or s in unique_skills]
     missing_skills = [s for s in cluster_top_skills if s not in selected_set]
 
+    # 4. Actionable Curriculum Recommendations & Capacity Plans
     if predicted_status == "High Demand":
-        status_color = "emerald"
         status_message = "Curriculum is strongly aligned with emerging industry demand in Maharashtra."
         readiness = 94
         action_plan = [
@@ -410,7 +553,6 @@ def compute_curriculum_gap(selected_skills: List[str], predicted_status: str) ->
         equipment_guidance = "Maintain cloud sandbox environments (AWS/Azure/GCP access) and modern Linux development workstations."
         trainer_guidance = "Certify faculty in containerization, cloud infrastructure, and real-world system architecture."
     elif predicted_status == "Needs Update":
-        status_color = "amber"
         status_message = "Curriculum covers foundational skills but lacks industry-critical modern tooling."
         readiness = 68
         rec_add = missing_skills[:3] or ["docker", "aws", "ci/cd"]
@@ -419,10 +561,9 @@ def compute_curriculum_gap(selected_skills: List[str], predicted_status: str) ->
             "Convert 35% of traditional classroom lectures into hands-on lab projects with Git version control.",
             "Align student capstone projects with active hiring requirements in Maharashtra district hubs."
         ]
-        equipment_guidance = "Provision cloud container labs (Docker/Kubernetes) and updated Linux workstations."
+        equipment_guidance = "Provision cloud container labs (Docker/Kubernetes access) and updated Linux workstations."
         trainer_guidance = f"Conduct faculty upskilling workshops on {', '.join(rec_add)} via industry trainer partnerships."
     else:  # Obsolete/Oversupplied
-        status_color = "rose"
         status_message = "Curriculum relies on legacy, oversaturated, or low-demand technologies with poor hiring velocity."
         readiness = 32
         pivotal = ["python", "sql", "git", "docker", "aws"]
@@ -436,263 +577,77 @@ def compute_curriculum_gap(selected_skills: List[str], predicted_status: str) ->
 
     target_districts = list(best_cluster.get("top_districts", {}).keys()) if best_cluster else ["Pune", "Mumbai", "Nagpur"]
 
-    return {
+    return jsonify({
+        "status": "success",
+        "course_name": course_name,
+        "curriculum_status": predicted_status,
+        "confidence": confidence,
+        "probabilities": knn_proba_dict,
+        "logistic_regression": {
+            "status": str(lr_pred),
+            "confidence": round(float(np.max(lr_proba)) * 100, 1),
+            "probabilities": lr_proba_dict,
+        },
         "aligned_cluster": best_cluster["cluster_name"] if best_cluster else "General Industry Stack",
         "matched_skills": matched_skills,
         "missing_skills": missing_skills,
         "placement_readiness": readiness,
-        "status_color": status_color,
-        "status_message": status_message,
-        "action_plan": action_plan,
-        "equipment_guidance": equipment_guidance,
-        "trainer_guidance": trainer_guidance,
-        "target_districts": target_districts,
-    }
-
-
-# Initialize models at module load
-try:
-    load_and_train_models()
-except Exception as e:
-    print(f"Initial model loading deferred: {e}")
+        "recommendations": {
+            "status_message": status_message,
+            "action_plan": action_plan,
+            "equipment_guidance": equipment_guidance,
+            "trainer_guidance": trainer_guidance,
+            "target_districts": target_districts,
+        }
+    })
 
 
 # ──────────────────────────────────────────────────────────────
-# Routes
+# Route Aliases for Backward Compatibility
 # ──────────────────────────────────────────────────────────────
-@app.route("/", methods=["GET"])
-def index():
-    """Renders main dashboard with live metrics, clusters, and curriculum evaluator."""
-    if not PIPELINE.get("initialized"):
-        load_and_train_models()
-
-    m = PIPELINE["metrics"]
-    all_skills = sorted(list(set(PIPELINE["feature_names"] + CANONICAL_SKILLS)))
-
-    return render_template(
-        "index.html",
-        skills=all_skills,
-        selected_skills=[],
-        course_name="",
-        # Model metrics
-        knn_accuracy=m.get("knn_accuracy", 100.0),
-        knn_precision=m.get("knn_precision", 100.0),
-        knn_recall=m.get("knn_recall", 100.0),
-        knn_f1=m.get("knn_f1", 100.0),
-        lr_accuracy=m.get("lr_accuracy", 100.0),
-        lr_precision=m.get("lr_precision", 100.0),
-        lr_recall=m.get("lr_recall", 100.0),
-        lr_f1=m.get("lr_f1", 100.0),
-        # Platform data
-        clusters=PIPELINE.get("clusters", []),
-        districts=PIPELINE.get("districts", []),
-        hottest_roles=PIPELINE.get("hottest_roles", []),
-        status_dist=PIPELINE.get("status_dist", {}),
-        total_postings=len(PIPELINE["df"]) if PIPELINE["df"] is not None else 400,
-        total_skills_count=len(PIPELINE["feature_names"]),
-        # Evaluator results (None on initial load)
-        predicted_status=None,
-        knn_confidence=None,
-        lr_confidence=None,
-        matched_skills=[],
-        missing_skills=[],
-        aligned_cluster=None,
-        placement_readiness=None,
-        action_plan=[],
-        equipment_guidance="",
-        trainer_guidance="",
-        target_districts=[],
-    )
-
-
 @app.route("/evaluate", methods=["POST"])
-def evaluate():
-    """
-    Accepts selected curriculum skills from frontend form.
-    Runs KNN to predict curriculum status and passes results & metrics back to template.
-    """
-    if not PIPELINE.get("initialized"):
-        load_and_train_models()
-
-    # Support form submission and JSON fetch
-    if request.is_json:
-        data = request.get_json(silent=True) or {}
-        selected_skills = [s.strip().lower() for s in data.get("skills", []) if s.strip()]
-        course_name = data.get("course_name", "Evaluated Skill Curriculum")
-    else:
-        selected_skills = [s.strip().lower() for s in request.form.getlist("skills") if s.strip()]
-        course_name = request.form.get("course_name", "").strip() or "Evaluated Skill Curriculum"
-
-    m = PIPELINE["metrics"]
-    all_skills = sorted(list(set(PIPELINE["feature_names"] + CANONICAL_SKILLS)))
-
-    if not selected_skills:
-        # No skills checked
-        return render_template(
-            "index.html",
-            skills=all_skills,
-            selected_skills=[],
-            course_name=course_name,
-            error_message="Please select at least one curriculum skill to evaluate course viability.",
-            knn_accuracy=m.get("knn_accuracy", 100.0),
-            knn_precision=m.get("knn_precision", 100.0),
-            knn_recall=m.get("knn_recall", 100.0),
-            knn_f1=m.get("knn_f1", 100.0),
-            lr_accuracy=m.get("lr_accuracy", 100.0),
-            lr_precision=m.get("lr_precision", 100.0),
-            lr_recall=m.get("lr_recall", 100.0),
-            lr_f1=m.get("lr_f1", 100.0),
-            clusters=PIPELINE.get("clusters", []),
-            districts=PIPELINE.get("districts", []),
-            hottest_roles=PIPELINE.get("hottest_roles", []),
-            status_dist=PIPELINE.get("status_dist", {}),
-            total_postings=len(PIPELINE["df"]) if PIPELINE["df"] is not None else 400,
-            total_skills_count=len(PIPELINE["feature_names"]),
-            predicted_status=None,
-        )
-
-    # Encode selected skills using MultiLabelBinarizer
-    mlb = PIPELINE["mlb"]
-    knn = PIPELINE["knn"]
-    lr = PIPELINE["lr"]
-
-    user_vec = mlb.transform([selected_skills])
-
-    # Predict with KNN and Logistic Regression
-    knn_pred = knn.predict(user_vec)[0]
-    knn_proba = knn.predict_proba(user_vec)[0]
-    lr_pred = lr.predict(user_vec)[0]
-    lr_proba = lr.predict_proba(user_vec)[0]
-
-    # Primary predicted status from KNN
-    predicted_status = str(knn_pred)
-    knn_conf = round(float(np.max(knn_proba)) * 100, 1)
-    lr_conf = round(float(np.max(lr_proba)) * 100, 1)
-
-    # Compute skill gaps and recommendations
-    gap_info = compute_curriculum_gap(selected_skills, predicted_status)
-
-    # If request wants JSON (e.g. from fetch)
-    if request.is_json or request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return jsonify({
-            "predicted_status": predicted_status,
-            "course_name": course_name,
-            "knn_confidence": knn_conf,
-            "lr_status": str(lr_pred),
-            "lr_confidence": lr_conf,
-            "matched_skills": gap_info["matched_skills"],
-            "missing_skills": gap_info["missing_skills"],
-            "aligned_cluster": gap_info["aligned_cluster"],
-            "placement_readiness": gap_info["placement_readiness"],
-            "action_plan": gap_info["action_plan"],
-            "equipment_guidance": gap_info["equipment_guidance"],
-            "trainer_guidance": gap_info["trainer_guidance"],
-            "target_districts": gap_info["target_districts"],
-            "metrics": m,
-        })
-
-    # Render template with live ML variables
-    return render_template(
-        "index.html",
-        skills=all_skills,
-        selected_skills=selected_skills,
-        course_name=course_name,
-        # Live ML predictions & gaps
-        predicted_status=predicted_status,
-        knn_confidence=knn_conf,
-        lr_status=str(lr_pred),
-        lr_confidence=lr_conf,
-        matched_skills=gap_info["matched_skills"],
-        missing_skills=gap_info["missing_skills"],
-        aligned_cluster=gap_info["aligned_cluster"],
-        placement_readiness=gap_info["placement_readiness"],
-        status_color=gap_info["status_color"],
-        status_message=gap_info["status_message"],
-        action_plan=gap_info["action_plan"],
-        equipment_guidance=gap_info["equipment_guidance"],
-        trainer_guidance=gap_info["trainer_guidance"],
-        target_districts=gap_info["target_districts"],
-        # Model metrics
-        knn_accuracy=m.get("knn_accuracy", 100.0),
-        knn_precision=m.get("knn_precision", 100.0),
-        knn_recall=m.get("knn_recall", 100.0),
-        knn_f1=m.get("knn_f1", 100.0),
-        lr_accuracy=m.get("lr_accuracy", 100.0),
-        lr_precision=m.get("lr_precision", 100.0),
-        lr_recall=m.get("lr_recall", 100.0),
-        lr_f1=m.get("lr_f1", 100.0),
-        # Platform data
-        clusters=PIPELINE.get("clusters", []),
-        districts=PIPELINE.get("districts", []),
-        hottest_roles=PIPELINE.get("hottest_roles", []),
-        status_dist=PIPELINE.get("status_dist", {}),
-        total_postings=len(PIPELINE["df"]) if PIPELINE["df"] is not None else 400,
-        total_skills_count=len(PIPELINE["feature_names"]),
-    )
-
-
 @app.route("/predict", methods=["POST"])
-def predict():
-    """Alias for /evaluate supporting JSON API requests."""
-    return evaluate()
+def evaluate_alias():
+    return api_evaluate()
 
 
-@app.route("/upload", methods=["POST"])
-def upload():
-    """Accepts uploaded CSV and retrains the entire pipeline."""
-    if "csv_file" not in request.files:
-        return jsonify({"error": "No file uploaded."}), 400
-
-    file = request.files["csv_file"]
-    if file.filename == "" or not file.filename.lower().endswith(".csv"):
-        return jsonify({"error": "Please upload a valid .csv file."}), 400
-
-    try:
-        temp_path = os.path.join(os.path.dirname(__file__), "uploaded_temp.csv")
-        file.save(temp_path)
-        load_and_train_models(temp_path)
-        m = PIPELINE["metrics"]
-        return jsonify({
-            "success": True,
-            "n_rows": len(PIPELINE["df"]),
-            "n_features": len(PIPELINE["feature_names"]),
-            "metrics": m,
-            "clusters": PIPELINE["clusters"],
-            "districts": PIPELINE["districts"],
-            "hottest_roles": PIPELINE["hottest_roles"],
-            "status_dist": PIPELINE["status_dist"],
-        })
-    except Exception as e:
-        return jsonify({"error": f"Upload processing error: {str(e)}"}), 400
+@app.route("/api/clusters", methods=["GET"])
+def get_clusters():
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+    return jsonify({
+        "status": "success",
+        "clusters": MODEL_CACHE["clusters"],
+    })
 
 
-@app.route("/load-sample", methods=["GET", "POST"])
-def load_sample():
-    """Quick loads sample_jobs.csv."""
-    try:
-        load_and_train_models("sample_jobs.csv")
-        m = PIPELINE["metrics"]
-        return jsonify({
-            "success": True,
-            "n_rows": len(PIPELINE["df"]),
-            "n_features": len(PIPELINE["feature_names"]),
-            "metrics": m,
-            "clusters": PIPELINE["clusters"],
-            "districts": PIPELINE["districts"],
-            "hottest_roles": PIPELINE["hottest_roles"],
-            "status_dist": PIPELINE["status_dist"],
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+@app.route("/api/districts", methods=["GET"])
+def get_districts():
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+    return jsonify({
+        "status": "success",
+        "districts": MODEL_CACHE["districts"],
+    })
 
 
+@app.route("/api/roles", methods=["GET"])
+def get_roles():
+    if not MODEL_CACHE.get("initialized"):
+        initialize_data_pipeline()
+    return jsonify({
+        "status": "success",
+        "hottest_roles": MODEL_CACHE["hottest_roles"],
+    })
+
+
+@app.route("/api/sample-csv", methods=["GET"])
 @app.route("/sample-csv", methods=["GET"])
-def sample_csv():
-    """Serves sample_jobs.csv as downloadable attachment."""
-    path = os.path.join(os.path.dirname(__file__), "sample_jobs.csv")
+def download_sample_csv():
+    path = os.path.join(os.path.dirname(__file__), "scraped_maharashtra_jobs.csv")
     if not os.path.exists(path):
-        load_and_train_models()
-    return send_file(path, mimetype="text/csv", as_attachment=True, download_name="maharashtra_job_market_sample.csv")
+        path = os.path.join(os.path.dirname(__file__), "sample_jobs.csv")
+    return send_file(path, mimetype="text/csv", as_attachment=True, download_name="maharashtra_jobs.csv")
 
 
 # ──────────────────────────────────────────────────────────────
