@@ -43,6 +43,8 @@
   
   <!-- Custom Design System Stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-surfacebg text-slate-900 font-sans antialiased min-h-screen">
 
@@ -235,23 +237,156 @@
 
           <!-- Model Comparison Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="p-5 bg-white rounded-xl border border-borderteal shadow-xs">
-              <div class="text-xs font-semibold uppercase text-teal-800 mb-1">K-Nearest Neighbors (KNN, k=5)</div>
-              <div class="text-2xl font-bold mb-1 {% if current_status == 'High Demand' %}text-emerald-600{% elif current_status == 'Needs Update' %}text-amber-600{% else %}text-rose-600{% endif %}" id="knn-status-text">
-                {{ current_status }}
+            <!-- KNN Model Card with Explanatory Technical Content -->
+            <div class="p-5 bg-white rounded-xl border border-borderteal shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="text-xs font-semibold uppercase text-teal-800 mb-1">K-Nearest Neighbors (KNN, k=5)</div>
+                <div class="text-2xl font-bold mb-1 {% if current_status == 'High Demand' %}text-emerald-600{% elif current_status == 'Needs Update' %}text-amber-600{% else %}text-rose-600{% endif %}" id="knn-status-text">
+                  {{ current_status }}
+                </div>
+                <div class="text-sm text-slate-600">
+                  Model Confidence: <strong class="text-teal-800" id="knn-conf-val">{{ knn_confidence or 80.0 }}%</strong> (Primary Live Engine)
+                </div>
               </div>
-              <div class="text-sm text-slate-600">
-                Model Confidence: <strong class="text-teal-800" id="knn-conf-val">{{ knn_confidence or 80.0 }}%</strong> (Primary Live Engine)
+
+              <!-- KNN Section Professional Content Block -->
+              <div class="mt-4 pt-3 border-t border-borderteal/60">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-teal-900 mb-2 flex items-center justify-between">
+                  <span>Engine Methodology</span>
+                  <span class="text-[10px] text-slate-500 font-normal">Supervised k=5</span>
+                </div>
+                <div class="p-4 bg-surfacebg rounded-xl border border-borderteal text-xs text-slate-700 leading-relaxed space-y-2">
+                  <div class="flex items-start gap-2.5">
+                    <span class="text-base text-teal-800 mt-0.5">📐</span>
+                    <p class="text-slate-600">
+                      The <strong class="text-teal-950 font-semibold">K-Nearest Neighbors engine (k=5)</strong> maps the inputted syllabus against the 5 closest real-world job market clusters using <span class="font-medium text-teal-900">Euclidean distance</span> to lock in its final viability rating.
+                    </p>
+                  </div>
+                  <div class="pt-2 border-t border-borderteal/50 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                    <span class="inline-flex items-center gap-1 font-semibold text-teal-800">
+                      <span>✓</span> Multi-dimensional feature space
+                    </span>
+                    <span>·</span>
+                    <span>Uniform distance weighting</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="p-5 bg-white rounded-xl border border-borderteal shadow-xs">
-              <div class="text-xs font-semibold uppercase text-teal-700 mb-1">Multinomial Logistic Regression</div>
-              <div class="text-2xl font-bold mb-1 {% if (lr_status or current_status) == 'High Demand' %}text-emerald-600{% elif (lr_status or current_status) == 'Needs Update' %}text-amber-600{% else %}text-rose-600{% endif %}" id="lr-status-text">
-                {{ lr_status or current_status }}
+
+            <!-- Multinomial Logistic Regression Model Card with Pie Chart -->
+            <div class="p-5 bg-white rounded-xl border border-borderteal shadow-xs flex flex-col justify-between">
+              <div>
+                <div class="text-xs font-semibold uppercase text-teal-700 mb-1">Multinomial Logistic Regression</div>
+                <div class="text-2xl font-bold mb-1 {% if (lr_status or current_status) == 'High Demand' %}text-emerald-600{% elif (lr_status or current_status) == 'Needs Update' %}text-amber-600{% else %}text-rose-600{% endif %}" id="lr-status-text">
+                  {{ lr_status or current_status }}
+                </div>
+                <div class="text-sm text-slate-600">
+                  Log-Odds Confidence: <strong class="text-teal-800" id="lr-conf-val">{{ lr_confidence or 84.2 }}%</strong> (C=0.003 Regularized)
+                </div>
               </div>
-              <div class="text-sm text-slate-600">
-                Log-Odds Confidence: <strong class="text-teal-800" id="lr-conf-val">{{ lr_confidence or 84.2 }}%</strong> (C=0.003 Regularized)
+
+              <!-- Probability Pie Chart Canvas -->
+              <div class="mt-4 pt-3 border-t border-borderteal/60">
+                <div class="text-[11px] font-semibold uppercase tracking-wider text-teal-900 mb-2 flex items-center justify-between">
+                  <span>Class Probabilities</span>
+                  <span class="text-[10px] text-slate-500 font-normal">Multinomial Distribution</span>
+                </div>
+
+                <!-- Live Printed Probability Text Badges -->
+                <div class="grid grid-cols-3 gap-2 mb-3 text-center">
+                  <div class="p-1.5 rounded-lg bg-emerald-50 border border-emerald-200">
+                    <div class="text-[10px] text-emerald-800 font-medium">High Demand</div>
+                    <div class="text-xs font-bold text-emerald-700" id="prob-high-val">{{ prob_high | default(high_demand_prob | default(0)) }}%</div>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-amber-50 border border-amber-200">
+                    <div class="text-[10px] text-amber-800 font-medium">Needs Update</div>
+                    <div class="text-xs font-bold text-amber-700" id="prob-update-val">{{ prob_needs_update | default(needs_update_prob | default(0)) }}%</div>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-rose-50 border border-rose-200">
+                    <div class="text-[10px] text-rose-800 font-medium">Obsolete</div>
+                    <div class="text-xs font-bold text-rose-700" id="prob-obsolete-val">{{ prob_obsolete | default(obsolete_prob | default(0)) }}%</div>
+                  </div>
+                </div>
+
+                <div style="position: relative; height: 240px; width: 100%;">
+                  <canvas id="viabilityChart" style="height: 240px; width: 100%;"></canvas>
+                </div>
               </div>
+
+              <!-- Dynamic Chart.js Script with Real Jinja2 Data Binding -->
+              <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                  const canvas = document.getElementById("viabilityChart");
+                  if (!canvas || typeof Chart === "undefined") return;
+
+                  const ctx = canvas.getContext("2d");
+                  if (window.myViabilityChart && typeof window.myViabilityChart.destroy === "function") {
+                    window.myViabilityChart.destroy();
+                  }
+
+                  window.myViabilityChart = new Chart(ctx, {
+                    type: "pie",
+                    data: {
+                      labels: ["High Demand", "Needs Update", "Obsolete"],
+                      datasets: [{
+                        data: [
+                          {{ prob_high | default(high_demand_prob | default(0)) }},
+                          {{ prob_needs_update | default(needs_update_prob | default(0)) }},
+                          {{ prob_obsolete | default(obsolete_prob | default(0)) }}
+                        ],
+                        backgroundColor: [
+                          "#059669", // Emerald (High Demand)
+                          "#d97706", // Amber (Needs Update)
+                          "#e11d48"  // Rose (Obsolete)
+                        ],
+                        borderColor: "#ffffff",
+                        borderWidth: 2,
+                        hoverOffset: 4
+                      }]
+                    },
+                    options: {
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: "bottom",
+                          labels: {
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            padding: 8,
+                            color: "#334155",
+                            font: {
+                              size: 11,
+                              family: "Inter, sans-serif"
+                            }
+                          }
+                        },
+                        tooltip: {
+                          callbacks: {
+                            label: function(context) {
+                              return ` ${context.label}: ${context.raw}%`;
+                            }
+                          }
+                        }
+                      }
+                    }
+                  });
+
+                  // Global hook for dynamic updates
+                  window.updateViabilityChart = function(high, update, obs) {
+                    if (window.myViabilityChart) {
+                      window.myViabilityChart.data.datasets[0].data = [high, update, obs];
+                      window.myViabilityChart.update();
+                    }
+                    const elHigh = document.getElementById("prob-high-val");
+                    const elUpdate = document.getElementById("prob-update-val");
+                    const elObs = document.getElementById("prob-obsolete-val");
+                    if (elHigh) elHigh.textContent = high + "%";
+                    if (elUpdate) elUpdate.textContent = update + "%";
+                    if (elObs) elObs.textContent = obs + "%";
+                  };
+                });
+              </script>
             </div>
           </div>
 
