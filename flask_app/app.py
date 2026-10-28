@@ -482,6 +482,13 @@ def api_root():
         total_postings=len(MODEL_CACHE["df"]) if MODEL_CACHE["df"] is not None else 450,
         total_skills_count=len(MODEL_CACHE.get("unique_skills", [])),
         predicted_status=None,
+        prob_high=72.5,
+        prob_needs_update=21.0,
+        prob_obsolete=6.5,
+        lr_prob_list=[72.5, 21.0, 6.5],
+        high_demand_prob=72.5,
+        needs_update_prob=21.0,
+        obsolete_prob=6.5,
     )
 
 
@@ -685,7 +692,10 @@ def api_evaluate():
     result = perform_curriculum_evaluation(selected_skills, course_name)
 
     if evaluations_collection is not None:
-        evaluations_collection.insert_one({"skills": selected_skills, "status": result.get("curriculum_status"), "timestamp": datetime.datetime.utcnow()})
+        try:
+            evaluations_collection.insert_one({"skills": selected_skills, "status": result.get("curriculum_status"), "timestamp": datetime.datetime.utcnow()})
+        except Exception as e:
+            print(f"Silent MongoDB Atlas logging notice: {e}")
 
     return jsonify(result)
 
@@ -742,6 +752,12 @@ def evaluate_alias():
     res = perform_curriculum_evaluation(selected_skills, course_name)
     rec = res["recommendations"]
 
+    # Extract Logistic Regression class probabilities
+    lr_probs = res.get("logistic_regression", {}).get("probabilities", {})
+    prob_high = lr_probs.get("High Demand", 0.0)
+    prob_needs_update = lr_probs.get("Needs Update", 0.0)
+    prob_obsolete = lr_probs.get("Obsolete/Oversupplied", lr_probs.get("Obsolete", 0.0))
+
     return render_template(
         "index.html",
         skills=all_skills,
@@ -751,6 +767,13 @@ def evaluate_alias():
         knn_confidence=res["confidence"],
         lr_status=res["logistic_regression"]["status"],
         lr_confidence=res["logistic_regression"]["confidence"],
+        prob_high=prob_high,
+        prob_needs_update=prob_needs_update,
+        prob_obsolete=prob_obsolete,
+        lr_prob_list=[prob_high, prob_needs_update, prob_obsolete],
+        high_demand_prob=prob_high,
+        needs_update_prob=prob_needs_update,
+        obsolete_prob=prob_obsolete,
         matched_skills=res["matched_skills"],
         missing_skills=res["missing_skills"],
         aligned_cluster=res["aligned_cluster"],

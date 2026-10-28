@@ -170,6 +170,13 @@ document.addEventListener("DOMContentLoaded", function () {
       lrConf.textContent = lrData.confidence ? `${lrData.confidence}%` : "84.2%";
     }
 
+    if (typeof window.updateViabilityChart === "function" && lrData.probabilities) {
+      const hp = lrData.probabilities["High Demand"] || 0;
+      const up = lrData.probabilities["Needs Update"] || 0;
+      const op = lrData.probabilities["Obsolete/Oversupplied"] || lrData.probabilities["Obsolete"] || 0;
+      window.updateViabilityChart(hp, up, op);
+    }
+
     // 4. Aligned Cluster & Placement Score
     const clusterElem = document.getElementById("aligned-cluster-text");
     if (clusterElem) {
